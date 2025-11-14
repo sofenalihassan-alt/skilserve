@@ -1,18 +1,26 @@
 import { useState } from "react";
-import { Menu, X, User, Globe } from "lucide-react";
+import { Menu, X, User, Globe, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [language, setLanguage] = useState<"en" | "ur">("en");
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
@@ -58,10 +66,34 @@ export const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button onClick={() => navigate("/login")}>
-              <User className="h-4 w-4 mr-2" />
-              {language === "en" ? "Login" : "لاگ ان"}
-            </Button>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button>
+                    <User className="h-4 w-4 mr-2" />
+                    {language === "en" ? "Account" : "اکاؤنٹ"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
+                    {language === "en" ? "Profile" : "پروفائل"}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/bookings")}>
+                    {language === "en" ? "My Bookings" : "میری بکنگز"}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    {language === "en" ? "Logout" : "لاگ آؤٹ"}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button onClick={() => navigate("/auth")}>
+                <User className="h-4 w-4 mr-2" />
+                {language === "en" ? "Login" : "لاگ ان"}
+              </Button>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -93,10 +125,25 @@ export const Header = () => {
                 اردو
               </Button>
             </div>
-            <Button className="w-full" onClick={() => navigate("/login")}>
-              <User className="h-4 w-4 mr-2" />
-              {language === "en" ? "Login" : "لاگ ان"}
-            </Button>
+            {user ? (
+              <>
+                <Button variant="ghost" className="w-full justify-start" onClick={() => navigate("/profile")}>
+                  {language === "en" ? "Profile" : "پروفائل"}
+                </Button>
+                <Button variant="ghost" className="w-full justify-start" onClick={() => navigate("/bookings")}>
+                  {language === "en" ? "My Bookings" : "میری بکنگز"}
+                </Button>
+                <Button className="w-full" onClick={handleSignOut}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  {language === "en" ? "Logout" : "لاگ آؤٹ"}
+                </Button>
+              </>
+            ) : (
+              <Button className="w-full" onClick={() => navigate("/auth")}>
+                <User className="h-4 w-4 mr-2" />
+                {language === "en" ? "Login" : "لاگ ان"}
+              </Button>
+            )}
           </nav>
         )}
       </div>
