@@ -7,6 +7,8 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Providers from "./pages/Providers";
 import Auth from "./pages/Auth";
+import ProviderRegistration from "./pages/ProviderRegistration";
+import Emergency from "./pages/Emergency";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +24,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/providers" element={<Providers />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/provider-registration" element={<ProviderRegistration />} />
+            <Route path="/emergency" element={<Emergency />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
