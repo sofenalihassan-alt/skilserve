@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { ProviderCard } from "@/components/ProviderCard";
+import ProvidersMap from "@/components/ProvidersMap";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -178,12 +179,8 @@ const Providers = () => {
             </div>
 
             {showMap && (
-              <div className="mb-6 bg-muted rounded-lg h-64 flex items-center justify-center border-2 border-dashed">
-                <div className="text-center text-muted-foreground">
-                  <Map className="h-12 w-12 mx-auto mb-2" />
-                  <p>Interactive Map (Mapbox Integration)</p>
-                  <p className="text-sm">Shows providers within 5km radius</p>
-                </div>
+              <div className="mb-6">
+                <ProvidersMap />
               </div>
             )}
 

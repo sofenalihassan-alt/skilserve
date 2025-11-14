@@ -80,7 +80,7 @@ const Auth = () => {
       return;
     }
 
-    const { error } = await signUp(email, password, fullName, phone);
+    const { error } = await signUp(email, password, fullName, phone, userType);
     
     if (error) {
       toast({
@@ -91,9 +91,16 @@ const Auth = () => {
     } else {
       toast({
         title: "Success",
-        description: "Account created successfully! You can now log in."
+        description: userType === "provider" 
+          ? "Account created! Please complete your provider profile." 
+          : "Account created successfully! You can now log in."
       });
-      setActiveTab("login");
+      
+      if (userType === "provider") {
+        navigate("/provider-registration");
+      } else {
+        setActiveTab("login");
+      }
     }
     
     setLoading(false);
