@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Menu, X, User, Globe, LogOut } from "lucide-react";
+import { Menu, X, User, Globe, LogOut, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,9 +14,9 @@ import {
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [language, setLanguage] = useState<"en" | "ur">("en");
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
 
   const handleSignOut = async () => {
     await signOut();
@@ -34,20 +35,20 @@ export const Header = () => {
               <span className="text-primary-foreground font-bold text-xl">SS</span>
             </div>
             <span className="text-xl font-bold">
-              {language === "en" ? "Skill Serve" : "سکل سرو"}
+              {t('skill_serve')}
             </span>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <Button variant="ghost" onClick={() => navigate("/providers")}>
-              {language === "en" ? "Find Services" : "خدمات تلاش کریں"}
+              {t('find_services')}
             </Button>
             <Button variant="ghost" onClick={() => navigate("/emergency")}>
-              {language === "en" ? "Emergency" : "ایمرجنسی"}
+              {t('emergency')}
             </Button>
-            <Button variant="ghost">
-              {language === "en" ? "Become a Provider" : "فراہم کنندہ بنیں"}
+            <Button variant="ghost" onClick={() => user ? navigate("/provider-registration") : navigate("/auth")}>
+              {t('become_provider')}
             </Button>
             
             <DropdownMenu>
@@ -71,27 +72,31 @@ export const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button>
                     <User className="h-4 w-4 mr-2" />
-                    {language === "en" ? "Account" : "اکاؤنٹ"}
+                    {t('account')}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={() => navigate("/profile")}>
-                    {language === "en" ? "Profile" : "پروفائل"}
+                    {t('profile')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/messages")}>
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    {t('messages')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/bookings")}>
-                    {language === "en" ? "My Bookings" : "میری بکنگز"}
+                    {t('my_bookings')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="h-4 w-4 mr-2" />
-                    {language === "en" ? "Logout" : "لاگ آؤٹ"}
+                    {t('logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Button onClick={() => navigate("/auth")}>
                 <User className="h-4 w-4 mr-2" />
-                {language === "en" ? "Login" : "لاگ ان"}
+                {t('login')}
               </Button>
             )}
           </nav>
@@ -109,13 +114,13 @@ export const Header = () => {
         {isMenuOpen && (
           <nav className="md:hidden py-4 space-y-2">
             <Button variant="ghost" className="w-full justify-start" onClick={() => navigate("/providers")}>
-              {language === "en" ? "Find Services" : "خدمات تلاش کریں"}
+              {t('find_services')}
             </Button>
             <Button variant="ghost" className="w-full justify-start" onClick={() => navigate("/emergency")}>
-              {language === "en" ? "Emergency" : "ایمرجنسی"}
+              {t('emergency')}
             </Button>
-            <Button variant="ghost" className="w-full justify-start">
-              {language === "en" ? "Become a Provider" : "فراہم کنندہ بنیں"}
+            <Button variant="ghost" className="w-full justify-start" onClick={() => user ? navigate("/provider-registration") : navigate("/auth")}>
+              {t('become_provider')}
             </Button>
             <div className="flex gap-2 pt-2">
               <Button variant="outline" size="sm" onClick={() => setLanguage("en")}>
@@ -128,20 +133,24 @@ export const Header = () => {
             {user ? (
               <>
                 <Button variant="ghost" className="w-full justify-start" onClick={() => navigate("/profile")}>
-                  {language === "en" ? "Profile" : "پروفائل"}
+                  {t('profile')}
+                </Button>
+                <Button variant="ghost" className="w-full justify-start" onClick={() => navigate("/messages")}>
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  {t('messages')}
                 </Button>
                 <Button variant="ghost" className="w-full justify-start" onClick={() => navigate("/bookings")}>
-                  {language === "en" ? "My Bookings" : "میری بکنگز"}
+                  {t('my_bookings')}
                 </Button>
                 <Button className="w-full" onClick={handleSignOut}>
                   <LogOut className="h-4 w-4 mr-2" />
-                  {language === "en" ? "Logout" : "لاگ آؤٹ"}
+                  {t('logout')}
                 </Button>
               </>
             ) : (
               <Button className="w-full" onClick={() => navigate("/auth")}>
                 <User className="h-4 w-4 mr-2" />
-                {language === "en" ? "Login" : "لاگ ان"}
+                {t('login')}
               </Button>
             )}
           </nav>
