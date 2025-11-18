@@ -157,19 +157,32 @@ const Messages = () => {
   };
 
   const sendMessage = async () => {
-    if (!user || !selectedUserId || !newMessage.trim()) return;
+    if (!selectedUserId || !user) return;
+
+    // Validate message with zod
+    const validation = messageSchema.safeParse({ message: newMessage });
+    
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast({
+        title: 'Validation Error',
+        description: firstError.message,
+        variant: 'destructive'
+      });
+      return;
+    }
 
     setLoading(true);
     const { error } = await supabase.from('messages').insert({
       sender_id: user.id,
       receiver_id: selectedUserId,
-      message: newMessage.trim(),
+      message: validation.data.message,
     });
 
     if (error) {
       toast({
         title: 'Error',
-        description: 'Failed to send message',
+        description: getSafeErrorMessage(error),
         variant: 'destructive',
       });
     } else {
