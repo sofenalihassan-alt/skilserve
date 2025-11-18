@@ -9,6 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Send, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { messageSchema, getSafeErrorMessage } from '@/lib/validation';
 
 interface Message {
   id: string;

@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Briefcase } from "lucide-react";
+import { providerSchema, getSafeErrorMessage } from "@/lib/validation";
 
 const ProviderRegistration = () => {
   const [loading, setLoading] = useState(false);
@@ -40,24 +41,45 @@ const ProviderRegistration = () => {
       return;
     }
 
+    // Validate input with zod
+    const validation = providerSchema.safeParse({
+      businessName,
+      hourlyRate,
+      yearsExperience,
+      bio,
+      licenseNumber,
+      specialization
+    });
+    
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast({
+        title: "Validation Error",
+        description: firstError.message,
+        variant: "destructive"
+      });
+      setLoading(false);
+      return;
+    }
+
     const { error } = await supabase
       .from("service_providers")
       .insert([{
         user_id: user.id,
-        business_name: businessName,
+        business_name: validation.data.businessName,
         category: category as any,
-        hourly_rate: hourlyRate,
-        years_experience: yearsExperience,
-        specialization,
-        bio,
-        license_number: licenseNumber,
+        hourly_rate: validation.data.hourlyRate,
+        years_experience: validation.data.yearsExperience,
+        specialization: validation.data.specialization,
+        bio: validation.data.bio,
+        license_number: validation.data.licenseNumber,
         is_active: true
       }]);
 
     if (error) {
       toast({
         title: "Registration Failed",
-        description: error.message,
+        description: getSafeErrorMessage(error),
         variant: "destructive"
       });
     } else {

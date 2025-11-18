@@ -9,6 +9,7 @@ import { User, Briefcase, LogIn, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import { loginSchema, signupSchema, getSafeErrorMessage } from "@/lib/validation";
 
 const Auth = () => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
@@ -31,22 +32,26 @@ const Auth = () => {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    if (!email || !password) {
+    // Validate input with zod
+    const validation = loginSchema.safeParse({ email, password });
+    
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
       toast({
-        title: "Error",
-        description: "Please fill in all fields",
+        title: "Validation Error",
+        description: firstError.message,
         variant: "destructive"
       });
       setLoading(false);
       return;
     }
 
-    const { error } = await signIn(email, password);
+    const { error } = await signIn(validation.data.email, validation.data.password);
     
     if (error) {
       toast({
         title: "Login Failed",
-        description: error.message,
+        description: getSafeErrorMessage(error),
         variant: "destructive"
       });
     } else {
@@ -70,22 +75,32 @@ const Auth = () => {
     const fullName = formData.get("fullName") as string;
     const phone = formData.get("phone") as string;
 
-    if (!email || !password || !fullName) {
+    // Validate input with zod
+    const validation = signupSchema.safeParse({ email, password, fullName, phone });
+    
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
       toast({
-        title: "Error",
-        description: "Please fill in all required fields",
+        title: "Validation Error",
+        description: firstError.message,
         variant: "destructive"
       });
       setLoading(false);
       return;
     }
 
-    const { error } = await signUp(email, password, fullName, phone, userType);
+    const { error } = await signUp(
+      validation.data.email, 
+      validation.data.password, 
+      validation.data.fullName, 
+      validation.data.phone, 
+      userType
+    );
     
     if (error) {
       toast({
         title: "Signup Failed",
-        description: error.message,
+        description: getSafeErrorMessage(error),
         variant: "destructive"
       });
     } else {
