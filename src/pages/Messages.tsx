@@ -28,6 +28,12 @@ interface Conversation {
   unreadCount: number;
 }
 
+interface ProviderProfile {
+  business_name: string;
+  category: string;
+  hourly_rate: number;
+}
+
 const Messages = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
@@ -38,6 +44,7 @@ const Messages = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [selectedProviderProfile, setSelectedProviderProfile] = useState<ProviderProfile | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -55,8 +62,23 @@ const Messages = () => {
   useEffect(() => {
     if (selectedUserId && user) {
       fetchMessages(selectedUserId);
+      fetchProviderProfile(selectedUserId);
     }
   }, [selectedUserId, user]);
+
+  const fetchProviderProfile = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('service_providers')
+      .select('business_name, category, hourly_rate')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (!error && data) {
+      setSelectedProviderProfile(data);
+    } else {
+      setSelectedProviderProfile(null);
+    }
+  };
 
   const fetchConversations = async () => {
     if (!user) return;
@@ -265,9 +287,18 @@ const Messages = () => {
             {selectedUserId ? (
               <>
                 <CardHeader>
-                  <CardTitle>
-                    {conversations.find((c) => c.userId === selectedUserId)?.userName || 'Chat'}
-                  </CardTitle>
+                  <div className="space-y-1">
+                    <CardTitle>
+                      {conversations.find((c) => c.userId === selectedUserId)?.userName || 'Chat'}
+                    </CardTitle>
+                    {selectedProviderProfile && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <span className="capitalize">{selectedProviderProfile.category}</span>
+                        <span>•</span>
+                        <span>${selectedProviderProfile.hourly_rate}/hr</span>
+                      </div>
+                    )}
+                  </div>
                 </CardHeader>
                 <CardContent className="flex flex-col h-[520px]">
                   <ScrollArea className="flex-1 pr-4">
