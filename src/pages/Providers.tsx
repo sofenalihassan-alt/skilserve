@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { ProviderCard } from "@/components/ProviderCard";
 import ProvidersMap from "@/components/ProvidersMap";
@@ -7,65 +7,86 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Map, Filter } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import type { Database } from "@/integrations/supabase/types";
 
-const mockProviders = [
-  {
-    id: 1,
-    name: "Ahmed Hassan",
-    service: "Master Electrician",
-    rating: 4.9,
-    reviews: 127,
-    distance: "1.2 km",
-    hourlyRate: 800,
-    experience: "8 years",
-    specialization: ["Wiring", "Solar", "Industrial"],
-    available: true,
-    emergency: true,
-  },
-  {
-    id: 2,
-    name: "Fatima Malik",
-    service: "Professional Plumber",
-    rating: 4.8,
-    reviews: 98,
-    distance: "2.5 km",
-    hourlyRate: 700,
-    experience: "6 years",
-    specialization: ["Pipework", "Drainage", "Bathroom"],
-    available: true,
-    emergency: false,
-  },
-  {
-    id: 3,
-    name: "Usman Ali",
-    service: "Carpenter & Furniture",
-    rating: 4.7,
-    reviews: 85,
-    distance: "3.8 km",
-    hourlyRate: 650,
-    experience: "10 years",
-    specialization: ["Custom Furniture", "Doors", "Cabinets"],
-    available: false,
-    emergency: false,
-  },
-  {
-    id: 4,
-    name: "Aisha Khan",
-    service: "House Cleaning Expert",
-    rating: 4.9,
-    reviews: 156,
-    distance: "1.5 km",
-    hourlyRate: 500,
-    experience: "5 years",
-    specialization: ["Deep Clean", "Sanitization", "Commercial"],
-    available: true,
-    emergency: true,
-  },
-];
+type ServiceProvider = Database['public']['Tables']['service_providers']['Row'];
 
 const Providers = () => {
+  const [providers, setProviders] = useState<ServiceProvider[]>([]);
+  const [filteredProviders, setFilteredProviders] = useState<ServiceProvider[]>([]);
+  const [loading, setLoading] = useState(true);
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [showMap, setShowMap] = useState(false);
+  const [category, setCategory] = useState("all");
+  const [sortBy, setSortBy] = useState("rating");
+  const [availability, setAvailability] = useState("all");
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchProviders();
+  }, []);
+
+  useEffect(() => {
+    applyFiltersAndSort();
+  }, [providers, category, priceRange, sortBy, availability]);
+
+  const fetchProviders = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('service_providers')
+      .select('*')
+      .eq('is_active', true);
+
+    if (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to load providers',
+        variant: 'destructive'
+      });
+    } else {
+      setProviders(data || []);
+    }
+    setLoading(false);
+  };
+
+  const applyFiltersAndSort = () => {
+    let filtered = [...providers];
+
+    // Filter by category
+    if (category !== "all") {
+      filtered = filtered.filter(p => p.category === category);
+    }
+
+    // Filter by price range
+    filtered = filtered.filter(p => 
+      p.hourly_rate >= priceRange[0] && p.hourly_rate <= priceRange[1]
+    );
+
+    // Sort
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'price-low':
+          return a.hourly_rate - b.hourly_rate;
+        case 'price-high':
+          return b.hourly_rate - a.hourly_rate;
+        case 'experience':
+          return (b.years_experience || 0) - (a.years_experience || 0);
+        default:
+          return 0;
+      }
+    });
+
+    setFilteredProviders(filtered);
+  };
+
+  const clearFilters = () => {
+    setCategory("all");
+    setPriceRange([0, 2000]);
+    setAvailability("all");
+    setSortBy("rating");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -81,21 +102,25 @@ const Providers = () => {
                   <Filter className="h-5 w-5" />
                   Filters
                 </h2>
-                <Button variant="ghost" size="sm">Clear</Button>
+                <Button variant="ghost" size="sm" onClick={clearFilters}>Clear</Button>
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Service Category</label>
-                <Select>
+                <Select value={category} onValueChange={setCategory}>
                   <SelectTrigger>
                     <SelectValue placeholder="All Services" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Services</SelectItem>
-                    <SelectItem value="electrician">Electrician</SelectItem>
-                    <SelectItem value="plumber">Plumber</SelectItem>
-                    <SelectItem value="carpenter">Carpenter</SelectItem>
-                    <SelectItem value="cleaner">Cleaner</SelectItem>
+                    <SelectItem value="electrical">Electrical</SelectItem>
+                    <SelectItem value="plumbing">Plumbing</SelectItem>
+                    <SelectItem value="carpentry">Carpentry</SelectItem>
+                    <SelectItem value="cleaning">Cleaning</SelectItem>
+                    <SelectItem value="painting">Painting</SelectItem>
+                    <SelectItem value="hvac">HVAC</SelectItem>
+                    <SelectItem value="landscaping">Landscaping</SelectItem>
+                    <SelectItem value="handyman">Handyman</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -171,11 +196,26 @@ const Providers = () => {
 
           {/* Main Content */}
           <main className="flex-1">
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold mb-4">Service Providers Near You</h1>
-              <p className="text-muted-foreground">
-                Found {mockProviders.length} providers within 5 km
-              </p>
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold mb-2">Service Providers Near You</h1>
+                <p className="text-muted-foreground">
+                  {loading ? 'Loading...' : `Found ${filteredProviders.length} providers`}
+                </p>
+              </div>
+              <div className="w-48">
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="rating">Rating</SelectItem>
+                    <SelectItem value="price-low">Price: Low to High</SelectItem>
+                    <SelectItem value="price-high">Price: High to Low</SelectItem>
+                    <SelectItem value="experience">Experience</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {showMap && (
@@ -185,9 +225,15 @@ const Providers = () => {
             )}
 
             <div className="grid gap-6">
-              {mockProviders.map((provider) => (
-                <ProviderCard key={provider.id} provider={provider} />
-              ))}
+              {loading ? (
+                <p className="text-center text-muted-foreground py-8">Loading providers...</p>
+              ) : filteredProviders.length === 0 ? (
+                <p className="text-center text-muted-foreground py-8">No providers found matching your filters</p>
+              ) : (
+                filteredProviders.map((provider) => (
+                  <ProviderCard key={provider.id} provider={provider} />
+                ))
+              )}
             </div>
           </main>
         </div>

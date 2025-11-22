@@ -2,81 +2,67 @@ import { Star, MapPin, Clock, Briefcase, Phone, MessageSquare } from "lucide-rea
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
+import type { Database } from "@/integrations/supabase/types";
 
 interface ProviderCardProps {
-  provider: {
-    id: number;
-    name: string;
-    service: string;
-    rating: number;
-    reviews: number;
-    distance: string;
-    hourlyRate: number;
-    experience: string;
-    specialization: string[];
-    available: boolean;
-    emergency: boolean;
-  };
+  provider: Database['public']['Tables']['service_providers']['Row'];
 }
 
 export const ProviderCard = ({ provider }: ProviderCardProps) => {
+  const navigate = useNavigate();
   return (
     <Card className="p-6 hover:shadow-lg transition-all">
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-bold text-lg">{provider.name}</h3>
-              {provider.emergency && (
-                <Badge variant="destructive" className="text-xs">
-                  <Clock className="h-3 w-3 mr-1" />
-                  24/7
-                </Badge>
-              )}
+              <h3 className="font-bold text-lg">{provider.business_name}</h3>
             </div>
-            <p className="text-sm text-muted-foreground">{provider.service}</p>
+            <p className="text-sm text-muted-foreground capitalize">{provider.category}</p>
+            {provider.specialization && (
+              <p className="text-xs text-muted-foreground">{provider.specialization}</p>
+            )}
           </div>
-          <Badge variant={provider.available ? "default" : "secondary"}>
-            {provider.available ? "Available" : "Busy"}
+          <Badge variant={provider.is_active ? "default" : "secondary"}>
+            {provider.is_active ? "Active" : "Inactive"}
           </Badge>
         </div>
 
-        <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-1">
-            <Star className="h-4 w-4 fill-accent text-accent" />
-            <span className="font-semibold">{provider.rating}</span>
-            <span className="text-muted-foreground">({provider.reviews})</span>
-          </div>
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <MapPin className="h-4 w-4" />
-            {provider.distance}
-          </div>
-        </div>
+        {provider.bio && (
+          <p className="text-sm text-muted-foreground line-clamp-2">{provider.bio}</p>
+        )}
 
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Briefcase className="h-4 w-4" />
-            {provider.experience}
-          </div>
+          {provider.years_experience && (
+            <div className="flex items-center gap-1">
+              <Briefcase className="h-4 w-4" />
+              {provider.years_experience} years
+            </div>
+          )}
           <div className="font-semibold text-primary">
-            Rs. {provider.hourlyRate}/hr
+            Rs. {provider.hourly_rate}/hr
           </div>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {provider.specialization.map((spec) => (
-            <Badge key={spec} variant="outline" className="text-xs">
-              {spec}
-            </Badge>
-          ))}
+          {provider.insurance_verified && (
+            <Badge variant="outline" className="text-xs">Verified</Badge>
+          )}
         </div>
 
         <div className="flex gap-2 pt-2">
-          <Button className="flex-1" size="sm">
+          <Button 
+            className="flex-1" 
+            size="sm"
+            onClick={() => navigate('/messages')}
+          >
             <Phone className="h-4 w-4 mr-2" />
             Call
           </Button>
-          <Button variant="outline" className="flex-1" size="sm">
+          <Button 
+            variant="outline" 
+            className="flex-1" 
+            size="sm"
+            onClick={() => navigate('/messages')}
+          >
             <MessageSquare className="h-4 w-4 mr-2" />
             Message
           </Button>
