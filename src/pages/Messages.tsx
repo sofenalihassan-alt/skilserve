@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -31,6 +32,7 @@ const Messages = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
+  const location = useLocation();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -41,6 +43,12 @@ const Messages = () => {
     if (user) {
       fetchConversations();
       subscribeToMessages();
+      
+      // Auto-select provider from navigation state
+      const state = location.state as { providerId?: string; providerName?: string } | null;
+      if (state?.providerId) {
+        setSelectedUserId(state.providerId);
+      }
     }
   }, [user]);
 
