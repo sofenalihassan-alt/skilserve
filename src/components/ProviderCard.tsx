@@ -61,7 +61,12 @@ export const ProviderCard = ({ provider }: ProviderCardProps) => {
             variant="outline" 
             className="flex-1" 
             size="sm"
-            onClick={() => navigate('/messages')}
+            onClick={() => navigate('/messages', { 
+              state: { 
+                providerId: provider.user_id,
+                providerName: provider.business_name 
+              }
+            })}
           >
             <MessageSquare className="h-4 w-4 mr-2" />
             Message
