@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Send, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -32,6 +33,8 @@ interface ProviderProfile {
   business_name: string;
   category: string;
   hourly_rate: number;
+  avatar_url: string | null;
+  full_name: string;
 }
 
 const Messages = () => {
@@ -67,14 +70,24 @@ const Messages = () => {
   }, [selectedUserId, user]);
 
   const fetchProviderProfile = async (userId: string) => {
-    const { data, error } = await supabase
+    const { data: providerData, error: providerError } = await supabase
       .from('service_providers')
       .select('business_name, category, hourly_rate')
       .eq('user_id', userId)
       .maybeSingle();
 
-    if (!error && data) {
-      setSelectedProviderProfile(data);
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('avatar_url, full_name')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (!providerError && providerData) {
+      setSelectedProviderProfile({
+        ...providerData,
+        avatar_url: profileData?.avatar_url || null,
+        full_name: profileData?.full_name || 'User',
+      });
     } else {
       setSelectedProviderProfile(null);
     }
@@ -287,17 +300,27 @@ const Messages = () => {
             {selectedUserId ? (
               <>
                 <CardHeader>
-                  <div className="space-y-1">
-                    <CardTitle>
-                      {conversations.find((c) => c.userId === selectedUserId)?.userName || 'Chat'}
-                    </CardTitle>
+                  <div className="flex items-center gap-3">
                     {selectedProviderProfile && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span className="capitalize">{selectedProviderProfile.category}</span>
-                        <span>•</span>
-                        <span>${selectedProviderProfile.hourly_rate}/hr</span>
-                      </div>
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={selectedProviderProfile.avatar_url || undefined} />
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {selectedProviderProfile.full_name.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
                     )}
+                    <div className="flex-1 space-y-1">
+                      <CardTitle>
+                        {conversations.find((c) => c.userId === selectedUserId)?.userName || 'Chat'}
+                      </CardTitle>
+                      {selectedProviderProfile && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <span className="capitalize">{selectedProviderProfile.category}</span>
+                          <span>•</span>
+                          <span>${selectedProviderProfile.hourly_rate}/hr</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="flex flex-col h-[520px]">
