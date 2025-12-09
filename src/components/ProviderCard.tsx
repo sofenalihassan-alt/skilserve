@@ -5,8 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import type { Database } from "@/integrations/supabase/types";
 
+// Safe provider type that excludes sensitive license_number field
+type SafeServiceProvider = Omit<Database['public']['Tables']['service_providers']['Row'], 'license_number'>;
+
 interface ProviderCardProps {
-  provider: Database['public']['Tables']['service_providers']['Row'];
+  provider: SafeServiceProvider;
 }
 
 export const ProviderCard = ({ provider }: ProviderCardProps) => {

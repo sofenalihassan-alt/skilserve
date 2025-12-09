@@ -24,7 +24,7 @@ const ProvidersMap = () => {
     const fetchProviders = async () => {
       const { data } = await supabase
         .from('service_providers')
-        .select('*')
+        .select('id, user_id, business_name, category, hourly_rate, bio, years_experience, specialization, is_active, insurance_verified')
         .eq('is_active', true)
         .limit(20);
       

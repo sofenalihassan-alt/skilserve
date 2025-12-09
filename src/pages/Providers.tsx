@@ -11,7 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 
-type ServiceProvider = Database['public']['Tables']['service_providers']['Row'];
+// Explicitly exclude license_number from public display for security
+type ServiceProvider = Omit<Database['public']['Tables']['service_providers']['Row'], 'license_number'>;
 
 const Providers = () => {
   const [providers, setProviders] = useState<ServiceProvider[]>([]);
@@ -36,7 +37,7 @@ const Providers = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('service_providers')
-      .select('*')
+      .select('id, user_id, business_name, category, hourly_rate, bio, years_experience, specialization, is_active, insurance_verified, created_at, updated_at')
       .eq('is_active', true);
 
     if (error) {
