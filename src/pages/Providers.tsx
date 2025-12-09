@@ -35,10 +35,10 @@ const Providers = () => {
 
   const fetchProviders = async () => {
     setLoading(true);
+    // Use secure view that excludes sensitive license_number field
     const { data, error } = await supabase
-      .from('service_providers')
-      .select('id, user_id, business_name, category, hourly_rate, bio, years_experience, specialization, is_active, insurance_verified, created_at, updated_at')
-      .eq('is_active', true);
+      .from('public_service_providers')
+      .select('*');
 
     if (error) {
       toast({
