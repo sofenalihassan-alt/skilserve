@@ -59,6 +59,13 @@ export type Database = {
             foreignKeyName: "bookings_provider_id_fkey"
             columns: ["provider_id"]
             isOneToOne: false
+            referencedRelation: "public_service_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
             referencedRelation: "service_providers"
             referencedColumns: ["id"]
           },
@@ -181,6 +188,13 @@ export type Database = {
             foreignKeyName: "reviews_provider_id_fkey"
             columns: ["provider_id"]
             isOneToOne: false
+            referencedRelation: "public_service_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
             referencedRelation: "service_providers"
             referencedColumns: ["id"]
           },
@@ -257,7 +271,51 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_service_providers: {
+        Row: {
+          bio: string | null
+          business_name: string | null
+          category: Database["public"]["Enums"]["service_category"] | null
+          created_at: string | null
+          hourly_rate: number | null
+          id: string | null
+          insurance_verified: boolean | null
+          is_active: boolean | null
+          specialization: string | null
+          updated_at: string | null
+          user_id: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          business_name?: string | null
+          category?: Database["public"]["Enums"]["service_category"] | null
+          created_at?: string | null
+          hourly_rate?: number | null
+          id?: string | null
+          insurance_verified?: boolean | null
+          is_active?: boolean | null
+          specialization?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          business_name?: string | null
+          category?: Database["public"]["Enums"]["service_category"] | null
+          created_at?: string | null
+          hourly_rate?: number | null
+          id?: string | null
+          insurance_verified?: boolean | null
+          is_active?: boolean | null
+          specialization?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {

@@ -22,10 +22,10 @@ const ProvidersMap = () => {
 
   useEffect(() => {
     const fetchProviders = async () => {
+      // Use secure view that excludes sensitive license_number field
       const { data } = await supabase
-        .from('service_providers')
-        .select('id, user_id, business_name, category, hourly_rate, bio, years_experience, specialization, is_active, insurance_verified')
-        .eq('is_active', true)
+        .from('public_service_providers')
+        .select('*')
         .limit(20);
       
       if (data) setProviders(data);
