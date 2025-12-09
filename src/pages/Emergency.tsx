@@ -27,7 +27,7 @@ const Emergency = () => {
   const fetchEmergencyProviders = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("service_providers")
+      .from("public_service_providers")
       .select("*")
       .eq("is_active", true)
       .in("category", ["plumbing", "electrical", "hvac"])
