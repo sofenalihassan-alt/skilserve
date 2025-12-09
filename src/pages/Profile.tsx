@@ -12,6 +12,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { User, MapPin, Phone, Mail, Save, Shield, Briefcase } from 'lucide-react';
+import { profileUpdateSchema, getSafeErrorMessage } from '@/lib/validation';
 
 interface ProfileData {
   full_name: string;
@@ -108,17 +109,40 @@ const Profile = () => {
   const handleSave = async () => {
     if (!user) return;
     
+    // Validate form data before saving
+    const validationResult = profileUpdateSchema.safeParse({
+      full_name: formData.full_name,
+      phone: formData.phone || undefined,
+      avatar_url: formData.avatar_url || undefined,
+      address: formData.address || undefined,
+      city: formData.city || undefined,
+      state: formData.state || undefined,
+      zip_code: formData.zip_code || undefined,
+    });
+
+    if (!validationResult.success) {
+      const firstError = validationResult.error.errors[0];
+      toast({
+        title: 'Validation Error',
+        description: firstError.message,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const validatedData = validationResult.data;
+    
     setSaving(true);
     const { error } = await supabase
       .from('profiles')
       .update({
-        full_name: formData.full_name,
-        phone: formData.phone || null,
-        avatar_url: formData.avatar_url || null,
-        address: formData.address || null,
-        city: formData.city || null,
-        state: formData.state || null,
-        zip_code: formData.zip_code || null,
+        full_name: validatedData.full_name,
+        phone: validatedData.phone || null,
+        avatar_url: validatedData.avatar_url || null,
+        address: validatedData.address || null,
+        city: validatedData.city || null,
+        state: validatedData.state || null,
+        zip_code: validatedData.zip_code || null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', user.id);
@@ -128,7 +152,7 @@ const Profile = () => {
     if (error) {
       toast({
         title: 'Error',
-        description: 'Failed to update profile. Please try again.',
+        description: getSafeErrorMessage(error),
         variant: 'destructive',
       });
     } else {

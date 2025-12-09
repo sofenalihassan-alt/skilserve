@@ -87,3 +87,20 @@ export const getSafeErrorMessage = (error: any): string => {
   // Generic safe message for unknown errors
   return 'An error occurred. Please try again later';
 };
+
+// Profile update validation schema
+export const profileUpdateSchema = z.object({
+  full_name: z.string().trim()
+    .min(1, 'Name is required')
+    .max(100, 'Name too long (maximum 100 characters)'),
+  phone: z.string().trim().optional()
+    .refine(val => !val || /^\+?[0-9]{10,15}$/.test(val), 'Invalid phone number format'),
+  avatar_url: z.string().optional()
+    .refine(val => !val || val.length === 0 || /^https?:\/\/.+/.test(val), 'Invalid URL format'),
+  address: z.string().trim().max(200, 'Address too long').optional(),
+  city: z.string().trim().max(100, 'City name too long').optional(),
+  state: z.string().trim().max(100, 'State name too long').optional(),
+  zip_code: z.string().trim()
+    .refine(val => !val || /^[A-Z0-9- ]{2,20}$/i.test(val), 'Invalid ZIP code format')
+    .optional()
+});
