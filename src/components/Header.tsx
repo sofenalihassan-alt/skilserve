@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X, User, Globe, LogOut, MessageCircle } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -14,9 +16,23 @@ import {
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [fullName, setFullName] = useState<string>('');
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { language, setLanguage, t } = useLanguage();
+
+  useEffect(() => {
+    if (user) {
+      supabase.from('profiles').select('avatar_url, full_name').eq('id', user.id).maybeSingle()
+        .then(({ data }) => {
+          if (data) {
+            setAvatarUrl(data.avatar_url);
+            setFullName(data.full_name || '');
+          }
+        });
+    }
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -70,17 +86,23 @@ export const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button>
-                    <User className="h-4 w-4 mr-2" />
-                    {t('account')}
-                  </Button>
+                  <button className="flex items-center gap-2 rounded-full border border-border p-1 pe-3 hover:bg-accent transition-colors">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={avatarUrl || undefined} />
+                      <AvatarFallback className="bg-primary/20 text-primary text-sm font-bold">
+                        {fullName?.charAt(0)?.toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-medium hidden lg:inline">{fullName || t('account')}</span>
+                  </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent>
+                <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => navigate("/profile")}>
+                    <User className="h-4 w-4 me-2" />
                     {t('profile')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/messages")}>
-                    <MessageCircle className="h-4 w-4 mr-2" />
+                    <MessageCircle className="h-4 w-4 me-2" />
                     {t('messages')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/bookings")}>
@@ -88,14 +110,14 @@ export const Header = () => {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="h-4 w-4 mr-2" />
+                    <LogOut className="h-4 w-4 me-2" />
                     {t('logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Button onClick={() => navigate("/auth")}>
-                <User className="h-4 w-4 mr-2" />
+                <User className="h-4 w-4 me-2" />
                 {t('login')}
               </Button>
             )}
@@ -132,7 +154,17 @@ export const Header = () => {
             </div>
             {user ? (
               <>
+                <div className="flex items-center gap-3 px-4 py-2">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={avatarUrl || undefined} />
+                    <AvatarFallback className="bg-primary/20 text-primary font-bold">
+                      {fullName?.charAt(0)?.toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium">{fullName || t('account')}</span>
+                </div>
                 <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/profile"); setIsMenuOpen(false); }}>
+                  <User className="h-4 w-4 me-2" />
                   {t('profile')}
                 </Button>
                 <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/messages"); setIsMenuOpen(false); }}>
@@ -142,7 +174,7 @@ export const Header = () => {
                 <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/bookings"); setIsMenuOpen(false); }}>
                   {t('my_bookings')}
                 </Button>
-                <Button className="w-full" onClick={handleSignOut}>
+                <Button className="w-full" variant="destructive" onClick={handleSignOut}>
                   <LogOut className="h-4 w-4 me-2" />
                   {t('logout')}
                 </Button>
