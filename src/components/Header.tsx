@@ -103,7 +103,7 @@ export const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden"
+            className="md:hidden p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X /> : <Menu />}
@@ -113,16 +113,16 @@ export const Header = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <nav className="md:hidden py-4 space-y-2">
-            <Button variant="ghost" className="w-full justify-start" onClick={() => navigate("/providers")}>
+            <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/providers"); setIsMenuOpen(false); }}>
               {t('find_services')}
             </Button>
-            <Button variant="ghost" className="w-full justify-start" onClick={() => navigate("/emergency")}>
+            <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/emergency"); setIsMenuOpen(false); }}>
               {t('emergency')}
             </Button>
-            <Button variant="ghost" className="w-full justify-start" onClick={() => user ? navigate("/provider-registration") : navigate("/auth")}>
+            <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { user ? navigate("/provider-registration") : navigate("/auth"); setIsMenuOpen(false); }}>
               {t('become_provider')}
             </Button>
-            <div className="flex gap-2 pt-2">
+            <div className="flex flex-wrap gap-2 pt-2">
               <Button variant="outline" size="sm" onClick={() => setLanguage("en")}>
                 English
               </Button>
@@ -132,24 +132,24 @@ export const Header = () => {
             </div>
             {user ? (
               <>
-                <Button variant="ghost" className="w-full justify-start" onClick={() => navigate("/profile")}>
+                <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/profile"); setIsMenuOpen(false); }}>
                   {t('profile')}
                 </Button>
-                <Button variant="ghost" className="w-full justify-start" onClick={() => navigate("/messages")}>
-                  <MessageCircle className="h-4 w-4 mr-2" />
+                <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/messages"); setIsMenuOpen(false); }}>
+                  <MessageCircle className="h-4 w-4 me-2" />
                   {t('messages')}
                 </Button>
-                <Button variant="ghost" className="w-full justify-start" onClick={() => navigate("/bookings")}>
+                <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/bookings"); setIsMenuOpen(false); }}>
                   {t('my_bookings')}
                 </Button>
                 <Button className="w-full" onClick={handleSignOut}>
-                  <LogOut className="h-4 w-4 mr-2" />
+                  <LogOut className="h-4 w-4 me-2" />
                   {t('logout')}
                 </Button>
               </>
             ) : (
-              <Button className="w-full" onClick={() => navigate("/auth")}>
-                <User className="h-4 w-4 mr-2" />
+              <Button className="w-full" onClick={() => { navigate("/auth"); setIsMenuOpen(false); }}>
+                <User className="h-4 w-4 me-2" />
                 {t('login')}
               </Button>
             )}
