@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { AvatarUpload } from '@/components/AvatarUpload';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -190,13 +190,13 @@ const Profile = () => {
               <CardContent className="pt-8 pb-6">
                 <div className="flex flex-col md:flex-row items-center gap-6">
                   <div className="relative group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity" />
-                    <Avatar className="h-28 w-28 relative border-4 border-background">
-                      <AvatarImage src={formData.avatar_url || undefined} />
-                      <AvatarFallback className="bg-primary/20 text-primary text-3xl font-bold">
-                        {formData.full_name?.charAt(0)?.toUpperCase() || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
+                    <AvatarUpload
+                      userId={user!.id}
+                      currentUrl={formData.avatar_url}
+                      fallbackText={formData.full_name?.charAt(0)?.toUpperCase() || 'U'}
+                      onUploaded={(url) => setFormData({ ...formData, avatar_url: url })}
+                      size="lg"
+                    />
                   </div>
                   <div className="text-center md:text-left flex-1">
                     <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
