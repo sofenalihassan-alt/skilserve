@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, User, Globe, LogOut, MessageCircle, Home } from "lucide-react";
+import { Menu, X, User, Globe, LogOut, Send, Home, Search, AlertTriangle, Briefcase, CalendarDays } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -61,20 +61,19 @@ export const Header = () => {
               <Home className="h-4 w-4 me-2" />
               {t('home')}
             </Button>
-            <Button variant="ghost" onClick={() => navigate("/providers")}>
-              {t('find_services')}
+            <Button variant="ghost" size="icon" onClick={() => navigate("/providers")} title={t('find_services')}>
+              <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" onClick={() => navigate("/emergency")}>
-              {t('emergency')}
+            <Button variant="ghost" size="icon" onClick={() => navigate("/emergency")} title={t('emergency')}>
+              <AlertTriangle className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" onClick={() => user ? navigate("/provider-registration") : navigate("/auth")}>
-              {t('become_provider')}
+            <Button variant="ghost" size="icon" onClick={() => user ? navigate("/provider-registration") : navigate("/auth")} title={t('become_provider')}>
+              <Briefcase className="h-5 w-5" />
             </Button>
 
-            {/* Direct message button */}
             {user && (
-              <Button variant="ghost" size="icon" onClick={() => navigate("/messages")} className="relative">
-                <MessageCircle className="h-5 w-5" />
+              <Button variant="ghost" size="icon" onClick={() => navigate("/messages")} className="relative" title={t('messages')}>
+                <Send className="h-5 w-5" />
               </Button>
             )}
             
@@ -114,8 +113,8 @@ export const Header = () => {
                     <User className="h-4 w-4 me-2" />
                     {t('profile')}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/messages")}>
-                    <MessageCircle className="h-4 w-4 me-2" />
+                <DropdownMenuItem onClick={() => navigate("/messages")}>
+                    <Send className="h-4 w-4 me-2" />
                     {t('messages')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/bookings")}>
@@ -141,7 +140,7 @@ export const Header = () => {
             <ThemeToggle />
             {user && (
               <Button variant="ghost" size="icon" onClick={() => navigate("/messages")}>
-                <MessageCircle className="h-5 w-5" />
+                <Send className="h-5 w-5" />
               </Button>
             )}
             <button
@@ -193,7 +192,7 @@ export const Header = () => {
                   {t('profile')}
                 </Button>
                 <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/messages"); setIsMenuOpen(false); }}>
-                  <MessageCircle className="h-4 w-4 me-2" />
+                  <Send className="h-4 w-4 me-2" />
                   {t('messages')}
                 </Button>
                 <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/bookings"); setIsMenuOpen(false); }}>

@@ -2,6 +2,7 @@ import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { ServiceCategories } from "@/components/ServiceCategories";
 import { EmergencyServices } from "@/components/EmergencyServices";
+import { Footer } from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
@@ -51,11 +52,7 @@ const Index = () => {
         </div>
       </section>
 
-      <footer className="bg-muted/50 py-8 px-4 mt-16">
-        <div className="container mx-auto text-center text-muted-foreground">
-          <p>&copy; 2024 Skill Serve. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
