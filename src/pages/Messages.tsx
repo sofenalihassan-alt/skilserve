@@ -118,7 +118,7 @@ const Messages = () => {
       if (!convMap.has(partnerId)) {
         convMap.set(partnerId, {
           userId: partnerId,
-          userName: 'Loading...',
+          userName: '',
           lastMessage: msg.message,
           unreadCount: 0,
         });

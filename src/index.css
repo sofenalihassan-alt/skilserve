@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,7 +9,7 @@ All colors MUST be HSL.
 */
 
 @layer base {
-  :root {
+  :root, .dark {
     --background: 230 25% 7%;
     --foreground: 210 40% 98%;
 
@@ -71,6 +73,60 @@ All colors MUST be HSL.
     --sidebar-border: 230 20% 18%;
     --sidebar-ring: 258 90% 66%;
   }
+
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 230 25% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 230 25% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 230 25% 12%;
+
+    --primary: 258 80% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 230 15% 92%;
+    --secondary-foreground: 230 25% 12%;
+
+    --muted: 230 15% 93%;
+    --muted-foreground: 230 10% 45%;
+
+    --accent: 173 70% 42%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 230 15% 88%;
+    --input: 230 15% 88%;
+    --ring: 258 80% 58%;
+
+    --emergency: 348 75% 52%;
+    --emergency-foreground: 0 0% 100%;
+
+    --success: 160 70% 35%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 85% 48%;
+    --warning-foreground: 0 0% 100%;
+
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1);
+    --shadow-glow: 0 0 20px hsl(258 80% 58% / 0.15);
+    --shadow-glow-accent: 0 0 20px hsl(173 70% 42% / 0.1);
+
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 230 25% 12%;
+    --sidebar-primary: 258 80% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 230 15% 92%;
+    --sidebar-accent-foreground: 230 25% 12%;
+    --sidebar-border: 230 15% 88%;
+    --sidebar-ring: 258 80% 58%;
+  }
 }
 
 @layer base {
@@ -80,11 +136,19 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground antialiased;
+    min-height: 100vh;
+  }
+
+  .dark body,
+  :root body {
     background: 
       radial-gradient(ellipse 80% 50% at 50% -20%, hsl(258 90% 66% / 0.12), transparent),
       radial-gradient(ellipse 60% 40% at 80% 80%, hsl(173 80% 50% / 0.08), transparent),
       linear-gradient(180deg, hsl(var(--background)), hsl(230 25% 4%));
-    min-height: 100vh;
+  }
+
+  .light body {
+    background: linear-gradient(180deg, hsl(0 0% 98%), hsl(230 15% 96%));
   }
 
   /* Custom scrollbar */

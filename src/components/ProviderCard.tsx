@@ -27,9 +27,15 @@ export const ProviderCard = ({ provider }: ProviderCardProps) => {
               <p className="text-xs text-muted-foreground">{provider.specialization}</p>
             )}
           </div>
-          <Badge variant={provider.is_active ? "default" : "secondary"}>
-            {provider.is_active ? "Active" : "Inactive"}
-          </Badge>
+          <div className="flex flex-col items-end gap-1">
+            <Badge variant={provider.is_active ? "default" : "secondary"}>
+              {provider.is_active ? "Active" : "Inactive"}
+            </Badge>
+            <Badge variant="outline" className="text-xs border-accent text-accent">
+              <Clock className="h-3 w-3 mr-1" />
+              24/7
+            </Badge>
+          </div>
         </div>
 
         {provider.bio && (
