@@ -11,6 +11,7 @@ interface LanguageContextType {
 const translations: Record<string, Record<Language, string>> = {
   // Header
   'skill_serve': { en: 'Skill Serve', ur: 'سکل سرو' },
+  'home': { en: 'Home', ur: 'ہوم' },
   'find_services': { en: 'Find Services', ur: 'خدمات تلاش کریں' },
   'emergency': { en: 'Emergency', ur: 'ایمرجنسی' },
   'become_provider': { en: 'Become a Provider', ur: 'فراہم کنندہ بنیں' },
@@ -83,7 +84,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
-      <div className={language === 'ur' ? 'font-urdu' : ''} dir={language === 'ur' ? 'rtl' : 'ltr'}>
+      <div className={language === 'ur' ? 'font-urdu leading-loose' : ''} dir={language === 'ur' ? 'rtl' : 'ltr'}>
         {children}
       </div>
     </LanguageContext.Provider>

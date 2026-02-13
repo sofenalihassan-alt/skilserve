@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { Menu, X, User, Globe, LogOut, MessageCircle } from "lucide-react";
+import { Menu, X, User, Globe, LogOut, MessageCircle, Home } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import logo from "@/assets/logo.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,16 +49,18 @@ export const Header = () => {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <div className="h-10 w-10 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-xl">SS</span>
-            </div>
+            <img src={logo} alt="Skill Serve" className="h-10 w-10 rounded-lg object-cover" />
             <span className="text-xl font-bold">
               {t('skill_serve')}
             </span>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-4">
+            <Button variant="ghost" onClick={() => navigate("/")}>
+              <Home className="h-4 w-4 me-2" />
+              {t('home')}
+            </Button>
             <Button variant="ghost" onClick={() => navigate("/providers")}>
               {t('find_services')}
             </Button>
@@ -66,6 +70,13 @@ export const Header = () => {
             <Button variant="ghost" onClick={() => user ? navigate("/provider-registration") : navigate("/auth")}>
               {t('become_provider')}
             </Button>
+
+            {/* Direct message button */}
+            {user && (
+              <Button variant="ghost" size="icon" onClick={() => navigate("/messages")} className="relative">
+                <MessageCircle className="h-5 w-5" />
+              </Button>
+            )}
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -83,10 +94,12 @@ export const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <ThemeToggle />
+
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 rounded-full border border-border p-1 pe-3 hover:bg-accent transition-colors">
+                  <button className="flex items-center gap-2 rounded-full border border-border p-1 pe-3 hover:bg-accent/10 transition-colors">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={avatarUrl || undefined} />
                       <AvatarFallback className="bg-primary/20 text-primary text-sm font-bold">
@@ -124,17 +137,29 @@ export const Header = () => {
           </nav>
 
           {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X /> : <Menu />}
-          </button>
+          <div className="flex md:hidden items-center gap-2">
+            <ThemeToggle />
+            {user && (
+              <Button variant="ghost" size="icon" onClick={() => navigate("/messages")}>
+                <MessageCircle className="h-5 w-5" />
+              </Button>
+            )}
+            <button
+              className="p-2"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X /> : <Menu />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <nav className="md:hidden py-4 space-y-2">
+            <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/"); setIsMenuOpen(false); }}>
+              <Home className="h-4 w-4 me-2" />
+              {t('home')}
+            </Button>
             <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/providers"); setIsMenuOpen(false); }}>
               {t('find_services')}
             </Button>
