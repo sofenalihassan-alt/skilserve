@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, User, Globe, LogOut, Send, Home, Search, AlertTriangle, Briefcase, CalendarDays } from "lucide-react";
+import { Menu, X, User, Globe, LogOut, MessageSquareText, Home, Search, AlertTriangle, Briefcase, CalendarDays } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -41,6 +41,13 @@ export const Header = () => {
     navigate("/");
   };
 
+  const NavButton = ({ icon: Icon, label, onClick, title }: { icon: React.ElementType; label: string; onClick: () => void; title?: string }) => (
+    <Button variant="ghost" onClick={onClick} title={title || label} className="gap-2">
+      <Icon className="h-4 w-4" />
+      <span className="hidden lg:inline">{label}</span>
+    </Button>
+  );
+
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
       <div className="container mx-auto px-4">
@@ -50,31 +57,20 @@ export const Header = () => {
             onClick={() => navigate("/")}
           >
             <img src={logo} alt="Skill Serve" className="h-10 w-10 rounded-lg object-cover" />
-            <span className="text-xl font-bold">
+            <span className="text-xl font-bold hidden sm:inline">
               {t('skill_serve')}
             </span>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" onClick={() => navigate("/")}>
-              <Home className="h-4 w-4 me-2" />
-              {t('home')}
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => navigate("/providers")} title={t('find_services')}>
-              <Search className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => navigate("/emergency")} title={t('emergency')}>
-              <AlertTriangle className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => user ? navigate("/provider-registration") : navigate("/auth")} title={t('become_provider')}>
-              <Briefcase className="h-5 w-5" />
-            </Button>
+          <nav className="hidden md:flex items-center gap-1">
+            <NavButton icon={Home} label={t('home')} onClick={() => navigate("/")} />
+            <NavButton icon={Search} label={t('find_services')} onClick={() => navigate("/providers")} />
+            <NavButton icon={AlertTriangle} label={t('emergency')} onClick={() => navigate("/emergency")} />
+            <NavButton icon={Briefcase} label={t('become_provider')} onClick={() => user ? navigate("/provider-registration") : navigate("/auth")} />
 
             {user && (
-              <Button variant="ghost" size="icon" onClick={() => navigate("/messages")} className="relative" title={t('messages')}>
-                <Send className="h-5 w-5" />
-              </Button>
+              <NavButton icon={MessageSquareText} label={t('messages')} onClick={() => navigate("/messages")} />
             )}
             
             <DropdownMenu>
@@ -113,11 +109,12 @@ export const Header = () => {
                     <User className="h-4 w-4 me-2" />
                     {t('profile')}
                   </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/messages")}>
-                    <Send className="h-4 w-4 me-2" />
+                  <DropdownMenuItem onClick={() => navigate("/messages")}>
+                    <MessageSquareText className="h-4 w-4 me-2" />
                     {t('messages')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/bookings")}>
+                    <CalendarDays className="h-4 w-4 me-2" />
                     {t('my_bookings')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -130,17 +127,17 @@ export const Header = () => {
             ) : (
               <Button onClick={() => navigate("/auth")}>
                 <User className="h-4 w-4 me-2" />
-                {t('login')}
+                <span className="hidden lg:inline">{t('login')}</span>
               </Button>
             )}
           </nav>
 
           {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex md:hidden items-center gap-1">
             <ThemeToggle />
             {user && (
-              <Button variant="ghost" size="icon" onClick={() => navigate("/messages")}>
-                <Send className="h-5 w-5" />
+              <Button variant="ghost" size="icon" onClick={() => navigate("/messages")} title={t('messages')}>
+                <MessageSquareText className="h-5 w-5" />
               </Button>
             )}
             <button
@@ -152,22 +149,23 @@ export const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation - icons only */}
         {isMenuOpen && (
-          <nav className="md:hidden py-4 space-y-2">
-            <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/"); setIsMenuOpen(false); }}>
-              <Home className="h-4 w-4 me-2" />
-              {t('home')}
-            </Button>
-            <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/providers"); setIsMenuOpen(false); }}>
-              {t('find_services')}
-            </Button>
-            <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/emergency"); setIsMenuOpen(false); }}>
-              {t('emergency')}
-            </Button>
-            <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { user ? navigate("/provider-registration") : navigate("/auth"); setIsMenuOpen(false); }}>
-              {t('become_provider')}
-            </Button>
+          <nav className="md:hidden py-4 space-y-1">
+            <div className="flex justify-around pb-3 border-b border-border">
+              <Button variant="ghost" size="icon" onClick={() => { navigate("/"); setIsMenuOpen(false); }} title={t('home')}>
+                <Home className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => { navigate("/providers"); setIsMenuOpen(false); }} title={t('find_services')}>
+                <Search className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => { navigate("/emergency"); setIsMenuOpen(false); }} title={t('emergency')}>
+                <AlertTriangle className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => { user ? navigate("/provider-registration") : navigate("/auth"); setIsMenuOpen(false); }} title={t('become_provider')}>
+                <Briefcase className="h-5 w-5" />
+              </Button>
+            </div>
             <div className="flex flex-wrap gap-2 pt-2">
               <Button variant="outline" size="sm" onClick={() => setLanguage("en")}>
                 English
@@ -187,15 +185,12 @@ export const Header = () => {
                   </Avatar>
                   <span className="font-medium">{fullName || t('account')}</span>
                 </div>
-                <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/profile"); setIsMenuOpen(false); }}>
+                <Button variant="ghost" className="w-full justify-start" onClick={() => { navigate("/profile"); setIsMenuOpen(false); }}>
                   <User className="h-4 w-4 me-2" />
                   {t('profile')}
                 </Button>
-                <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/messages"); setIsMenuOpen(false); }}>
-                  <Send className="h-4 w-4 me-2" />
-                  {t('messages')}
-                </Button>
-                <Button variant="ghost" className="w-full justify-start rtl:justify-end" onClick={() => { navigate("/bookings"); setIsMenuOpen(false); }}>
+                <Button variant="ghost" className="w-full justify-start" onClick={() => { navigate("/bookings"); setIsMenuOpen(false); }}>
+                  <CalendarDays className="h-4 w-4 me-2" />
                   {t('my_bookings')}
                 </Button>
                 <Button className="w-full" variant="destructive" onClick={handleSignOut}>

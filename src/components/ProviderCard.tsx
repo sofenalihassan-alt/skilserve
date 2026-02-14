@@ -1,11 +1,10 @@
-import { Star, MapPin, Clock, Briefcase, Phone, MessageSquare } from "lucide-react";
+import { Star, MapPin, Clock, Briefcase, Phone, MessageSquareText } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import type { Database } from "@/integrations/supabase/types";
 
-// Safe provider type that excludes sensitive license_number field
 type SafeServiceProvider = Omit<Database['public']['Tables']['service_providers']['Row'], 'license_number'>;
 
 interface ProviderCardProps {
@@ -14,6 +13,8 @@ interface ProviderCardProps {
 
 export const ProviderCard = ({ provider }: ProviderCardProps) => {
   const navigate = useNavigate();
+  const is247 = (provider as any).availability_24_7;
+
   return (
     <Card className="p-6 hover:shadow-lg transition-all">
       <div className="space-y-4">
@@ -31,10 +32,12 @@ export const ProviderCard = ({ provider }: ProviderCardProps) => {
             <Badge variant={provider.is_active ? "default" : "secondary"}>
               {provider.is_active ? "Active" : "Inactive"}
             </Badge>
-            <Badge variant="outline" className="text-xs border-accent text-accent">
-              <Clock className="h-3 w-3 mr-1" />
-              24/7
-            </Badge>
+            {is247 && (
+              <Badge variant="outline" className="text-xs border-accent text-accent">
+                <Clock className="h-3 w-3 mr-1" />
+                24/7
+              </Badge>
+            )}
           </div>
         </div>
 
@@ -77,7 +80,7 @@ export const ProviderCard = ({ provider }: ProviderCardProps) => {
               }
             })}
           >
-            <MessageSquare className="h-4 w-4 mr-2" />
+            <MessageSquareText className="h-4 w-4 mr-2" />
             Message
           </Button>
         </div>
