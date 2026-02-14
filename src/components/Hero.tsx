@@ -1,10 +1,22 @@
+import { useState } from "react";
 import { Search, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useNavigate } from "react-router-dom";
 
 export const Hero = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [locationQuery, setLocationQuery] = useState("");
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) params.set("search", searchQuery.trim());
+    if (locationQuery.trim()) params.set("location", locationQuery.trim());
+    navigate(`/providers?${params.toString()}`);
+  };
 
   return (
     <section className="relative bg-gradient-to-br from-primary/10 via-background to-secondary/20 py-12 sm:py-20 px-4">
@@ -24,6 +36,9 @@ export const Hero = () => {
               <Input 
                 placeholder={t('search_placeholder')} 
                 className="ps-10 h-12"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
             <div className="relative md:w-64">
@@ -31,9 +46,12 @@ export const Hero = () => {
               <Input 
                 placeholder={t('location_placeholder')} 
                 className="ps-10 h-12"
+                value={locationQuery}
+                onChange={(e) => setLocationQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
-            <Button size="lg" className="h-12 px-8">
+            <Button size="lg" className="h-12 px-8" onClick={handleSearch}>
               {t('search')}
             </Button>
           </div>

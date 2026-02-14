@@ -202,6 +202,7 @@ export type Database = {
       }
       service_providers: {
         Row: {
+          availability_24_7: boolean
           bio: string | null
           business_name: string
           category: Database["public"]["Enums"]["service_category"]
@@ -217,6 +218,7 @@ export type Database = {
           years_experience: number | null
         }
         Insert: {
+          availability_24_7?: boolean
           bio?: string | null
           business_name: string
           category: Database["public"]["Enums"]["service_category"]
@@ -232,6 +234,7 @@ export type Database = {
           years_experience?: number | null
         }
         Update: {
+          availability_24_7?: boolean
           bio?: string | null
           business_name?: string
           category?: Database["public"]["Enums"]["service_category"]
@@ -273,6 +276,7 @@ export type Database = {
     Views: {
       public_service_providers: {
         Row: {
+          availability_24_7: boolean | null
           bio: string | null
           business_name: string | null
           category: Database["public"]["Enums"]["service_category"] | null
@@ -287,6 +291,7 @@ export type Database = {
           years_experience: number | null
         }
         Insert: {
+          availability_24_7?: boolean | null
           bio?: string | null
           business_name?: string | null
           category?: Database["public"]["Enums"]["service_category"] | null
@@ -301,6 +306,7 @@ export type Database = {
           years_experience?: number | null
         }
         Update: {
+          availability_24_7?: boolean | null
           bio?: string | null
           business_name?: string | null
           category?: Database["public"]["Enums"]["service_category"] | null

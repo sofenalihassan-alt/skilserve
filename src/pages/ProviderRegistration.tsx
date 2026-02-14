@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +16,7 @@ import { providerSchema, getSafeErrorMessage } from "@/lib/validation";
 
 const ProviderRegistration = () => {
   const [loading, setLoading] = useState(false);
+  const [availability247, setAvailability247] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -32,32 +34,15 @@ const ProviderRegistration = () => {
     const licenseNumber = formData.get("licenseNumber") as string;
 
     if (!user) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to register as a provider",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "You must be logged in to register as a provider", variant: "destructive" });
       setLoading(false);
       return;
     }
 
-    // Validate input with zod
-    const validation = providerSchema.safeParse({
-      businessName,
-      hourlyRate,
-      yearsExperience,
-      bio,
-      licenseNumber,
-      specialization
-    });
+    const validation = providerSchema.safeParse({ businessName, hourlyRate, yearsExperience, bio, licenseNumber, specialization });
     
     if (!validation.success) {
-      const firstError = validation.error.errors[0];
-      toast({
-        title: "Validation Error",
-        description: firstError.message,
-        variant: "destructive"
-      });
+      toast({ title: "Validation Error", description: validation.error.errors[0].message, variant: "destructive" });
       setLoading(false);
       return;
     }
@@ -73,20 +58,14 @@ const ProviderRegistration = () => {
         specialization: validation.data.specialization,
         bio: validation.data.bio,
         license_number: validation.data.licenseNumber,
-        is_active: true
+        is_active: true,
+        availability_24_7: availability247,
       }]);
 
     if (error) {
-      toast({
-        title: "Registration Failed",
-        description: getSafeErrorMessage(error),
-        variant: "destructive"
-      });
+      toast({ title: "Registration Failed", description: getSafeErrorMessage(error), variant: "destructive" });
     } else {
-      toast({
-        title: "Success",
-        description: "Provider profile created successfully!"
-      });
+      toast({ title: "Success", description: "Provider profile created successfully!" });
       navigate("/providers");
     }
     
@@ -112,21 +91,13 @@ const ProviderRegistration = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="businessName">Business Name *</Label>
-              <Input 
-                id="businessName" 
-                name="businessName"
-                type="text" 
-                placeholder="Your business or professional name"
-                required
-              />
+              <Input id="businessName" name="businessName" type="text" placeholder="Your business or professional name" required />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="category">Service Category *</Label>
               <Select name="category" required>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="plumbing">Plumbing</SelectItem>
                   <SelectItem value="electrical">Electrical</SelectItem>
@@ -143,58 +114,43 @@ const ProviderRegistration = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="hourlyRate">Hourly Rate (PKR) *</Label>
-                <Input 
-                  id="hourlyRate" 
-                  name="hourlyRate"
-                  type="number" 
-                  min="0"
-                  step="0.01"
-                  placeholder="1000"
-                  required
-                />
+                <Input id="hourlyRate" name="hourlyRate" type="number" min="0" step="0.01" placeholder="1000" required />
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="yearsExperience">Years of Experience</Label>
-                <Input 
-                  id="yearsExperience" 
-                  name="yearsExperience"
-                  type="number" 
-                  min="0"
-                  placeholder="5"
-                />
+                <Input id="yearsExperience" name="yearsExperience" type="number" min="0" placeholder="5" />
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="specialization">Specialization</Label>
-              <Input 
-                id="specialization" 
-                name="specialization"
-                type="text" 
-                placeholder="e.g., Residential Plumbing, Emergency Services"
-              />
+              <Input id="specialization" name="specialization" type="text" placeholder="e.g., Residential Plumbing, Emergency Services" />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="licenseNumber">License Number</Label>
-              <Input 
-                id="licenseNumber" 
-                name="licenseNumber"
-                type="text" 
-                placeholder="Your professional license number"
+              <Input id="licenseNumber" name="licenseNumber" type="text" placeholder="Your professional license number" />
+            </div>
+
+            <div className="flex items-center space-x-3 p-4 rounded-lg border border-primary/20 bg-primary/5">
+              <Checkbox
+                id="availability247"
+                checked={availability247}
+                onCheckedChange={(checked) => setAvailability247(checked === true)}
               />
+              <div>
+                <Label htmlFor="availability247" className="font-semibold cursor-pointer">
+                  Available 24/7 for Emergency Services
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Check this if you are available round the clock for emergency calls
+                </p>
+              </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="bio">Bio *</Label>
-              <Textarea 
-                id="bio" 
-                name="bio"
-                placeholder="Tell potential clients about your experience and services..."
-                className="min-h-[120px]"
-                required
-              />
+              <Textarea id="bio" name="bio" placeholder="Tell potential clients about your experience and services..." className="min-h-[120px]" required />
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>

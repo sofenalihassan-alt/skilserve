@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { ProviderCard } from "@/components/ProviderCard";
 import ProvidersMap from "@/components/ProvidersMap";
@@ -6,15 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Map, Filter } from "lucide-react";
+import { Map, Filter, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 
-// Explicitly exclude license_number from public display for security
 type ServiceProvider = Omit<Database['public']['Tables']['service_providers']['Row'], 'license_number'>;
 
 const Providers = () => {
+  const [searchParams] = useSearchParams();
   const [providers, setProviders] = useState<ServiceProvider[]>([]);
   const [filteredProviders, setFilteredProviders] = useState<ServiceProvider[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,8 +23,16 @@ const Providers = () => {
   const [showMap, setShowMap] = useState(false);
   const [category, setCategory] = useState("all");
   const [sortBy, setSortBy] = useState("rating");
-  const [availability, setAvailability] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
+
+  // Read URL params on mount
+  useEffect(() => {
+    const cat = searchParams.get("category");
+    const search = searchParams.get("search");
+    if (cat) setCategory(cat);
+    if (search) setSearchQuery(search);
+  }, [searchParams]);
 
   useEffect(() => {
     fetchProviders();
@@ -31,11 +40,10 @@ const Providers = () => {
 
   useEffect(() => {
     applyFiltersAndSort();
-  }, [providers, category, priceRange, sortBy, availability]);
+  }, [providers, category, priceRange, sortBy, searchQuery]);
 
   const fetchProviders = async () => {
     setLoading(true);
-    // Use secure view that excludes sensitive license_number field
     const { data, error } = await supabase
       .from('public_service_providers')
       .select('*');
@@ -55,23 +63,30 @@ const Providers = () => {
   const applyFiltersAndSort = () => {
     let filtered = [...providers];
 
-    // Filter by category
     if (category !== "all") {
       filtered = filtered.filter(p => p.category === category);
     }
 
-    // Filter by price range
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(p =>
+        p.business_name?.toLowerCase().includes(q) ||
+        p.category?.toLowerCase().includes(q) ||
+        p.specialization?.toLowerCase().includes(q) ||
+        p.bio?.toLowerCase().includes(q)
+      );
+    }
+
     filtered = filtered.filter(p => 
-      p.hourly_rate >= priceRange[0] && p.hourly_rate <= priceRange[1]
+      (p.hourly_rate ?? 0) >= priceRange[0] && (p.hourly_rate ?? 0) <= priceRange[1]
     );
 
-    // Sort
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'price-low':
-          return a.hourly_rate - b.hourly_rate;
+          return (a.hourly_rate ?? 0) - (b.hourly_rate ?? 0);
         case 'price-high':
-          return b.hourly_rate - a.hourly_rate;
+          return (b.hourly_rate ?? 0) - (a.hourly_rate ?? 0);
         case 'experience':
           return (b.years_experience || 0) - (a.years_experience || 0);
         default:
@@ -85,8 +100,8 @@ const Providers = () => {
   const clearFilters = () => {
     setCategory("all");
     setPriceRange([0, 2000]);
-    setAvailability("all");
     setSortBy("rating");
+    setSearchQuery("");
   };
 
   return (
@@ -104,6 +119,19 @@ const Providers = () => {
                   Filters
                 </h2>
                 <Button variant="ghost" size="sm" onClick={clearFilters}>Clear</Button>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Search</label>
+                <div className="relative">
+                  <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search providers..."
+                    className="ps-9"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -126,21 +154,6 @@ const Providers = () => {
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Distance</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Within 5 km" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">Within 1 km</SelectItem>
-                    <SelectItem value="3">Within 3 km</SelectItem>
-                    <SelectItem value="5">Within 5 km</SelectItem>
-                    <SelectItem value="10">Within 10 km</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
               <div className="space-y-4">
                 <label className="text-sm font-medium">Price Range (Rs/hr)</label>
                 <Slider
@@ -154,34 +167,6 @@ const Providers = () => {
                   <span>Rs. {priceRange[0]}</span>
                   <span>Rs. {priceRange[1]}</span>
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Rating</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Ratings" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Ratings</SelectItem>
-                    <SelectItem value="4.5">4.5+ Stars</SelectItem>
-                    <SelectItem value="4">4+ Stars</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Availability</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Providers" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Providers</SelectItem>
-                    <SelectItem value="available">Available Now</SelectItem>
-                    <SelectItem value="emergency">24/7 Emergency</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </div>
 
@@ -202,6 +187,7 @@ const Providers = () => {
                 <h1 className="text-3xl font-bold mb-2">Service Providers Near You</h1>
                 <p className="text-muted-foreground">
                   {loading ? 'Loading...' : `Found ${filteredProviders.length} providers`}
+                  {category !== "all" && ` in ${category}`}
                 </p>
               </div>
               <div className="w-48">

@@ -14,6 +14,7 @@ interface EmergencyProvider {
   hourly_rate: number;
   years_experience: number;
   specialization: string;
+  availability_24_7: boolean;
 }
 
 const Emergency = () => {
@@ -30,15 +31,10 @@ const Emergency = () => {
       .from("public_service_providers")
       .select("*")
       .eq("is_active", true)
-      .in("category", ["plumbing", "electrical", "hvac"])
-      .limit(6);
+      .eq("availability_24_7", true);
 
     if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load emergency providers",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Failed to load emergency providers", variant: "destructive" });
     } else {
       setProviders(data || []);
     }
@@ -46,10 +42,7 @@ const Emergency = () => {
   };
 
   const handleEmergencyCall = (provider: EmergencyProvider) => {
-    toast({
-      title: "Emergency Service",
-      description: `Connecting you with ${provider.business_name}...`
-    });
+    toast({ title: "Emergency Service", description: `Connecting you with ${provider.business_name}...` });
   };
 
   return (
@@ -68,7 +61,7 @@ const Emergency = () => {
           <Card className="p-6 mb-12 bg-emergency/5 border-emergency/20">
             <p className="text-center text-lg">
               Need urgent help? Our verified emergency service providers are available round the clock.
-              All providers are background-checked and ready to respond immediately.
+              Only providers who have opted in for 24/7 availability are shown here.
             </p>
           </Card>
 
@@ -81,7 +74,7 @@ const Emergency = () => {
               <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2">No Emergency Providers Available</h3>
               <p className="text-muted-foreground">
-                Please check back later or contact support for immediate assistance.
+                No providers have opted for 24/7 emergency availability yet.
               </p>
             </Card>
           ) : (
@@ -92,7 +85,7 @@ const Emergency = () => {
                     <div className="flex items-start justify-between">
                       <div>
                         <h3 className="font-bold text-lg">{provider.business_name}</h3>
-                        <p className="text-sm text-muted-foreground capitalize">{provider.category.replace('_', ' ')}</p>
+                        <p className="text-sm text-muted-foreground capitalize">{provider.category?.replace('_', ' ')}</p>
                       </div>
                       <Badge className="bg-success">
                         <Clock className="h-3 w-3 mr-1" />
@@ -101,9 +94,7 @@ const Emergency = () => {
                     </div>
                     
                     {provider.specialization && (
-                      <p className="text-sm text-muted-foreground">
-                        {provider.specialization}
-                      </p>
+                      <p className="text-sm text-muted-foreground">{provider.specialization}</p>
                     )}
                     
                     <div className="flex items-center gap-4 text-sm">
