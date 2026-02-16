@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { MessageSquareText, User, Trash2, MoreVertical } from 'lucide-react';
+import { MessageSquareText, User, Trash2, MoreVertical, Phone as PhoneIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { messageSchema, getSafeErrorMessage } from '@/lib/validation';
 import {
@@ -41,17 +41,12 @@ interface Message {
 interface Conversation {
   userId: string;
   userName: string;
+  avatarUrl: string | null;
+  category: string | null;
   lastMessage: string;
   lastMessageTime: string;
   unreadCount: number;
-}
-
-interface ProviderProfile {
-  business_name: string;
-  category: string;
-  hourly_rate: number;
-  avatar_url: string | null;
-  full_name: string;
+  phone: string | null;
 }
 
 const Messages = () => {
@@ -64,7 +59,6 @@ const Messages = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedProviderProfile, setSelectedProviderProfile] = useState<ProviderProfile | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'message' | 'conversation'; id?: string } | null>(null);
 
@@ -79,37 +73,15 @@ const Messages = () => {
   }, [user]);
 
   useEffect(() => {
-    if (selectedUserId && user) {
-      fetchMessages(selectedUserId);
-      fetchProviderProfile(selectedUserId);
-    }
+    if (selectedUserId && user) fetchMessages(selectedUserId);
   }, [selectedUserId, user]);
-
-  const fetchProviderProfile = async (userId: string) => {
-    const [{ data: providerData }, { data: profileData }] = await Promise.all([
-      supabase.from('service_providers').select('business_name, category, hourly_rate').eq('user_id', userId).maybeSingle(),
-      supabase.from('profiles').select('avatar_url, full_name').eq('id', userId).maybeSingle(),
-    ]);
-
-    if (providerData) {
-      setSelectedProviderProfile({
-        ...providerData,
-        avatar_url: profileData?.avatar_url || null,
-        full_name: profileData?.full_name || 'User',
-      });
-    } else {
-      setSelectedProviderProfile(null);
-    }
-  };
 
   const fetchConversations = async () => {
     if (!user) return;
     const { data, error } = await supabase
-      .from('messages')
-      .select('*')
+      .from('messages').select('*')
       .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
       .order('created_at', { ascending: false });
-
     if (error) return;
 
     const convMap = new Map<string, Conversation>();
@@ -120,11 +92,8 @@ const Messages = () => {
       userIds.add(partnerId);
       if (!convMap.has(partnerId)) {
         convMap.set(partnerId, {
-          userId: partnerId,
-          userName: '',
-          lastMessage: msg.message,
-          lastMessageTime: msg.created_at,
-          unreadCount: 0,
+          userId: partnerId, userName: '', avatarUrl: null, category: null,
+          lastMessage: msg.message, lastMessageTime: msg.created_at, unreadCount: 0, phone: null,
         });
       }
       if (msg.receiver_id === user.id && !msg.is_read) {
@@ -133,13 +102,20 @@ const Messages = () => {
     });
 
     if (userIds.size > 0) {
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id, full_name')
-        .in('id', Array.from(userIds));
+      const ids = Array.from(userIds);
+      const [{ data: profiles }, { data: providers }] = await Promise.all([
+        supabase.from('profiles').select('id, full_name, avatar_url, phone').in('id', ids),
+        supabase.from('service_providers').select('user_id, category').in('user_id', ids),
+      ]);
+      const providerMap = new Map(providers?.map(p => [p.user_id, p.category]) || []);
       profiles?.forEach((profile) => {
         const conv = convMap.get(profile.id);
-        if (conv) conv.userName = profile.full_name || 'Unknown User';
+        if (conv) {
+          conv.userName = profile.full_name || 'Unknown User';
+          conv.avatarUrl = profile.avatar_url;
+          conv.phone = profile.phone;
+          conv.category = providerMap.get(profile.id) || null;
+        }
       });
     }
 
@@ -148,25 +124,20 @@ const Messages = () => {
 
   const fetchMessages = async (partnerId: string) => {
     if (!user) return;
-    const { data } = await supabase
-      .from('messages')
-      .select('*')
+    const { data } = await supabase.from('messages').select('*')
       .or(`and(sender_id.eq.${user.id},receiver_id.eq.${partnerId}),and(sender_id.eq.${partnerId},receiver_id.eq.${user.id})`)
       .order('created_at', { ascending: true });
-
     setMessages(data || []);
     await supabase.from('messages').update({ is_read: true }).eq('receiver_id', user.id).eq('sender_id', partnerId);
   };
 
   const subscribeToMessages = () => {
     if (!user) return () => {};
-    const channel = supabase
-      .channel('messages')
+    const channel = supabase.channel('messages')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'messages', filter: `receiver_id=eq.${user.id}` }, () => {
         fetchConversations();
         if (selectedUserId) fetchMessages(selectedUserId);
-      })
-      .subscribe();
+      }).subscribe();
     return () => { supabase.removeChannel(channel); };
   };
 
@@ -179,9 +150,7 @@ const Messages = () => {
     }
     setLoading(true);
     const { error } = await supabase.from('messages').insert({
-      sender_id: user.id,
-      receiver_id: selectedUserId,
-      message: validation.data.message,
+      sender_id: user.id, receiver_id: selectedUserId, message: validation.data.message,
     });
     if (error) {
       toast({ title: 'Error', description: getSafeErrorMessage(error), variant: 'destructive' });
@@ -193,7 +162,7 @@ const Messages = () => {
     setLoading(false);
   };
 
-  const handleDeleteMessage = async (messageId: string) => {
+  const handleDeleteMessage = (messageId: string) => {
     setDeleteTarget({ type: 'message', id: messageId });
     setDeleteDialogOpen(true);
   };
@@ -206,7 +175,6 @@ const Messages = () => {
 
   const confirmDelete = async () => {
     if (!user || !deleteTarget) return;
-
     if (deleteTarget.type === 'message' && deleteTarget.id) {
       await supabase.from('messages').delete().eq('id', deleteTarget.id).eq('sender_id', user.id);
       if (selectedUserId) fetchMessages(selectedUserId);
@@ -216,11 +184,37 @@ const Messages = () => {
       setSelectedUserId(null);
       setMessages([]);
     }
-
     fetchConversations();
     setDeleteDialogOpen(false);
     setDeleteTarget(null);
     toast({ title: 'Deleted', description: deleteTarget.type === 'message' ? 'Message deleted' : 'Conversation deleted' });
+  };
+
+  const handleCall = async (partnerId: string, phone: string | null) => {
+    if (!phone || !user) {
+      toast({ title: 'No Phone', description: 'This user has not added a phone number.', variant: 'destructive' });
+      return;
+    }
+    const cleanPhone = phone.replace(/[^0-9+]/g, '');
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+
+    // Record call history
+    await supabase.from('call_history' as any).insert({
+      caller_id: user.id, receiver_id: partnerId, call_type: isMobile ? 'direct' : 'whatsapp', phone_number: cleanPhone,
+    } as any);
+
+    if (isMobile) {
+      // On mobile, offer both options
+      const useWhatsApp = confirm('Open WhatsApp? (Cancel for direct call)');
+      if (useWhatsApp) {
+        window.open(`https://wa.me/${cleanPhone.replace('+', '')}`, '_blank');
+      } else {
+        window.open(`tel:${cleanPhone}`, '_self');
+      }
+    } else {
+      window.open(`https://wa.me/${cleanPhone.replace('+', '')}`, '_blank');
+    }
+    toast({ title: 'Call Initiated', description: `Connecting to ${phone}` });
   };
 
   if (!user) {
@@ -234,7 +228,7 @@ const Messages = () => {
     );
   }
 
-  const selectedConvName = conversations.find((c) => c.userId === selectedUserId)?.userName || 'Chat';
+  const selectedConv = conversations.find((c) => c.userId === selectedUserId);
 
   return (
     <div className="min-h-screen bg-background">
@@ -256,11 +250,17 @@ const Messages = () => {
                     className={`p-4 border-b cursor-pointer hover:bg-muted/50 transition-colors ${selectedUserId === conv.userId ? 'bg-muted' : ''}`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                        <User className="h-5 w-5 text-primary" />
-                      </div>
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={conv.avatarUrl || undefined} />
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {conv.userName.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold truncate">{conv.userName}</p>
+                        {conv.category && (
+                          <p className="text-xs text-accent capitalize">{conv.category}</p>
+                        )}
                         <p className="text-sm text-muted-foreground truncate">{conv.lastMessage}</p>
                       </div>
                       {conv.unreadCount > 0 && (
@@ -276,28 +276,25 @@ const Messages = () => {
           </Card>
 
           <Card className="md:col-span-2">
-            {selectedUserId ? (
+            {selectedConv ? (
               <>
                 <CardHeader>
                   <div className="flex items-center gap-3">
-                    {selectedProviderProfile && (
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={selectedProviderProfile.avatar_url || undefined} />
-                        <AvatarFallback className="bg-primary/10 text-primary">
-                          {selectedProviderProfile.full_name.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src={selectedConv.avatarUrl || undefined} />
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {selectedConv.userName.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="flex-1 space-y-1">
-                      <CardTitle>{selectedConvName}</CardTitle>
-                      {selectedProviderProfile && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span className="capitalize">{selectedProviderProfile.category}</span>
-                          <span>•</span>
-                          <span>Rs. {selectedProviderProfile.hourly_rate}/hr</span>
-                        </div>
+                      <CardTitle>{selectedConv.userName}</CardTitle>
+                      {selectedConv.category && (
+                        <p className="text-sm text-accent capitalize">{selectedConv.category}</p>
                       )}
                     </div>
+                    <Button variant="outline" size="icon" onClick={() => handleCall(selectedConv.userId, selectedConv.phone)} title="Call">
+                      <PhoneIcon className="h-4 w-4" />
+                    </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button>
@@ -314,21 +311,14 @@ const Messages = () => {
                   <ScrollArea className="flex-1 pr-4">
                     <div className="space-y-4">
                       {messages.map((msg) => (
-                        <div
-                          key={msg.id}
-                          className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'} group`}
-                        >
+                        <div key={msg.id} className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'} group`}>
                           <div className={`max-w-[70%] rounded-lg p-3 relative ${msg.sender_id === user.id ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
                             <p className="break-words">{msg.message}</p>
-                            <p className="text-xs opacity-70 mt-1">
-                              {new Date(msg.created_at).toLocaleTimeString()}
-                            </p>
+                            <p className="text-xs opacity-70 mt-1">{new Date(msg.created_at).toLocaleTimeString()}</p>
                             {msg.sender_id === user.id && (
-                              <button
-                                onClick={() => handleDeleteMessage(msg.id)}
+                              <button onClick={() => handleDeleteMessage(msg.id)}
                                 className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                title="Delete message"
-                              >
+                                title="Delete message">
                                 <Trash2 className="h-3 w-3" />
                               </button>
                             )}
@@ -337,15 +327,9 @@ const Messages = () => {
                       ))}
                     </div>
                   </ScrollArea>
-                  
                   <div className="flex gap-2 mt-4">
-                    <Input
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder={t('type_message')}
-                      onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                      disabled={loading}
-                    />
+                    <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
+                      placeholder={t('type_message')} onKeyPress={(e) => e.key === 'Enter' && sendMessage()} disabled={loading} />
                     <Button onClick={sendMessage} disabled={loading || !newMessage.trim()}>
                       <MessageSquareText className="h-4 w-4" />
                     </Button>

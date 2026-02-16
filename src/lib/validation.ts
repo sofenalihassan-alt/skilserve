@@ -102,5 +102,6 @@ export const profileUpdateSchema = z.object({
   state: z.string().trim().max(100, 'State name too long').optional(),
   zip_code: z.string().trim()
     .refine(val => !val || /^[A-Z0-9- ]{2,20}$/i.test(val), 'Invalid ZIP code format')
-    .optional()
+    .optional(),
+  country: z.string().trim().max(100, 'Country name too long').optional(),
 });
