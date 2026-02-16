@@ -127,9 +127,8 @@ const ProviderRegistration = () => {
               <Input id="specialization" name="specialization" type="text" placeholder="e.g., Residential Plumbing, Emergency Services" />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="licenseNumber">License Number</Label>
-              <Input id="licenseNumber" name="licenseNumber" type="text" placeholder="Your professional license number" />
+            <div className="p-3 rounded-lg bg-success/10 border border-success/20 text-sm text-muted-foreground">
+              <p>✅ A unique license number will be auto-generated for your provider profile.</p>
             </div>
 
             <div className="flex items-center space-x-3 p-4 rounded-lg border border-primary/20 bg-primary/5">

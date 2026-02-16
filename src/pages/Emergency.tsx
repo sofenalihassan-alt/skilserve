@@ -9,6 +9,7 @@ import { toast } from "@/hooks/use-toast";
 
 interface EmergencyProvider {
   id: string;
+  user_id: string;
   business_name: string;
   category: string;
   hourly_rate: number;
@@ -41,8 +42,22 @@ const Emergency = () => {
     setLoading(false);
   };
 
-  const handleEmergencyCall = (provider: EmergencyProvider) => {
-    toast({ title: "Emergency Service", description: `Connecting you with ${provider.business_name}...` });
+  const handleEmergencyCall = async (provider: EmergencyProvider) => {
+    // Fetch provider's phone
+    const { data } = await supabase.from('profiles').select('phone').eq('id', provider.user_id).maybeSingle();
+    const phone = data?.phone;
+    if (!phone) {
+      toast({ title: "No Phone", description: "This provider hasn't added a phone number yet.", variant: "destructive" });
+      return;
+    }
+    const cleanPhone = phone.replace(/[^0-9+]/g, '');
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.open(`tel:${cleanPhone}`, '_self');
+    } else {
+      window.open(`https://wa.me/${cleanPhone.replace('+', '')}`, '_blank');
+    }
+    toast({ title: "Emergency Call", description: `Connecting you with ${provider.business_name}...` });
   };
 
   return (

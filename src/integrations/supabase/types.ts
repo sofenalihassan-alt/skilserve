@@ -71,6 +71,33 @@ export type Database = {
           },
         ]
       }
+      call_history: {
+        Row: {
+          call_type: string
+          caller_id: string
+          created_at: string
+          id: string
+          phone_number: string | null
+          receiver_id: string
+        }
+        Insert: {
+          call_type?: string
+          caller_id: string
+          created_at?: string
+          id?: string
+          phone_number?: string | null
+          receiver_id: string
+        }
+        Update: {
+          call_type?: string
+          caller_id?: string
+          created_at?: string
+          id?: string
+          phone_number?: string | null
+          receiver_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           booking_id: string | null
@@ -114,6 +141,7 @@ export type Database = {
           address: string | null
           avatar_url: string | null
           city: string | null
+          country: string | null
           created_at: string
           full_name: string
           id: string
@@ -126,6 +154,7 @@ export type Database = {
           address?: string | null
           avatar_url?: string | null
           city?: string | null
+          country?: string | null
           created_at?: string
           full_name: string
           id: string
@@ -138,6 +167,7 @@ export type Database = {
           address?: string | null
           avatar_url?: string | null
           city?: string | null
+          country?: string | null
           created_at?: string
           full_name?: string
           id?: string

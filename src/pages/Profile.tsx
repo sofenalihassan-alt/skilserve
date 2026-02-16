@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AvatarUpload } from '@/components/AvatarUpload';
 import { Separator } from '@/components/ui/separator';
+import { CountryStateSelector } from '@/components/CountryStateSelector';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,6 +23,7 @@ interface ProfileData {
   city: string | null;
   state: string | null;
   zip_code: string | null;
+  country: string | null;
 }
 
 interface ProviderData {
@@ -51,12 +53,11 @@ const Profile = () => {
     city: '',
     state: '',
     zip_code: '',
+    country: '',
   });
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/auth');
-    }
+    if (!authLoading && !user) navigate('/auth');
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
@@ -68,16 +69,8 @@ const Profile = () => {
 
   const fetchProfile = async () => {
     if (!user) return;
-    
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .maybeSingle();
-
-    if (error) {
-      console.error('Error fetching profile:', error);
-    } else if (data) {
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
+    if (!error && data) {
       setProfile(data);
       setFormData({
         full_name: data.full_name || '',
@@ -87,6 +80,7 @@ const Profile = () => {
         city: data.city || '',
         state: data.state || '',
         zip_code: data.zip_code || '',
+        country: (data as any).country || '',
       });
     }
     setLoading(false);
@@ -94,22 +88,14 @@ const Profile = () => {
 
   const fetchProviderData = async () => {
     if (!user) return;
-    
-    const { data } = await supabase
-      .from('service_providers')
+    const { data } = await supabase.from('service_providers')
       .select('business_name, category, hourly_rate, years_experience, specialization, is_active')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    if (data) {
-      setProviderData(data);
-    }
+      .eq('user_id', user.id).maybeSingle();
+    if (data) setProviderData(data);
   };
 
   const handleSave = async () => {
     if (!user) return;
-    
-    // Validate form data before saving
     const validationResult = profileUpdateSchema.safeParse({
       full_name: formData.full_name,
       phone: formData.phone || undefined,
@@ -118,48 +104,30 @@ const Profile = () => {
       city: formData.city || undefined,
       state: formData.state || undefined,
       zip_code: formData.zip_code || undefined,
+      country: formData.country || undefined,
     });
-
     if (!validationResult.success) {
-      const firstError = validationResult.error.errors[0];
-      toast({
-        title: 'Validation Error',
-        description: firstError.message,
-        variant: 'destructive',
-      });
+      toast({ title: 'Validation Error', description: validationResult.error.errors[0].message, variant: 'destructive' });
       return;
     }
-
-    const validatedData = validationResult.data;
-    
+    const d = validationResult.data;
     setSaving(true);
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        full_name: validatedData.full_name,
-        phone: validatedData.phone || null,
-        avatar_url: validatedData.avatar_url || null,
-        address: validatedData.address || null,
-        city: validatedData.city || null,
-        state: validatedData.state || null,
-        zip_code: validatedData.zip_code || null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', user.id);
-
+    const { error } = await supabase.from('profiles').update({
+      full_name: d.full_name,
+      phone: d.phone || null,
+      avatar_url: formData.avatar_url || null,
+      address: d.address || null,
+      city: d.city || null,
+      state: d.state || null,
+      zip_code: d.zip_code || null,
+      country: formData.country || null,
+      updated_at: new Date().toISOString(),
+    } as any).eq('id', user.id);
     setSaving(false);
-
     if (error) {
-      toast({
-        title: 'Error',
-        description: getSafeErrorMessage(error),
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: getSafeErrorMessage(error), variant: 'destructive' });
     } else {
-      toast({
-        title: 'Success',
-        description: 'Profile updated successfully!',
-      });
+      toast({ title: 'Success', description: 'Profile updated successfully!' });
       fetchProfile();
     }
   };
@@ -199,9 +167,7 @@ const Profile = () => {
                     />
                   </div>
                   <div className="text-center md:text-left flex-1">
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-                      {formData.full_name || 'User'}
-                    </h1>
+                    <h1 className="text-3xl font-bold">{formData.full_name || 'User'}</h1>
                     <p className="text-muted-foreground flex items-center justify-center md:justify-start gap-2 mt-2">
                       <Mail className="h-4 w-4" />
                       {user?.email}
@@ -223,9 +189,7 @@ const Profile = () => {
           <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <User className="h-5 w-5 text-primary" />
-                </div>
+                <div className="p-2 rounded-lg bg-primary/10"><User className="h-5 w-5 text-primary" /></div>
                 <div>
                   <CardTitle>{t('profile')}</CardTitle>
                   <CardDescription>Manage your personal information</CardDescription>
@@ -236,35 +200,14 @@ const Profile = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="full_name">Full Name</Label>
-                  <Input
-                    id="full_name"
-                    value={formData.full_name}
-                    onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                    className="bg-background/50"
-                  />
+                  <Input id="full_name" value={formData.full_name} onChange={(e) => setFormData({ ...formData, full_name: e.target.value })} className="bg-background/50" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number</Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="phone"
-                      value={formData.phone || ''}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="pl-10 bg-background/50"
-                      placeholder="+1 (555) 000-0000"
-                    />
+                    <Input id="phone" value={formData.phone || ''} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="pl-10 bg-background/50" placeholder="+92 300 1234567" />
                   </div>
-                </div>
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="avatar_url">Avatar URL</Label>
-                  <Input
-                    id="avatar_url"
-                    value={formData.avatar_url || ''}
-                    onChange={(e) => setFormData({ ...formData, avatar_url: e.target.value })}
-                    className="bg-background/50"
-                    placeholder="https://example.com/avatar.jpg"
-                  />
                 </div>
               </div>
 
@@ -278,40 +221,21 @@ const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="address">Street Address</Label>
-                    <Input
-                      id="address"
-                      value={formData.address || ''}
-                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                      className="bg-background/50"
-                      placeholder="123 Main Street"
-                    />
+                    <Input id="address" value={formData.address || ''} onChange={(e) => setFormData({ ...formData, address: e.target.value })} className="bg-background/50" placeholder="123 Main Street" />
                   </div>
+                  <CountryStateSelector
+                    country={formData.country || ''}
+                    state={formData.state || ''}
+                    onCountryChange={(c) => setFormData({ ...formData, country: c })}
+                    onStateChange={(s) => setFormData({ ...formData, state: s })}
+                  />
                   <div className="space-y-2">
                     <Label htmlFor="city">City</Label>
-                    <Input
-                      id="city"
-                      value={formData.city || ''}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      className="bg-background/50"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="state">State</Label>
-                    <Input
-                      id="state"
-                      value={formData.state || ''}
-                      onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                      className="bg-background/50"
-                    />
+                    <Input id="city" value={formData.city || ''} onChange={(e) => setFormData({ ...formData, city: e.target.value })} className="bg-background/50" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="zip_code">ZIP Code</Label>
-                    <Input
-                      id="zip_code"
-                      value={formData.zip_code || ''}
-                      onChange={(e) => setFormData({ ...formData, zip_code: e.target.value })}
-                      className="bg-background/50"
-                    />
+                    <Input id="zip_code" value={formData.zip_code || ''} onChange={(e) => setFormData({ ...formData, zip_code: e.target.value })} className="bg-background/50" />
                   </div>
                 </div>
               </div>
@@ -325,14 +249,11 @@ const Profile = () => {
             </CardContent>
           </Card>
 
-          {/* Provider Information (if applicable) */}
           {providerData && (
             <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-accent/10">
-                    <Briefcase className="h-5 w-5 text-accent" />
-                  </div>
+                  <div className="p-2 rounded-lg bg-accent/10"><Briefcase className="h-5 w-5 text-accent" /></div>
                   <div>
                     <CardTitle>Provider Details</CardTitle>
                     <CardDescription>Your service provider information</CardDescription>
@@ -351,7 +272,7 @@ const Profile = () => {
                   </div>
                   <div className="p-4 rounded-xl bg-background/50 border border-border/50">
                     <p className="text-sm text-muted-foreground">Hourly Rate</p>
-                    <p className="font-semibold mt-1">${providerData.hourly_rate}/hr</p>
+                    <p className="font-semibold mt-1">Rs. {providerData.hourly_rate}/hr</p>
                   </div>
                   {providerData.years_experience && (
                     <div className="p-4 rounded-xl bg-background/50 border border-border/50">
