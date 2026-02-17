@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { MessageSquareText, User, Trash2, MoreVertical, Phone as PhoneIcon } from 'lucide-react';
+import { MessageSquareText, User, Trash2, MoreVertical, Phone as PhoneIcon, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { messageSchema, getSafeErrorMessage } from '@/lib/validation';
 import {
@@ -61,6 +61,7 @@ const Messages = () => {
   const [loading, setLoading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'message' | 'conversation'; id?: string } | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
@@ -75,6 +76,10 @@ const Messages = () => {
   useEffect(() => {
     if (selectedUserId && user) fetchMessages(selectedUserId);
   }, [selectedUserId, user]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const fetchConversations = async () => {
     if (!user) return;
@@ -179,12 +184,13 @@ const Messages = () => {
       await supabase.from('messages').delete().eq('id', deleteTarget.id).eq('sender_id', user.id);
       if (selectedUserId) fetchMessages(selectedUserId);
     } else if (deleteTarget.type === 'conversation' && selectedUserId) {
+      // Delete all messages in the conversation from both sides
       await supabase.from('messages').delete()
         .or(`and(sender_id.eq.${user.id},receiver_id.eq.${selectedUserId}),and(sender_id.eq.${selectedUserId},receiver_id.eq.${user.id})`);
       setSelectedUserId(null);
       setMessages([]);
     }
-    fetchConversations();
+    await fetchConversations();
     setDeleteDialogOpen(false);
     setDeleteTarget(null);
     toast({ title: 'Deleted', description: deleteTarget.type === 'message' ? 'Message deleted' : 'Conversation deleted' });
@@ -198,13 +204,11 @@ const Messages = () => {
     const cleanPhone = phone.replace(/[^0-9+]/g, '');
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
-    // Record call history
     await supabase.from('call_history' as any).insert({
       caller_id: user.id, receiver_id: partnerId, call_type: isMobile ? 'direct' : 'whatsapp', phone_number: cleanPhone,
     } as any);
 
     if (isMobile) {
-      // On mobile, offer both options
       const useWhatsApp = confirm('Open WhatsApp? (Cancel for direct call)');
       if (useWhatsApp) {
         window.open(`https://wa.me/${cleanPhone.replace('+', '')}`, '_blank');
@@ -230,27 +234,31 @@ const Messages = () => {
 
   const selectedConv = conversations.find((c) => c.userId === selectedUserId);
 
+  // Mobile: show either conversation list or chat, not both
+  const showChatOnMobile = !!selectedUserId;
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">{t('messages')}</h1>
+      <div className="container mx-auto px-4 py-4 md:py-8">
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">{t('messages')}</h1>
         
-        <div className="grid md:grid-cols-3 gap-4 h-[600px]">
-          <Card className="md:col-span-1">
-            <CardHeader><CardTitle>{t('all_messages')}</CardTitle></CardHeader>
+        <div className="grid md:grid-cols-3 gap-4 h-[calc(100vh-180px)] md:h-[600px]">
+          {/* Conversation List - hide on mobile when chat is open */}
+          <Card className={`md:col-span-1 ${showChatOnMobile ? 'hidden md:block' : ''}`}>
+            <CardHeader className="pb-3"><CardTitle className="text-lg">{t('all_messages')}</CardTitle></CardHeader>
             <CardContent className="p-0">
-              <ScrollArea className="h-[500px]">
+              <ScrollArea className="h-[calc(100vh-300px)] md:h-[500px]">
                 {conversations.length === 0 ? (
                   <p className="text-center text-muted-foreground p-4">{t('no_messages')}</p>
                 ) : conversations.map((conv) => (
                   <div
                     key={conv.userId}
                     onClick={() => setSelectedUserId(conv.userId)}
-                    className={`p-4 border-b cursor-pointer hover:bg-muted/50 transition-colors ${selectedUserId === conv.userId ? 'bg-muted' : ''}`}
+                    className={`p-3 md:p-4 border-b cursor-pointer hover:bg-muted/50 transition-colors ${selectedUserId === conv.userId ? 'bg-muted' : ''}`}
                   >
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
+                      <Avatar className="h-10 w-10 shrink-0">
                         <AvatarImage src={conv.avatarUrl || undefined} />
                         <AvatarFallback className="bg-primary/10 text-primary">
                           {conv.userName.charAt(0).toUpperCase()}
@@ -264,7 +272,7 @@ const Messages = () => {
                         <p className="text-sm text-muted-foreground truncate">{conv.lastMessage}</p>
                       </div>
                       {conv.unreadCount > 0 && (
-                        <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs">
+                        <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs shrink-0">
                           {conv.unreadCount}
                         </div>
                       )}
@@ -275,29 +283,34 @@ const Messages = () => {
             </CardContent>
           </Card>
 
-          <Card className="md:col-span-2">
+          {/* Chat Area - full width on mobile when open */}
+          <Card className={`md:col-span-2 ${!showChatOnMobile ? 'hidden md:block' : ''}`}>
             {selectedConv ? (
               <>
-                <CardHeader>
+                <CardHeader className="pb-3">
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-12 w-12">
+                    {/* Back button on mobile */}
+                    <Button variant="ghost" size="icon" className="md:hidden shrink-0" onClick={() => setSelectedUserId(null)}>
+                      <ArrowLeft className="h-5 w-5" />
+                    </Button>
+                    <Avatar className="h-10 w-10 shrink-0">
                       <AvatarImage src={selectedConv.avatarUrl || undefined} />
                       <AvatarFallback className="bg-primary/10 text-primary">
                         {selectedConv.userName.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 space-y-1">
-                      <CardTitle>{selectedConv.userName}</CardTitle>
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-base truncate">{selectedConv.userName}</CardTitle>
                       {selectedConv.category && (
-                        <p className="text-sm text-accent capitalize">{selectedConv.category}</p>
+                        <p className="text-xs text-accent capitalize">{selectedConv.category}</p>
                       )}
                     </div>
-                    <Button variant="outline" size="icon" onClick={() => handleCall(selectedConv.userId, selectedConv.phone)} title="Call">
+                    <Button variant="outline" size="icon" className="shrink-0" onClick={() => handleCall(selectedConv.userId, selectedConv.phone)} title="Call">
                       <PhoneIcon className="h-4 w-4" />
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" className="shrink-0"><MoreVertical className="h-4 w-4" /></Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={handleDeleteConversation} className="text-destructive">
@@ -307,14 +320,14 @@ const Messages = () => {
                     </DropdownMenu>
                   </div>
                 </CardHeader>
-                <CardContent className="flex flex-col h-[520px]">
-                  <ScrollArea className="flex-1 pr-4">
-                    <div className="space-y-4">
+                <CardContent className="flex flex-col h-[calc(100vh-320px)] md:h-[520px]">
+                  <ScrollArea className="flex-1 pr-2 md:pr-4">
+                    <div className="space-y-3">
                       {messages.map((msg) => (
                         <div key={msg.id} className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'} group`}>
-                          <div className={`max-w-[70%] rounded-lg p-3 relative ${msg.sender_id === user.id ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                            <p className="break-words">{msg.message}</p>
-                            <p className="text-xs opacity-70 mt-1">{new Date(msg.created_at).toLocaleTimeString()}</p>
+                          <div className={`max-w-[80%] md:max-w-[70%] rounded-lg p-3 relative ${msg.sender_id === user.id ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                            <p className="break-words text-sm">{msg.message}</p>
+                            <p className="text-[10px] opacity-70 mt-1">{new Date(msg.created_at).toLocaleTimeString()}</p>
                             {msg.sender_id === user.id && (
                               <button onClick={() => handleDeleteMessage(msg.id)}
                                 className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
@@ -325,12 +338,13 @@ const Messages = () => {
                           </div>
                         </div>
                       ))}
+                      <div ref={messagesEndRef} />
                     </div>
                   </ScrollArea>
-                  <div className="flex gap-2 mt-4">
+                  <div className="flex gap-2 mt-3">
                     <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder={t('type_message')} onKeyPress={(e) => e.key === 'Enter' && sendMessage()} disabled={loading} />
-                    <Button onClick={sendMessage} disabled={loading || !newMessage.trim()}>
+                      placeholder={t('type_message')} onKeyPress={(e) => e.key === 'Enter' && sendMessage()} disabled={loading} className="text-sm" />
+                    <Button onClick={sendMessage} disabled={loading || !newMessage.trim()} size="sm">
                       <MessageSquareText className="h-4 w-4" />
                     </Button>
                   </div>

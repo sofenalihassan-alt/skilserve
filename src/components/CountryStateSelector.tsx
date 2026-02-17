@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, Search } from 'lucide-react';
+import { ChevronDown, Search, Check } from 'lucide-react';
 
 interface CountryStateSelectorProps {
   country: string;
@@ -45,26 +45,28 @@ export const CountryStateSelector = ({ country, state, onCountryChange, onStateC
         <Label>Country</Label>
         <Popover open={countryOpen} onOpenChange={setCountryOpen}>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="w-full justify-between bg-background/50 font-normal">
+            <Button variant="outline" role="combobox" aria-expanded={countryOpen} className="w-full justify-between bg-background/50 font-normal" type="button">
               {country || 'Select country'}
-              <ChevronDown className="h-4 w-4 opacity-50" />
+              <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[300px] p-2" align="start">
-            <div className="flex items-center gap-2 px-2 pb-2 border-b">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <Input
+          <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start" sideOffset={4}>
+            <div className="flex items-center gap-2 px-3 py-2 border-b">
+              <Search className="h-4 w-4 text-muted-foreground shrink-0" />
+              <input
                 placeholder="Search countries..."
                 value={countrySearch}
                 onChange={(e) => setCountrySearch(e.target.value)}
-                className="h-8 border-0 p-0 focus-visible:ring-0"
+                className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                autoFocus
               />
             </div>
-            <ScrollArea className="h-[250px] mt-1">
+            <ScrollArea className="h-[200px]">
               {filteredCountries.map(c => (
                 <button
                   key={c.isoCode}
-                  className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-muted transition-colors ${country === c.name ? 'bg-primary/10 text-primary font-medium' : ''}`}
+                  type="button"
+                  className={`w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors flex items-center gap-2 ${country === c.name ? 'bg-primary/10 text-primary font-medium' : ''}`}
                   onClick={() => {
                     onCountryChange(c.name);
                     onStateChange('');
@@ -72,9 +74,14 @@ export const CountryStateSelector = ({ country, state, onCountryChange, onStateC
                     setCountrySearch('');
                   }}
                 >
-                  {c.flag} {c.name}
+                  <span>{c.flag}</span>
+                  <span className="flex-1">{c.name}</span>
+                  {country === c.name && <Check className="h-4 w-4 text-primary" />}
                 </button>
               ))}
+              {filteredCountries.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">No countries found</p>
+              )}
             </ScrollArea>
           </PopoverContent>
         </Popover>
@@ -86,37 +93,46 @@ export const CountryStateSelector = ({ country, state, onCountryChange, onStateC
           <PopoverTrigger asChild>
             <Button
               variant="outline"
+              role="combobox"
+              aria-expanded={stateOpen}
               className="w-full justify-between bg-background/50 font-normal"
               disabled={!country || states.length === 0}
+              type="button"
             >
               {state || (states.length === 0 ? 'No states available' : 'Select state')}
-              <ChevronDown className="h-4 w-4 opacity-50" />
+              <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[300px] p-2" align="start">
-            <div className="flex items-center gap-2 px-2 pb-2 border-b">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <Input
+          <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start" sideOffset={4}>
+            <div className="flex items-center gap-2 px-3 py-2 border-b">
+              <Search className="h-4 w-4 text-muted-foreground shrink-0" />
+              <input
                 placeholder="Search states..."
                 value={stateSearch}
                 onChange={(e) => setStateSearch(e.target.value)}
-                className="h-8 border-0 p-0 focus-visible:ring-0"
+                className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                autoFocus
               />
             </div>
-            <ScrollArea className="h-[250px] mt-1">
+            <ScrollArea className="h-[200px]">
               {filteredStates.map(s => (
                 <button
                   key={s.isoCode}
-                  className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-muted transition-colors ${state === s.name ? 'bg-primary/10 text-primary font-medium' : ''}`}
+                  type="button"
+                  className={`w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors flex items-center gap-2 ${state === s.name ? 'bg-primary/10 text-primary font-medium' : ''}`}
                   onClick={() => {
                     onStateChange(s.name);
                     setStateOpen(false);
                     setStateSearch('');
                   }}
                 >
-                  {s.name}
+                  <span className="flex-1">{s.name}</span>
+                  {state === s.name && <Check className="h-4 w-4 text-primary" />}
                 </button>
               ))}
+              {filteredStates.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">No states found</p>
+              )}
             </ScrollArea>
           </PopoverContent>
         </Popover>
