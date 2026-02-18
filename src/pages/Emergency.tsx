@@ -3,9 +3,11 @@ import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, Phone, Clock, MapPin } from "lucide-react";
+import { AlertCircle, Phone, Clock, MapPin, MessageSquareText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 interface EmergencyProvider {
   id: string;
@@ -21,6 +23,8 @@ interface EmergencyProvider {
 const Emergency = () => {
   const [providers, setProviders] = useState<EmergencyProvider[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchEmergencyProviders();
@@ -126,13 +130,26 @@ const Emergency = () => {
                       <p className="text-sm text-muted-foreground mb-2">
                         PKR {provider.hourly_rate}/hour
                       </p>
-                      <Button 
-                        className="w-full bg-emergency hover:bg-emergency/90"
-                        onClick={() => handleEmergencyCall(provider)}
-                      >
-                        <Phone className="h-4 w-4 mr-2" />
-                        Emergency Call
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button 
+                          className="flex-1 bg-emergency hover:bg-emergency/90"
+                          onClick={() => handleEmergencyCall(provider)}
+                        >
+                          <Phone className="h-4 w-4 mr-2" />
+                          Call
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          className="flex-1"
+                          onClick={() => {
+                            if (!user) { navigate('/auth'); return; }
+                            navigate('/messages', { state: { providerId: provider.user_id, providerName: provider.business_name } });
+                          }}
+                        >
+                          <MessageSquareText className="h-4 w-4 mr-2" />
+                          Msg
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </Card>
