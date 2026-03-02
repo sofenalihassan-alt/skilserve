@@ -21,6 +21,7 @@ export const Header = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [fullName, setFullName] = useState<string>('');
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isProvider, setIsProvider] = useState(false);
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { language, setLanguage, t } = useLanguage();
@@ -31,11 +32,15 @@ export const Header = () => {
         .then(({ data }) => {
           if (data) { setAvatarUrl(data.avatar_url); setFullName(data.full_name || ''); }
         });
+      supabase.from('service_providers').select('id').eq('user_id', user.id).maybeSingle()
+        .then(({ data }) => { setIsProvider(!!data); });
       fetchUnread();
       const channel = supabase.channel('unread-header')
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `receiver_id=eq.${user.id}` }, () => fetchUnread())
         .subscribe();
       return () => { supabase.removeChannel(channel); };
+    } else {
+      setIsProvider(false);
     }
   }, [user]);
 
@@ -74,7 +79,9 @@ export const Header = () => {
             <NavButton icon={Home} label={t('home')} onClick={() => navigate("/")} />
             <NavButton icon={Search} label={t('find_services')} onClick={() => navigate("/providers")} />
             <NavButton icon={AlertTriangle} label={t('emergency')} onClick={() => navigate("/emergency")} />
-            <NavButton icon={Briefcase} label={t('become_provider')} onClick={() => user ? navigate("/provider-registration") : navigate("/auth")} />
+            {!isProvider && (
+              <NavButton icon={Briefcase} label={t('become_provider')} onClick={() => user ? navigate("/provider-registration") : navigate("/auth")} />
+            )}
             {user && <NavButton icon={MessageSquareText} label={t('messages')} onClick={() => navigate("/messages")} badge={unreadCount} />}
             
             <DropdownMenu>
@@ -135,7 +142,6 @@ export const Header = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <nav className="md:hidden py-4 space-y-1">
-            {/* Profile at top */}
             {user ? (
               <div className="flex items-center gap-3 px-4 py-3 mb-3 border-b border-border">
                 <Avatar className="h-12 w-12">
@@ -149,15 +155,15 @@ export const Header = () => {
               </div>
             ) : null}
 
-            {/* Nav icons */}
             <div className="flex justify-around pb-3 border-b border-border">
               <Button variant="ghost" size="icon" onClick={() => { navigate("/"); setIsMenuOpen(false); }} title={t('home')}><Home className="h-5 w-5" /></Button>
               <Button variant="ghost" size="icon" onClick={() => { navigate("/providers"); setIsMenuOpen(false); }} title={t('find_services')}><Search className="h-5 w-5" /></Button>
               <Button variant="ghost" size="icon" onClick={() => { navigate("/emergency"); setIsMenuOpen(false); }} title={t('emergency')}><AlertTriangle className="h-5 w-5" /></Button>
-              <Button variant="ghost" size="icon" onClick={() => { user ? navigate("/provider-registration") : navigate("/auth"); setIsMenuOpen(false); }} title={t('become_provider')}><Briefcase className="h-5 w-5" /></Button>
+              {!isProvider && (
+                <Button variant="ghost" size="icon" onClick={() => { user ? navigate("/provider-registration") : navigate("/auth"); setIsMenuOpen(false); }} title={t('become_provider')}><Briefcase className="h-5 w-5" /></Button>
+              )}
             </div>
 
-            {/* Menu items */}
             {user ? (
               <div className="space-y-1 pt-2">
                 <Button variant="ghost" className="w-full justify-start" onClick={() => { navigate("/profile"); setIsMenuOpen(false); }}>
