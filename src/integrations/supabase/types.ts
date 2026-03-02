@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.1"
+    PostgrestVersion: "13.0.5"
   }
   public: {
     Tables: {
@@ -337,6 +337,7 @@ export type Database = {
       public_service_providers: {
         Row: {
           availability_24_7: boolean | null
+          avatar_url: string | null
           bio: string | null
           business_name: string | null
           category: Database["public"]["Enums"]["service_category"] | null
@@ -349,36 +350,6 @@ export type Database = {
           updated_at: string | null
           user_id: string | null
           years_experience: number | null
-        }
-        Insert: {
-          availability_24_7?: boolean | null
-          bio?: string | null
-          business_name?: string | null
-          category?: Database["public"]["Enums"]["service_category"] | null
-          created_at?: string | null
-          hourly_rate?: number | null
-          id?: string | null
-          insurance_verified?: boolean | null
-          is_active?: boolean | null
-          specialization?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          years_experience?: number | null
-        }
-        Update: {
-          availability_24_7?: boolean | null
-          bio?: string | null
-          business_name?: string | null
-          category?: Database["public"]["Enums"]["service_category"] | null
-          created_at?: string | null
-          hourly_rate?: number | null
-          id?: string | null
-          insurance_verified?: boolean | null
-          is_active?: boolean | null
-          specialization?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          years_experience?: number | null
         }
         Relationships: []
       }
