@@ -1,6 +1,8 @@
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
+import { StatsCounter } from "@/components/StatsCounter";
 import { ServiceCategories } from "@/components/ServiceCategories";
+import { Testimonials } from "@/components/Testimonials";
 import { EmergencyServices } from "@/components/EmergencyServices";
 import { Footer } from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -12,7 +14,9 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <Hero />
+      <StatsCounter />
       <ServiceCategories />
+      <Testimonials />
       <EmergencyServices />
       
       <section className="py-12 sm:py-16 px-4 bg-primary/5">

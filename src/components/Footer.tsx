@@ -1,4 +1,5 @@
 import { Phone, Mail, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export const Footer = () => {
@@ -33,9 +34,11 @@ export const Footer = () => {
           <div className="space-y-3">
             <h4 className="text-sm font-semibold uppercase tracking-wider text-foreground/80">Quick Links</h4>
             <div className="flex flex-col gap-1.5 text-sm text-muted-foreground">
-              <span className="hover:text-primary transition-colors cursor-pointer">{t('find_services')}</span>
-              <span className="hover:text-primary transition-colors cursor-pointer">{t('emergency')}</span>
-              <span className="hover:text-primary transition-colors cursor-pointer">{t('become_provider')}</span>
+              <Link to="/providers" className="hover:text-primary transition-colors">{t('find_services')}</Link>
+              <Link to="/emergency" className="hover:text-primary transition-colors">{t('emergency')}</Link>
+              <Link to="/provider-registration" className="hover:text-primary transition-colors">{t('become_provider')}</Link>
+              <Link to="#" className="hover:text-primary transition-colors">Terms of Service</Link>
+              <Link to="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
             </div>
           </div>
         </div>
