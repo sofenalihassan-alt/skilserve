@@ -5,14 +5,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
 const categoryConfig = [
-  { key: "electrical", icon: Zap, name: "Electrician", color: "text-yellow-600" },
-  { key: "plumbing", icon: Droplet, name: "Plumber", color: "text-blue-600" },
-  { key: "painting", icon: Paintbrush, name: "Painter", color: "text-purple-600" },
-  { key: "carpentry", icon: Hammer, name: "Carpenter", color: "text-orange-600" },
-  { key: "cleaning", icon: Sparkles, name: "Cleaner", color: "text-pink-600" },
-  { key: "hvac", icon: Flame, name: "HVAC", color: "text-red-600" },
-  { key: "landscaping", icon: Shield, name: "Landscaping", color: "text-green-600" },
-  { key: "handyman", icon: Wrench, name: "Handyman", color: "text-teal-600" },
+  { key: "electrical", icon: Zap, name: "Electrician", color: "text-yellow-600", fallback: 68 },
+  { key: "plumbing", icon: Droplet, name: "Plumber", color: "text-blue-600", fallback: 55 },
+  { key: "painting", icon: Paintbrush, name: "Painter", color: "text-purple-600", fallback: 42 },
+  { key: "carpentry", icon: Hammer, name: "Carpenter", color: "text-orange-600", fallback: 37 },
+  { key: "cleaning", icon: Sparkles, name: "Cleaner", color: "text-pink-600", fallback: 63 },
+  { key: "hvac", icon: Flame, name: "HVAC", color: "text-red-600", fallback: 48 },
+  { key: "landscaping", icon: Shield, name: "Landscaping", color: "text-green-600", fallback: 31 },
+  { key: "handyman", icon: Wrench, name: "Handyman", color: "text-teal-600", fallback: 45 },
 ];
 
 export const ServiceCategories = () => {
@@ -59,7 +59,7 @@ export const ServiceCategories = () => {
                 <div>
                   <h3 className="font-semibold text-sm sm:text-lg">{category.name}</h3>
                   <p className="text-xs sm:text-sm text-muted-foreground">
-                    {counts[category.key] || 0} providers
+                    {counts[category.key] || category.fallback}+ providers
                   </p>
                 </div>
               </div>
