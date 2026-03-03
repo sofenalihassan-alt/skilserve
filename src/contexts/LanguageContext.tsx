@@ -49,6 +49,31 @@ const translations: Record<string, Record<Language, string>> = {
   'view_emergency': { en: 'View Emergency Services', ur: 'ایمرجنسی خدمات دیکھیں' },
   'available_24_7': { en: 'Available 24/7', ur: '24/7 دستیاب' },
   
+  // Stats
+  'stat_providers': { en: 'Verified Providers', ur: 'تصدیق شدہ فراہم کنندگان' },
+  'stat_emergency': { en: 'Emergency Support', ur: 'ایمرجنسی سپورٹ' },
+  'stat_customers': { en: 'Happy Customers', ur: 'خوش صارفین' },
+  'stat_categories': { en: 'Service Categories', ur: 'خدمات کے زمرے' },
+
+  // Testimonials
+  'testimonials_title': { en: 'What Our Customers Say', ur: 'ہمارے صارفین کیا کہتے ہیں' },
+  'testimonials_subtitle': { en: 'Trusted by thousands of homeowners and businesses across Pakistan', ur: 'پاکستان بھر میں ہزاروں گھر مالکان اور کاروباری اداروں کا اعتماد' },
+  'testimonial_1_name': { en: 'Ahmed Khan', ur: 'احمد خان' },
+  'testimonial_1_role': { en: 'Homeowner', ur: 'گھر مالک' },
+  'testimonial_1_quote': { en: 'Found an excellent electrician within minutes. Professional service and fair pricing. Highly recommended!', ur: 'منٹوں میں ایک بہترین الیکٹریشن مل گیا۔ پیشہ ورانہ خدمت اور مناسب قیمت۔' },
+  'testimonial_2_name': { en: 'Fatima Ali', ur: 'فاطمہ علی' },
+  'testimonial_2_role': { en: 'Business Owner', ur: 'کاروبار مالک' },
+  'testimonial_2_quote': { en: 'Skill Serve has been a game-changer for our office maintenance. Quick response and verified professionals every time.', ur: 'سکل سرو نے ہمارے دفتر کی دیکھ بھال کو آسان بنا دیا۔ ہر بار فوری جواب اور تصدیق شدہ پیشہ ور۔' },
+  'testimonial_3_name': { en: 'Hassan Raza', ur: 'حسن رضا' },
+  'testimonial_3_role': { en: 'Property Manager', ur: 'پراپرٹی مینیجر' },
+  'testimonial_3_quote': { en: 'Managing multiple properties is so much easier now. The emergency service feature has saved us many times.', ur: 'اب کئی جائیدادوں کا انتظام بہت آسان ہو گیا ہے۔ ایمرجنسی سروس نے کئی بار ہماری مدد کی۔' },
+  'testimonial_4_name': { en: 'Ayesha Malik', ur: 'عائشہ ملک' },
+  'testimonial_4_role': { en: 'Homeowner', ur: 'گھر مالک' },
+  'testimonial_4_quote': { en: 'The plumber arrived in under 30 minutes for our emergency. Excellent platform with reliable service providers!', ur: 'پلمبر ہماری ایمرجنسی کے لیے 30 منٹ سے بھی کم وقت میں پہنچ گیا۔ بہترین پلیٹ فارم!' },
+  'testimonial_5_name': { en: 'Usman Sheikh', ur: 'عثمان شیخ' },
+  'testimonial_5_role': { en: 'Restaurant Owner', ur: 'ریسٹورنٹ مالک' },
+  'testimonial_5_quote': { en: 'We use Skill Serve for all our HVAC and cleaning needs. Consistent quality and transparent pricing.', ur: 'ہم اپنی تمام ایچ وی اے سی اور صفائی کی ضروریات کے لیے سکل سرو استعمال کرتے ہیں۔' },
+
   // Common
   'search': { en: 'Search', ur: 'تلاش کریں' },
   'filter': { en: 'Filter', ur: 'فلٹر' },
