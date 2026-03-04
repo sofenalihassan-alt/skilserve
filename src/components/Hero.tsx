@@ -19,14 +19,14 @@ export const Hero = () => {
   };
 
   return (
-    <section className="relative bg-gradient-to-br from-primary/10 via-background to-secondary/20 py-12 sm:py-20 px-4">
+    <section className="relative bg-gradient-to-br from-primary/10 via-background to-secondary/20 py-8 sm:py-14 px-4">
       <div className="container mx-auto max-w-6xl">
-        <div className="text-center space-y-4 sm:space-y-6">
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-foreground">
+        <div className="text-center space-y-3 sm:space-y-5">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
             {t('hero_title_1')}
-            <span className="block text-primary mt-2">{t('hero_title_2')}</span>
+            <span className="block text-primary mt-1">{t('hero_title_2')}</span>
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
             {t('hero_subtitle')}
           </p>
           
