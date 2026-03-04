@@ -434,6 +434,12 @@ export type Database = {
         | "hvac"
         | "landscaping"
         | "handyman"
+        | "roofing"
+        | "pest_control"
+        | "appliance_repair"
+        | "moving"
+        | "security"
+        | "tiling"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -578,6 +584,12 @@ export const Constants = {
         "hvac",
         "landscaping",
         "handyman",
+        "roofing",
+        "pest_control",
+        "appliance_repair",
+        "moving",
+        "security",
+        "tiling",
       ],
     },
   },
