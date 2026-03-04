@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Wrench, Zap, Droplet, Paintbrush, Hammer, Shield, Sparkles, Flame } from "lucide-react";
+import { Wrench, Zap, Droplet, Paintbrush, Hammer, Shield, Sparkles, Flame, Home, Bug, Settings, Truck, Camera, Grid3X3 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,12 @@ const categoryConfig = [
   { key: "hvac", icon: Flame, name: "HVAC", color: "text-red-600", fallback: 48 },
   { key: "landscaping", icon: Shield, name: "Landscaping", color: "text-green-600", fallback: 31 },
   { key: "handyman", icon: Wrench, name: "Handyman", color: "text-teal-600", fallback: 45 },
+  { key: "roofing", icon: Home, name: "Roofing", color: "text-amber-700", fallback: 29 },
+  { key: "pest_control", icon: Bug, name: "Pest Control", color: "text-lime-600", fallback: 34 },
+  { key: "appliance_repair", icon: Settings, name: "Appliance Repair", color: "text-slate-600", fallback: 41 },
+  { key: "moving", icon: Truck, name: "Movers & Packers", color: "text-indigo-600", fallback: 38 },
+  { key: "security", icon: Camera, name: "Security & CCTV", color: "text-gray-700", fallback: 26 },
+  { key: "tiling", icon: Grid3X3, name: "Tiling & Flooring", color: "text-cyan-600", fallback: 33 },
 ];
 
 export const ServiceCategories = () => {
