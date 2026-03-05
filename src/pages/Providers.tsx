@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
 import { ProviderCard } from "@/components/ProviderCard";
 import ProvidersMap from "@/components/ProvidersMap";
@@ -197,14 +198,27 @@ const Providers = () => {
               ) : filteredProviders.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">No providers found matching your filters</p>
               ) : (
-                filteredProviders.map((provider) => (
-                  <ProviderCard
-                    key={provider.id}
-                    provider={provider}
-                    avgRating={reviewStats[provider.id || '']?.avg || 0}
-                    reviewCount={reviewStats[provider.id || '']?.count || 0}
-                  />
-                ))
+                <AnimatePresence mode="wait">
+                  {filteredProviders.map((provider, index) => (
+                    <motion.div
+                      key={provider.id}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{
+                        duration: 0.4,
+                        delay: index * 0.1,
+                        ease: [0.25, 0.46, 0.45, 0.94],
+                      }}
+                    >
+                      <ProviderCard
+                        provider={provider}
+                        avgRating={reviewStats[provider.id || '']?.avg || 0}
+                        reviewCount={reviewStats[provider.id || '']?.count || 0}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               )}
             </div>
           </main>

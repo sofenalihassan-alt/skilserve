@@ -9,6 +9,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { SplashScreen } from "@/components/SplashScreen";
+import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import Index from "./pages/Index";
 import Providers from "./pages/Providers";
@@ -38,6 +39,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
+          <SmoothScrollProvider>
           <BrowserRouter>
             <AuthProvider>
               <LanguageProvider>
@@ -57,6 +59,7 @@ const App = () => {
               </LanguageProvider>
             </AuthProvider>
           </BrowserRouter>
+          </SmoothScrollProvider>
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
