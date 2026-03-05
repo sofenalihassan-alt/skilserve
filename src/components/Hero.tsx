@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
+import { MagneticButton } from "@/components/MagneticButton";
 
 export const Hero = () => {
   const { t } = useLanguage();
@@ -51,9 +52,11 @@ export const Hero = () => {
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
-            <Button size="lg" className="h-12 px-8" onClick={handleSearch}>
-              {t('search')}
-            </Button>
+            <MagneticButton>
+              <Button size="lg" className="h-12 px-8" onClick={handleSearch}>
+                {t('search')}
+              </Button>
+            </MagneticButton>
           </div>
         </div>
       </div>

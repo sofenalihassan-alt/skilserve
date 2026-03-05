@@ -2,6 +2,7 @@ import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { MagneticButton } from "@/components/MagneticButton";
 
 export const EmergencyServices = () => {
   const navigate = useNavigate();
@@ -20,14 +21,16 @@ export const EmergencyServices = () => {
           {t('emergency_desc')}
         </p>
         
-        <Button 
-          size="lg"
-          className="bg-emergency hover:bg-emergency/90 text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6"
-          onClick={() => navigate("/emergency")}
-        >
-          <AlertCircle className="h-5 w-5 me-2" />
-          {t('view_emergency')}
-        </Button>
+        <MagneticButton className="inline-block">
+          <Button 
+            size="lg"
+            className="bg-emergency hover:bg-emergency/90 text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6"
+            onClick={() => navigate("/emergency")}
+          >
+            <AlertCircle className="h-5 w-5 me-2" />
+            {t('view_emergency')}
+          </Button>
+        </MagneticButton>
       </div>
     </section>
   );
