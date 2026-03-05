@@ -2,50 +2,39 @@
 
 # Implementation Plan
 
-I will complete tasks 2, 3, and 4 fully. Task 1 (Admin Dashboard) is too large for the remaining credits and will be listed as not done.
+## 1. Bento-Style Provider Cards
+Redesign `ProviderCard.tsx` with a modern bento grid layout:
+- Larger card with rounded-2xl corners, subtle gradient border on hover
+- Top section: Avatar + name + category with inline high-contrast pill badges for "5km Away", "Verified", "24/7"
+- Badges use bold bg colors: `bg-emerald-500/10 text-emerald-600` for Verified, `bg-orange-500/10 text-orange-600` for 24/7, `bg-blue-500/10 text-blue-600` for distance
+- Simulated distance badge (random 2-8km since no real geolocation data exists)
+- Bottom row: price prominently displayed, action buttons with consistent Lucide icons at `strokeWidth={1.5}`
+- All Lucide icons across the card standardized to `strokeWidth={1.5}` for premium feel
 
-## Task 2: Make Hero Section Smaller
-- Reduce `h1` font sizes from `text-3xl sm:text-4xl md:text-6xl` to `text-2xl sm:text-3xl md:text-4xl`
-- Reduce padding from `py-12 sm:py-20` to `py-8 sm:py-14`
-- Make subtitle text slightly smaller
-- Keep search bar and layout unchanged
+**File:** `src/components/ProviderCard.tsx`
 
-**File:** `src/components/Hero.tsx`
+## 2. Live Activity Toast
+Create a new `LiveActivityToast.tsx` component:
+- Array of simulated activities: categories, cities (Bhakkar, Lahore, Islamabad, Karachi, etc.), time labels ("2 mins ago", "10 mins ago")
+- Randomly picks one every 8-12 seconds using `setInterval`
+- Renders as a small animated toast in the bottom-left corner using framer-motion (slide in, stay 4s, slide out)
+- Subtle design: small avatar dot + text like "Plumber booked in Bhakkar 10 mins ago"
+- Mount it in `Providers.tsx` page
 
-## Task 3: Make Testimonials Dynamic from Database
-- Create a `testimonials` table in the database with columns: `id`, `name`, `role`, `quote`, `rating`, `created_at`
-- Seed it with the 5 existing hardcoded testimonials
-- Add RLS policy allowing anyone to read testimonials
-- Update `src/components/Testimonials.tsx` to fetch from the database instead of using hardcoded data, with the hardcoded list as fallback
-- Show total review count in the section subtitle (e.g., "Trusted by X+ customers")
-- This way you can add real testimonials over time and the count grows naturally
+**Files:** New `src/components/LiveActivityToast.tsx`, edit `src/pages/Providers.tsx`
 
-**Files:** New migration, `src/components/Testimonials.tsx`
+## 3. Provider Grid Layout Change
+Update `Providers.tsx` grid from single-column list (`grid gap-6`) to a responsive bento grid (`grid grid-cols-1 md:grid-cols-2 gap-5`) so cards tile nicely in a 2-column layout on desktop.
 
-## Task 4: Provider Reviews on Find Services Page + Feedback
-- Fetch average rating and review count per provider from the `reviews` table
-- Show star rating and review count on each `ProviderCard`
-- Add a "Leave Feedback" button/dialog on each provider card that opens a simple star rating + comment form
-- The feedback form submits to the `reviews` table (requires a completed booking per existing RLS)
-- Add a general "Website Feedback" floating button on the Providers page that opens a simple form (stored in a new `website_feedback` table)
-- Add sorting by rating using actual review averages
+**File:** `src/pages/Providers.tsx`
 
-**Files:** `src/components/ProviderCard.tsx`, `src/pages/Providers.tsx`, new migration for `website_feedback` table, new `src/components/FeedbackDialog.tsx`
+## 4. Consistent Icon Stroke Weight
+All Lucide icons in ProviderCard and Providers page will use `strokeWidth={1.5}` for a premium, consistent look. Icons used: `Star`, `MapPin`, `Clock`, `Briefcase`, `Phone`, `MessageSquareText`, `ThumbsUp`, `ShieldCheck`, `Navigation`.
 
-## What Will NOT Be Done
-**Task 1: Admin Dashboard** -- This is a major feature requiring multiple new pages (users list, providers list, bookings management, content moderation), admin role setup, protected routes, and significant UI work. It needs its own dedicated credit to build properly. I recommend tackling it as a standalone task.
+---
 
-## Technical Details
-
-**Database changes:**
-1. New `testimonials` table with public SELECT RLS policy
-2. Insert 5 seed testimonials
-3. New `website_feedback` table with authenticated INSERT policy and public SELECT
-
-**Component changes:**
-- `Hero.tsx`: Smaller font sizes and padding
-- `Testimonials.tsx`: Fetch from DB, show count, fallback to hardcoded
-- `ProviderCard.tsx`: Add rating stars, review count, feedback button
-- `Providers.tsx`: Pass review data, add website feedback button
-- New `FeedbackDialog.tsx`: Reusable feedback form component
+**Summary of files:**
+- Edit: `src/components/ProviderCard.tsx`, `src/pages/Providers.tsx`
+- Create: `src/components/LiveActivityToast.tsx`
+- No database changes needed
 
