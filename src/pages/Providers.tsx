@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Map, Filter, Search, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { LiveActivityToast } from "@/components/LiveActivityToast";
 import { useToast } from "@/hooks/use-toast";
 import { FeedbackDialog } from "@/components/FeedbackDialog";
 
@@ -130,13 +131,13 @@ const Providers = () => {
           <aside className="lg:w-80 space-y-6">
             <div className="bg-card rounded-lg p-6 border space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold flex items-center gap-2"><Filter className="h-5 w-5" />Filters</h2>
+                <h2 className="text-xl font-bold flex items-center gap-2"><Filter className="h-5 w-5" strokeWidth={1.5} />Filters</h2>
                 <Button variant="ghost" size="sm" onClick={clearFilters}>Clear</Button>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Search</label>
                 <div className="relative">
-                  <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
                   <Input placeholder="Search providers..." className="ps-9" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                 </div>
               </div>
@@ -167,7 +168,7 @@ const Providers = () => {
               </div>
             </div>
             <Button variant="outline" className="w-full" onClick={() => setShowMap(!showMap)}>
-              <Map className="h-4 w-4 mr-2" />{showMap ? "Hide Map" : "Show Map View"}
+              <Map className="h-4 w-4 mr-2" strokeWidth={1.5} />{showMap ? "Hide Map" : "Show Map View"}
             </Button>
           </aside>
           <main className="flex-1">
@@ -192,7 +193,7 @@ const Providers = () => {
               </div>
             </div>
             {showMap && <div className="mb-6"><ProvidersMap /></div>}
-            <div className="grid gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {loading ? (
                 <p className="text-center text-muted-foreground py-8">Loading providers...</p>
               ) : filteredProviders.length === 0 ? (
@@ -239,6 +240,8 @@ const Providers = () => {
         onOpenChange={setFeedbackOpen}
         type="website"
       />
+
+      <LiveActivityToast />
     </div>
   );
 };
