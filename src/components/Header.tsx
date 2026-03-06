@@ -77,7 +77,7 @@ export const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
             <NavButton icon={Home} label={t('home')} onClick={() => navigate("/")} />
-            <NavButton icon={Search} label={t('find_services')} onClick={() => navigate("/providers")} />
+            <NavButton icon={Search} label={t('find_services')} onClick={() => window.dispatchEvent(new Event('open-command-palette'))} />
             <NavButton icon={AlertTriangle} label={t('emergency')} onClick={() => navigate("/emergency")} />
             {!isProvider && (
               <NavButton icon={Briefcase} label={t('become_provider')} onClick={() => user ? navigate("/provider-registration") : navigate("/auth")} />
@@ -157,7 +157,7 @@ export const Header = () => {
 
             <div className="flex justify-around pb-3 border-b border-border">
               <Button variant="ghost" size="icon" onClick={() => { navigate("/"); setIsMenuOpen(false); }} title={t('home')}><Home className="h-5 w-5" /></Button>
-              <Button variant="ghost" size="icon" onClick={() => { navigate("/providers"); setIsMenuOpen(false); }} title={t('find_services')}><Search className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" onClick={() => { window.dispatchEvent(new Event('open-command-palette')); setIsMenuOpen(false); }} title={t('find_services')}><Search className="h-5 w-5" /></Button>
               <Button variant="ghost" size="icon" onClick={() => { navigate("/emergency"); setIsMenuOpen(false); }} title={t('emergency')}><AlertTriangle className="h-5 w-5" /></Button>
               {!isProvider && (
                 <Button variant="ghost" size="icon" onClick={() => { user ? navigate("/provider-registration") : navigate("/auth"); setIsMenuOpen(false); }} title={t('become_provider')}><Briefcase className="h-5 w-5" /></Button>
