@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, ReactNode } from 'react';
 
 type Language = 'en' | 'ur';
 
@@ -101,7 +101,22 @@ const translations: Record<string, Record<Language, string>> = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguageState] = useState<Language>('en');
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const pendingLang = useRef<Language | null>(null);
+
+  const setLanguage = useCallback((lang: Language) => {
+    if (lang === language) return;
+    pendingLang.current = lang;
+    setIsTransitioning(true);
+    // After fade-out completes, swap language then fade back in
+    setTimeout(() => {
+      setLanguageState(lang);
+      pendingLang.current = null;
+      // Small delay to let DOM update with new dir before fading in
+      requestAnimationFrame(() => setIsTransitioning(false));
+    }, 300);
+  }, [language]);
 
   const t = (key: string): string => {
     return translations[key]?.[language] || key;
@@ -109,7 +124,14 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
-      <div className={language === 'ur' ? 'font-urdu leading-loose' : ''} dir={language === 'ur' ? 'rtl' : 'ltr'}>
+      <div
+        className={language === 'ur' ? 'font-urdu leading-loose' : ''}
+        dir={language === 'ur' ? 'rtl' : 'ltr'}
+        style={{
+          transition: 'opacity 0.3s ease',
+          opacity: isTransitioning ? 0 : 1,
+        }}
+      >
         {children}
       </div>
     </LanguageContext.Provider>

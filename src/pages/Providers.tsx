@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { LiveActivityToast } from "@/components/LiveActivityToast";
 import { useToast } from "@/hooks/use-toast";
 import { FeedbackDialog } from "@/components/FeedbackDialog";
+import { ProviderCardSkeleton, MapSkeleton } from "@/components/ProviderCardSkeleton";
 
 interface ProviderWithAvatar {
   id: string | null;
@@ -192,10 +193,14 @@ const Providers = () => {
                 </Select>
               </div>
             </div>
-            {showMap && <div className="mb-6"><ProvidersMap /></div>}
+            {showMap && (loading ? <div className="mb-6"><MapSkeleton /></div> : <div className="mb-6"><ProvidersMap /></div>)}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {loading ? (
-                <p className="text-center text-muted-foreground py-8">Loading providers...</p>
+                <>
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <ProviderCardSkeleton key={i} />
+                  ))}
+                </>
               ) : filteredProviders.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">No providers found matching your filters</p>
               ) : (
