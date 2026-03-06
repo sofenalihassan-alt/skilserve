@@ -1,38 +1,38 @@
 
 
-# Implementation Plan
+# Command Palette (Cmd+K) Search
 
-## 1. Skeleton Loaders for Provider Cards and Map
+## Overview
+Create a global command palette accessible via `Cmd+K` / `Ctrl+K` shortcut or clicking the search button in the header. Uses the existing `cmdk` library and `CommandDialog` component already installed.
 
-Create a `ProviderCardSkeleton` component that mirrors the exact bento-style card shape: avatar circle, name/category text bars, badge pills row, bio lines, price bar, and 3 action buttons. Use the existing `Skeleton` component from `src/components/ui/skeleton.tsx`.
+## 1. Create CommandPalette Component
+**New file:** `src/components/CommandPalette.tsx`
 
-Create a `MapSkeleton` that matches the 600px-tall map card shape.
+- Register global `keydown` listener for `Cmd+K` / `Ctrl+K` to toggle open
+- On open, show two default sections:
+  - **Recent Searches** -- stored in `localStorage`, max 5 items, with a clock icon
+  - **Popular Categories** -- hardcoded list: Electrician, Plumber, Carpenter, Painter, Cleaner, HVAC, Landscaping, Handyman
+- As the user types, query `public_service_providers` view live via Supabase with `.ilike()` on `business_name`, `category`, `specialization`
+- **Instant Results** show: small avatar thumbnail (40px circle), business name, category badge, hourly rate
+- **Emergency highlight**: providers with `availability_24_7 = true` get a pulsing red dot before their name using a CSS `animate-pulse` on a `bg-red-500` circle with "Live" text
+- Selecting a provider navigates to `/providers?search=<name>`
+- Selecting a category navigates to `/providers?category=<value>`
+- Save search term to localStorage on selection
 
-Update `src/pages/Providers.tsx` to render a grid of 4-6 skeleton cards while `loading` is true, and a map skeleton when `showMap` is true during loading.
+## 2. Mount in App.tsx
+Add `<CommandPalette />` inside `LanguageProvider` so it's globally available on all pages.
 
-**Files:** New `src/components/ProviderCardSkeleton.tsx`, edit `src/pages/Providers.tsx`
+## 3. Header Search Integration
+Update the header's existing search icon/button to also open the command palette by exposing an open state setter or using a custom event.
 
-## 2. Smooth Language Cross-fade Transition
+## Technical Details
+- Uses existing `Command`, `CommandDialog`, `CommandInput`, `CommandList`, `CommandGroup`, `CommandItem`, `CommandEmpty` from `src/components/ui/command.tsx`
+- Debounce search input by 300ms before querying Supabase
+- All Lucide icons at `strokeWidth={1.5}` for consistency
+- Pulsing red dot: `<span className="relative flex h-2.5 w-2.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" /><span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" /></span>`
 
-Update `src/contexts/LanguageContext.tsx` to add CSS transition properties on the wrapper div. When language changes:
-- Apply `transition: opacity 0.3s ease, transform 0.3s ease` on the wrapper
-- Briefly fade out (opacity 0), swap language + dir attribute, then fade back in
-- Use a small state flag (`isTransitioning`) to control the opacity class
-- The `dir` attribute change (ltr/rtl) will be covered by the same 0.3s transition so the RTL flip animates smoothly
-
-Add CSS transition for direction-dependent properties:
-```css
-.language-transition {
-  transition: opacity 0.3s ease, direction 0.3s ease;
-}
-```
-
-Since CSS `direction` isn't animatable, the smooth feel comes from fading out content, swapping dir, then fading back in -- so the layout "snap" is hidden behind the crossfade.
-
-**File:** `src/contexts/LanguageContext.tsx`
-
-## Summary
-- Create: `src/components/ProviderCardSkeleton.tsx`
-- Edit: `src/pages/Providers.tsx`, `src/contexts/LanguageContext.tsx`
-- No database changes
+## Files
+- **Create:** `src/components/CommandPalette.tsx`
+- **Edit:** `src/App.tsx` (mount component), `src/components/Header.tsx` (wire search button)
+- No database changes needed
 
