@@ -100,6 +100,7 @@ const translations: Record<string, Record<Language, string>> = {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguageState] = useState<Language>('en');
   const [isTransitioning, setIsTransitioning] = useState(false);
