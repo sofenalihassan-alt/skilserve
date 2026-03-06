@@ -2,39 +2,37 @@
 
 # Implementation Plan
 
-## 1. Bento-Style Provider Cards
-Redesign `ProviderCard.tsx` with a modern bento grid layout:
-- Larger card with rounded-2xl corners, subtle gradient border on hover
-- Top section: Avatar + name + category with inline high-contrast pill badges for "5km Away", "Verified", "24/7"
-- Badges use bold bg colors: `bg-emerald-500/10 text-emerald-600` for Verified, `bg-orange-500/10 text-orange-600` for 24/7, `bg-blue-500/10 text-blue-600` for distance
-- Simulated distance badge (random 2-8km since no real geolocation data exists)
-- Bottom row: price prominently displayed, action buttons with consistent Lucide icons at `strokeWidth={1.5}`
-- All Lucide icons across the card standardized to `strokeWidth={1.5}` for premium feel
+## 1. Skeleton Loaders for Provider Cards and Map
 
-**File:** `src/components/ProviderCard.tsx`
+Create a `ProviderCardSkeleton` component that mirrors the exact bento-style card shape: avatar circle, name/category text bars, badge pills row, bio lines, price bar, and 3 action buttons. Use the existing `Skeleton` component from `src/components/ui/skeleton.tsx`.
 
-## 2. Live Activity Toast
-Create a new `LiveActivityToast.tsx` component:
-- Array of simulated activities: categories, cities (Bhakkar, Lahore, Islamabad, Karachi, etc.), time labels ("2 mins ago", "10 mins ago")
-- Randomly picks one every 8-12 seconds using `setInterval`
-- Renders as a small animated toast in the bottom-left corner using framer-motion (slide in, stay 4s, slide out)
-- Subtle design: small avatar dot + text like "Plumber booked in Bhakkar 10 mins ago"
-- Mount it in `Providers.tsx` page
+Create a `MapSkeleton` that matches the 600px-tall map card shape.
 
-**Files:** New `src/components/LiveActivityToast.tsx`, edit `src/pages/Providers.tsx`
+Update `src/pages/Providers.tsx` to render a grid of 4-6 skeleton cards while `loading` is true, and a map skeleton when `showMap` is true during loading.
 
-## 3. Provider Grid Layout Change
-Update `Providers.tsx` grid from single-column list (`grid gap-6`) to a responsive bento grid (`grid grid-cols-1 md:grid-cols-2 gap-5`) so cards tile nicely in a 2-column layout on desktop.
+**Files:** New `src/components/ProviderCardSkeleton.tsx`, edit `src/pages/Providers.tsx`
 
-**File:** `src/pages/Providers.tsx`
+## 2. Smooth Language Cross-fade Transition
 
-## 4. Consistent Icon Stroke Weight
-All Lucide icons in ProviderCard and Providers page will use `strokeWidth={1.5}` for a premium, consistent look. Icons used: `Star`, `MapPin`, `Clock`, `Briefcase`, `Phone`, `MessageSquareText`, `ThumbsUp`, `ShieldCheck`, `Navigation`.
+Update `src/contexts/LanguageContext.tsx` to add CSS transition properties on the wrapper div. When language changes:
+- Apply `transition: opacity 0.3s ease, transform 0.3s ease` on the wrapper
+- Briefly fade out (opacity 0), swap language + dir attribute, then fade back in
+- Use a small state flag (`isTransitioning`) to control the opacity class
+- The `dir` attribute change (ltr/rtl) will be covered by the same 0.3s transition so the RTL flip animates smoothly
 
----
+Add CSS transition for direction-dependent properties:
+```css
+.language-transition {
+  transition: opacity 0.3s ease, direction 0.3s ease;
+}
+```
 
-**Summary of files:**
-- Edit: `src/components/ProviderCard.tsx`, `src/pages/Providers.tsx`
-- Create: `src/components/LiveActivityToast.tsx`
-- No database changes needed
+Since CSS `direction` isn't animatable, the smooth feel comes from fading out content, swapping dir, then fading back in -- so the layout "snap" is hidden behind the crossfade.
+
+**File:** `src/contexts/LanguageContext.tsx`
+
+## Summary
+- Create: `src/components/ProviderCardSkeleton.tsx`
+- Edit: `src/pages/Providers.tsx`, `src/contexts/LanguageContext.tsx`
+- No database changes
 
