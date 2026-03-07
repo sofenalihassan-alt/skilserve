@@ -1,38 +1,36 @@
 
 
-# Command Palette (Cmd+K) Search
+# Mobile UI Optimization Plan
 
-## Overview
-Create a global command palette accessible via `Cmd+K` / `Ctrl+K` shortcut or clicking the search button in the header. Uses the existing `cmdk` library and `CommandDialog` component already installed.
+## 1. Bottom Navigation Bar (Mobile Only)
+**New file:** `src/components/BottomNav.tsx`
 
-## 1. Create CommandPalette Component
-**New file:** `src/components/CommandPalette.tsx`
+Create a fixed bottom navigation bar visible only on mobile (`md:hidden`). Four tabs: Home (`/`), Map (`/providers?view=map`), Bookings (`/bookings`), Profile (`/profile`). Uses `useLocation` to highlight the active tab. Includes unread message badge on Profile if needed. Height ~64px with safe-area padding for notched phones (`pb-safe`).
 
-- Register global `keydown` listener for `Cmd+K` / `Ctrl+K` to toggle open
-- On open, show two default sections:
-  - **Recent Searches** -- stored in `localStorage`, max 5 items, with a clock icon
-  - **Popular Categories** -- hardcoded list: Electrician, Plumber, Carpenter, Painter, Cleaner, HVAC, Landscaping, Handyman
-- As the user types, query `public_service_providers` view live via Supabase with `.ilike()` on `business_name`, `category`, `specialization`
-- **Instant Results** show: small avatar thumbnail (40px circle), business name, category badge, hourly rate
-- **Emergency highlight**: providers with `availability_24_7 = true` get a pulsing red dot before their name using a CSS `animate-pulse` on a `bg-red-500` circle with "Live" text
-- Selecting a provider navigates to `/providers?search=<name>`
-- Selecting a category navigates to `/providers?category=<value>`
-- Save search term to localStorage on selection
+**Edit:** `src/components/Header.tsx` -- Hide the mobile hamburger menu section and the entire mobile nav dropdown on `md:hidden` since the bottom nav replaces it. Keep the top header simplified on mobile (logo + search icon + theme toggle only).
 
-## 2. Mount in App.tsx
-Add `<CommandPalette />` inside `LanguageProvider` so it's globally available on all pages.
+**Edit:** `src/pages/Providers.tsx`, `src/pages/Index.tsx`, `src/pages/Bookings.tsx`, `src/pages/Profile.tsx` -- Add `pb-20` bottom padding so content doesn't hide behind the fixed bottom nav on mobile.
 
-## 3. Header Search Integration
-Update the header's existing search icon/button to also open the command palette by exposing an open state setter or using a custom event.
+## 2. Pull-to-Refresh on Provider List
+**Edit:** `src/pages/Providers.tsx`
 
-## Technical Details
-- Uses existing `Command`, `CommandDialog`, `CommandInput`, `CommandList`, `CommandGroup`, `CommandItem`, `CommandEmpty` from `src/components/ui/command.tsx`
-- Debounce search input by 300ms before querying Supabase
-- All Lucide icons at `strokeWidth={1.5}` for consistency
-- Pulsing red dot: `<span className="relative flex h-2.5 w-2.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" /><span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" /></span>`
+Implement a touch-based pull-to-refresh using pointer events:
+- Track `touchstart` / `touchmove` / `touchend` on the provider list container
+- When pulled down >60px at scroll top, show a spinning refresh indicator and call `fetchProviders()` + `fetchReviewStats()`
+- Animate the indicator with framer-motion (rotate + fade)
+- Only active on mobile (check `useIsMobile`)
 
-## Files
-- **Create:** `src/components/CommandPalette.tsx`
-- **Edit:** `src/App.tsx` (mount component), `src/components/Header.tsx` (wire search button)
-- No database changes needed
+## 3. Swipe-Up Drawer for Map Pin Details
+**Edit:** `src/components/ProvidersMap.tsx`
+
+Replace the Mapbox popup with a swipe-up drawer (using existing `vaul` Drawer component):
+- When a map marker is clicked, set a `selectedProvider` state instead of showing a popup
+- Open a `<Drawer>` from the bottom with the provider's details: avatar, name, category, rate, specialization, and action buttons (Call, Message, Book)
+- The drawer uses snap points (`[0.35, 0.7]`) so users can swipe up for more detail or swipe down to dismiss
+- This mirrors the Google Maps / Uber pattern
+
+## Summary of Files
+- **Create:** `src/components/BottomNav.tsx`
+- **Edit:** `src/components/Header.tsx`, `src/pages/Providers.tsx`, `src/pages/Index.tsx`, `src/pages/Bookings.tsx`, `src/pages/Profile.tsx`, `src/components/ProvidersMap.tsx`
+- No database changes
 
