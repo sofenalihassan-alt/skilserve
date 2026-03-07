@@ -120,79 +120,15 @@ export const Header = () => {
             )}
           </nav>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile: simplified top bar (bottom nav handles main navigation) */}
           <div className="flex md:hidden items-center gap-1">
+            <Button variant="ghost" size="icon" onClick={() => window.dispatchEvent(new Event('open-command-palette'))} title={t('find_services')}>
+              <Search className="h-5 w-5" />
+            </Button>
             <ThemeToggle />
-            {user && (
-              <Button variant="ghost" size="icon" onClick={() => navigate("/messages")} title={t('messages')} className="relative">
-                <MessageSquareText className="h-5 w-5" />
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[10px] font-bold">
-                    {unreadCount > 99 ? '99+' : unreadCount}
-                  </span>
-                )}
-              </Button>
-            )}
-            <button className="p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              {isMenuOpen ? <X /> : <Menu />}
-            </button>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <nav className="md:hidden py-4 space-y-1">
-            {user ? (
-              <div className="flex items-center gap-3 px-4 py-3 mb-3 border-b border-border">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={avatarUrl || undefined} />
-                  <AvatarFallback className="bg-primary/20 text-primary font-bold">{fullName?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <p className="font-semibold">{fullName || t('account')}</p>
-                  <p className="text-xs text-muted-foreground">{user.email}</p>
-                </div>
-              </div>
-            ) : null}
-
-            <div className="flex justify-around pb-3 border-b border-border">
-              <Button variant="ghost" size="icon" onClick={() => { navigate("/"); setIsMenuOpen(false); }} title={t('home')}><Home className="h-5 w-5" /></Button>
-              <Button variant="ghost" size="icon" onClick={() => { window.dispatchEvent(new Event('open-command-palette')); setIsMenuOpen(false); }} title={t('find_services')}><Search className="h-5 w-5" /></Button>
-              <Button variant="ghost" size="icon" onClick={() => { navigate("/emergency"); setIsMenuOpen(false); }} title={t('emergency')}><AlertTriangle className="h-5 w-5" /></Button>
-              {!isProvider && (
-                <Button variant="ghost" size="icon" onClick={() => { user ? navigate("/provider-registration") : navigate("/auth"); setIsMenuOpen(false); }} title={t('become_provider')}><Briefcase className="h-5 w-5" /></Button>
-              )}
-            </div>
-
-            {user ? (
-              <div className="space-y-1 pt-2">
-                <Button variant="ghost" className="w-full justify-start" onClick={() => { navigate("/profile"); setIsMenuOpen(false); }}>
-                  <User className="h-4 w-4 me-2" />{t('profile')}
-                </Button>
-                <Button variant="ghost" className="w-full justify-start" onClick={() => { navigate("/bookings"); setIsMenuOpen(false); }}>
-                  <CalendarDays className="h-4 w-4 me-2" />{t('my_bookings')}
-                </Button>
-                <div className="flex gap-2 px-4 py-2">
-                  <Button variant="outline" size="sm" onClick={() => setLanguage("en")} className={language === 'en' ? 'border-primary' : ''}>English</Button>
-                  <Button variant="outline" size="sm" onClick={() => setLanguage("ur")} className={language === 'ur' ? 'border-primary' : ''}>اردو</Button>
-                </div>
-                <Button className="w-full" variant="destructive" onClick={handleSignOut}>
-                  <LogOut className="h-4 w-4 me-2" />{t('logout')}
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-2 pt-2">
-                <div className="flex gap-2 px-4 py-2">
-                  <Button variant="outline" size="sm" onClick={() => setLanguage("en")}>English</Button>
-                  <Button variant="outline" size="sm" onClick={() => setLanguage("ur")}>اردو</Button>
-                </div>
-                <Button className="w-full" onClick={() => { navigate("/auth"); setIsMenuOpen(false); }}>
-                  <User className="h-4 w-4 me-2" />{t('login')}
-                </Button>
-              </div>
-            )}
-          </nav>
-        )}
       </div>
     </header>
   );
