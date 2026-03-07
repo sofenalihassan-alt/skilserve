@@ -12,6 +12,7 @@ import { SplashScreen } from "@/components/SplashScreen";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { CommandPalette } from "@/components/CommandPalette";
+import { BottomNav } from "@/components/BottomNav";
 import Index from "./pages/Index";
 import Providers from "./pages/Providers";
 import Auth from "./pages/Auth";
@@ -45,6 +46,7 @@ const App = () => {
             <AuthProvider>
               <LanguageProvider>
                 <CommandPalette />
+                <BottomNav />
                 <PushNotificationInit>
                   <Routes>
                     <Route path="/auth" element={<Auth />} />

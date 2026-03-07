@@ -125,7 +125,7 @@ const Providers = () => {
   const clearFilters = () => { setCategory("all"); setPriceRange([0, 2000]); setSortBy("rating"); setSearchQuery(""); };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Header />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">

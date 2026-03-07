@@ -352,7 +352,7 @@ const Bookings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-5xl mx-auto">
