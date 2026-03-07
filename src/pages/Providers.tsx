@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Map, Filter, Search, MessageSquare } from "lucide-react";
+import { Map, Filter, Search, MessageSquare, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LiveActivityToast } from "@/components/LiveActivityToast";
 import { useToast } from "@/hooks/use-toast";
 import { FeedbackDialog } from "@/components/FeedbackDialog";
 import { ProviderCardSkeleton, MapSkeleton } from "@/components/ProviderCardSkeleton";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ProviderWithAvatar {
   id: string | null;
@@ -49,6 +50,37 @@ const Providers = () => {
   const [reviewStats, setReviewStats] = useState<ReviewStats>({});
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
+
+  // Pull-to-refresh state
+  const [pullDistance, setPullDistance] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const touchStartY = useRef(0);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (listRef.current && listRef.current.scrollTop === 0) {
+      touchStartY.current = e.touches[0].clientY;
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isMobile || isRefreshing) return;
+    if (listRef.current && listRef.current.scrollTop === 0) {
+      const delta = e.touches[0].clientY - touchStartY.current;
+      if (delta > 0) setPullDistance(Math.min(delta * 0.5, 100));
+    }
+  }, [isMobile, isRefreshing]);
+
+  const handleTouchEnd = useCallback(async () => {
+    if (pullDistance > 60 && !isRefreshing) {
+      setIsRefreshing(true);
+      setPullDistance(60);
+      await Promise.all([fetchProviders(), fetchReviewStats()]);
+      setIsRefreshing(false);
+    }
+    setPullDistance(0);
+  }, [pullDistance, isRefreshing]);
 
   useEffect(() => {
     const cat = searchParams.get("category");
@@ -172,7 +204,26 @@ const Providers = () => {
               <Map className="h-4 w-4 mr-2" strokeWidth={1.5} />{showMap ? "Hide Map" : "Show Map View"}
             </Button>
           </aside>
-          <main className="flex-1">
+          <main className="flex-1" ref={listRef} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+            {/* Pull-to-refresh indicator */}
+            <AnimatePresence>
+              {(pullDistance > 0 || isRefreshing) && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: pullDistance || 60 }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="flex items-center justify-center overflow-hidden"
+                >
+                  <motion.div
+                    animate={{ rotate: isRefreshing ? 360 : pullDistance * 3 }}
+                    transition={isRefreshing ? { repeat: Infinity, duration: 0.8, ease: "linear" } : { duration: 0 }}
+                  >
+                    <RefreshCw className={`h-6 w-6 text-primary ${pullDistance > 60 ? 'text-primary' : 'text-muted-foreground'}`} />
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div className="mb-6 flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold mb-2">Service Providers Near You</h1>
