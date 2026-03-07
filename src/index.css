@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -75,7 +75,7 @@ All colors MUST be HSL.
   }
 
   .light {
-    --background: 35 30% 95%;
+    --background: 210 17% 97%;
     --foreground: 220 30% 12%;
 
     --card: 35 25% 98%;
@@ -148,7 +148,7 @@ All colors MUST be HSL.
   }
 
   .light body {
-    background: linear-gradient(180deg, hsl(35 30% 95%), hsl(35 20% 92%));
+    background: hsl(210 17% 97%);
   }
 
   /* Custom scrollbar */
