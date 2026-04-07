@@ -26,6 +26,36 @@ const Auth = () => {
     }
   }, [user, navigate]);
 
+  const handleForgotPassword = async () => {
+    const emailInput = document.getElementById("login-email") as HTMLInputElement;
+    const email = emailInput?.value?.trim();
+    if (!email) {
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address first.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) {
+      toast({
+        title: "Error",
+        description: getSafeErrorMessage(error),
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Check Your Email",
+        description: "A password reset link has been sent to your email.",
+      });
+    }
+    setLoading(false);
+  };
+
   const handleGoogleSignIn = async () => {
     setLoading(true);
     const { error } = await lovable.auth.signInWithOAuth("google", {
