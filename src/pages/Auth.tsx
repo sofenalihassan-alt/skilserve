@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { loginSchema, signupSchema, getSafeErrorMessage } from "@/lib/validation";
 import { lovable } from "@/integrations/lovable/index";
+import { supabase } from "@/integrations/supabase/client";
 
 const Auth = () => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
@@ -24,6 +25,36 @@ const Auth = () => {
       navigate("/");
     }
   }, [user, navigate]);
+
+  const handleForgotPassword = async () => {
+    const emailInput = document.getElementById("login-email") as HTMLInputElement;
+    const email = emailInput?.value?.trim();
+    if (!email) {
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address first.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) {
+      toast({
+        title: "Error",
+        description: getSafeErrorMessage(error),
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Check Your Email",
+        description: "A password reset link has been sent to your email.",
+      });
+    }
+    setLoading(false);
+  };
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
@@ -209,6 +240,17 @@ const Auth = () => {
                     placeholder="Enter your password"
                     required
                   />
+                </div>
+                <div className="flex justify-end">
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="px-0 text-sm text-muted-foreground h-auto"
+                    onClick={handleForgotPassword}
+                    disabled={loading}
+                  >
+                    Forgot Password?
+                  </Button>
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Logging in..." : "Login"}

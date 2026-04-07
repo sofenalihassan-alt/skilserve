@@ -21,6 +21,7 @@ import Emergency from "./pages/Emergency";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import Bookings from "./pages/Bookings";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => {
                 <PushNotificationInit>
                   <Routes>
                     <Route path="/auth" element={<Auth />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
                     <Route path="/providers" element={<ProtectedRoute><Providers /></ProtectedRoute>} />
                     <Route path="/provider-registration" element={<ProtectedRoute><ProviderRegistration /></ProtectedRoute>} />
