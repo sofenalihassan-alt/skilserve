@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { loginSchema, signupSchema, getSafeErrorMessage } from "@/lib/validation";
 import { lovable } from "@/integrations/lovable/index";
+import { supabase } from "@/integrations/supabase/client";
 
 const Auth = () => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
@@ -209,6 +210,17 @@ const Auth = () => {
                     placeholder="Enter your password"
                     required
                   />
+                </div>
+                <div className="flex justify-end">
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="px-0 text-sm text-muted-foreground h-auto"
+                    onClick={handleForgotPassword}
+                    disabled={loading}
+                  >
+                    Forgot Password?
+                  </Button>
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Logging in..." : "Login"}
