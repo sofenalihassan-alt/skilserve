@@ -1,13 +1,15 @@
-import { useState, useMemo } from "react";
-import { Star, Clock, Briefcase, Phone, MessageSquareText, ThumbsUp, ShieldCheck, Navigation } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { Star, Clock, Briefcase, Phone, MessageSquareText, ThumbsUp, ShieldCheck, Navigation, CalendarPlus, Lock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { FeedbackDialog } from "@/components/FeedbackDialog";
+import { BookingDialog } from "@/components/BookingDialog";
 
 interface ProviderCardProps {
   provider: {
@@ -33,6 +35,28 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
   const { user } = useAuth();
   const { toast } = useToast();
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [hasConfirmedBooking, setHasConfirmedBooking] = useState(false);
+
+  const isEmergency = provider.availability_24_7;
+
+  // Check if user has a confirmed/in_progress booking with this provider
+  useEffect(() => {
+    if (!user || !provider.id) return;
+    const check = async () => {
+      const { data } = await supabase
+        .from("bookings")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("provider_id", provider.id!)
+        .in("status", ["confirmed", "in_progress"])
+        .limit(1);
+      setHasConfirmedBooking(!!(data && data.length > 0));
+    };
+    check();
+  }, [user, provider.id]);
+
+  const canMessage = isEmergency || hasConfirmedBooking;
 
   const simulatedDistance = useMemo(
     () => Math.floor(Math.random() * 7) + 2,
@@ -73,10 +97,14 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
     }
   };
 
+  const handleBook = () => {
+    if (!user) { navigate('/auth'); return; }
+    setBookingOpen(true);
+  };
+
   return (
     <>
       <Card className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card p-0 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:border-primary/30">
-        {/* Gradient border glow on hover */}
         <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-br from-primary/10 via-transparent to-accent/10" />
 
         <div className="relative p-5 space-y-4">
@@ -102,7 +130,6 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
                 </p>
               )}
 
-              {/* Star rating */}
               <div className="flex items-center gap-1 mt-1.5">
                 {Array.from({ length: 5 }).map((_, s) => (
                   <Star
@@ -122,7 +149,7 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
             </div>
           </div>
 
-          {/* Pill badges row */}
+          {/* Pill badges */}
           <div className="flex flex-wrap gap-2">
             <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400">
               <Navigation className="h-3 w-3" strokeWidth={1.5} />
@@ -154,7 +181,7 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
             </p>
           )}
 
-          {/* Stats + Price row */}
+          {/* Stats + Price */}
           <div className="flex items-center justify-between pt-1">
             <div className="flex items-center gap-3 text-sm text-muted-foreground">
               {provider.years_experience && (
@@ -172,15 +199,37 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
 
           {/* Action buttons */}
           <div className="flex gap-2 pt-1">
-            <Button className="flex-1" size="sm" onClick={handleCall}>
+            <Button className="flex-1" size="sm" onClick={handleBook}>
+              <CalendarPlus className="h-4 w-4 mr-1.5" strokeWidth={1.5} />
+              Book
+            </Button>
+            <Button variant="outline" className="flex-1" size="sm" onClick={handleCall}>
               <Phone className="h-4 w-4 mr-1.5" strokeWidth={1.5} />
               Call
             </Button>
-            <Button variant="outline" className="flex-1" size="sm"
-              onClick={() => navigate('/messages', { state: { providerId: provider.user_id, providerName: provider.business_name } })}>
-              <MessageSquareText className="h-4 w-4 mr-1.5" strokeWidth={1.5} />
-              Message
-            </Button>
+
+            {canMessage ? (
+              <Button variant="outline" className="flex-1" size="sm"
+                onClick={() => navigate('/messages', { state: { providerId: provider.user_id, providerName: provider.business_name } })}>
+                <MessageSquareText className="h-4 w-4 mr-1.5" strokeWidth={1.5} />
+                Message
+              </Button>
+            ) : (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" className="flex-1 opacity-50 cursor-not-allowed" size="sm" disabled>
+                      <Lock className="h-4 w-4 mr-1.5" strokeWidth={1.5} />
+                      Message
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Book first to message this provider</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+
             <Button variant="ghost" size="icon" className="shrink-0" onClick={() => setFeedbackOpen(true)}>
               <ThumbsUp className="h-4 w-4" strokeWidth={1.5} />
             </Button>
@@ -194,6 +243,17 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
         type="provider"
         providerName={provider.business_name || "Provider"}
         providerId={provider.id || undefined}
+      />
+
+      <BookingDialog
+        open={bookingOpen}
+        onOpenChange={setBookingOpen}
+        provider={{
+          id: provider.id,
+          business_name: provider.business_name,
+          category: provider.category,
+          hourly_rate: provider.hourly_rate,
+        }}
       />
     </>
   );
