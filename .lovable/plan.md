@@ -1,29 +1,52 @@
 
 
-# Password Reset Flow
+# Booking System Enhancement
 
-## 1. Add "Forgot Password?" link to Auth.tsx
-Below the password field in the login form, add a button/link that opens a forgot-password dialog or inline form. When clicked, it calls `supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/reset-password' })` and shows a success toast.
+## Overview
+Add a "Book" button to every provider card that opens a booking dialog. The dialog collects problem details, preferred date/time, and urgency. On submit, it creates a pending booking request. On the provider side (Bookings page), providers can manage requests with confirm/decline/start/complete workflow. Message button on booking cards is only shown after a booking is confirmed (except for emergency 24/7 providers where both message and book work simultaneously).
 
-**File:** `src/pages/Auth.tsx`
+## 1. Create BookingDialog Component
+**New file:** `src/components/BookingDialog.tsx`
 
-## 2. Create /reset-password page
-**New file:** `src/pages/ResetPassword.tsx`
+A dialog/sheet that opens when "Book" is clicked on a provider card:
+- Fields: Problem description (textarea, required), preferred date (date picker), estimated duration (select: 1-8 hrs), additional notes, urgency toggle (normal/urgent)
+- Auto-calculates estimated cost from provider's hourly rate × duration
+- On submit: inserts into `bookings` table with status `pending`
+- Shows success toast with booking confirmation
+- Validates all inputs with Zod
 
-- On mount, listen to `supabase.auth.onAuthStateChange` for `PASSWORD_RECOVERY` event
-- When recovery event detected, show a "Set New Password" form (password + confirm password)
-- On submit, call `supabase.auth.updateUser({ password })` 
-- Show success toast and redirect to `/auth`
-- If no recovery event after a few seconds, show "Invalid or expired link" message
-- Validate password match and minimum length client-side
+## 2. Update ProviderCard -- Add Book Button
+**Edit:** `src/components/ProviderCard.tsx`
 
-## 3. Add route in App.tsx
-Add `<Route path="/reset-password" element={<ResetPassword />} />` as a public route (no `ProtectedRoute` wrapper).
+- Add a "Book" button alongside Call and Message in the action row
+- For non-emergency providers: show Book + Call buttons; hide Message until booking is confirmed (this requires checking if user has an active/confirmed booking with this provider)
+- For emergency (24/7) providers: show all three buttons (Book, Call, Message) always
+- The Book button opens the `BookingDialog`
 
-**File:** `src/App.tsx`
+## 3. Update Bookings Page -- Provider Management
+**Edit:** `src/pages/Bookings.tsx`
 
-## Summary
-- **Create:** `src/pages/ResetPassword.tsx`
-- **Edit:** `src/pages/Auth.tsx` (add forgot password link + handler), `src/App.tsx` (add route)
+Enhance the provider-side "Client Requests" tab:
+- Add summary stats at top: pending count, confirmed count, in-progress count, completed count
+- Show customer phone number (from profiles) on confirmed bookings
+- Message button only appears on confirmed+ bookings (provider side)
+- Add a filter/sort for booking status
+- Provider workflow: Pending → Confirm/Decline → Start Work → Mark Complete
+
+## 4. Conditional Message Button Logic
+**Edit:** `src/components/ProviderCard.tsx`
+
+- Query `bookings` table to check if current user has a confirmed/in_progress booking with this provider
+- If yes OR if provider is 24/7 emergency: show Message button
+- If no confirmed booking and not emergency: hide Message button, show tooltip "Book first to message"
+
+## What won't change
+- Database schema stays the same (bookings table already has all needed columns)
+- No new tables or migrations needed
+- RLS policies already support user inserts and provider reads
+
+## Files
+- **Create:** `src/components/BookingDialog.tsx`
+- **Edit:** `src/components/ProviderCard.tsx`, `src/pages/Bookings.tsx`
 - No database changes needed
 
