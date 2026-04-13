@@ -332,7 +332,7 @@ const BookingsTab = () => {
                     <TableCell>{b.total_amount ? `₨${b.total_amount}` : '—'}</TableCell>
                     <TableCell><Badge variant="outline">{b.status}</Badge></TableCell>
                     <TableCell>
-                      <Select onValueChange={(val) => handleStatusChange(b.id, val)}>
+                      <Select onValueChange={(val) => handleStatusChange(b.id, val as "pending" | "confirmed" | "in_progress" | "completed" | "cancelled")}>
                         <SelectTrigger className="w-32 h-8"><SelectValue placeholder="Change" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="pending">Pending</SelectItem>
