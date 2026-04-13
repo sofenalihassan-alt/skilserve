@@ -112,7 +112,12 @@ const ProviderRegistration = () => {
     if (error) {
       toast({ title: "Failed", description: getSafeErrorMessage(error), variant: "destructive" });
     } else {
-      toast({ title: "Success", description: existingProvider ? "Provider profile updated!" : "Provider profile created!" });
+      toast({
+        title: "Success",
+        description: existingProvider
+          ? "Provider profile updated!"
+          : "Your registration is pending admin approval. You'll be notified once approved.",
+      });
       navigate("/profile");
     }
 
