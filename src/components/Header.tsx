@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Menu, X, User, Globe, LogOut, MessageSquareText, Home, Search, AlertTriangle, Briefcase, CalendarDays, Phone } from "lucide-react";
+import { Menu, X, User, Globe, LogOut, MessageSquareText, Home, Search, AlertTriangle, Briefcase, CalendarDays, Phone, Shield } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useAdmin } from "@/hooks/useAdmin";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
@@ -25,6 +26,7 @@ export const Header = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { language, setLanguage, t } = useLanguage();
+  const { isAdmin } = useAdmin();
 
   useEffect(() => {
     if (user) {
@@ -83,6 +85,7 @@ export const Header = () => {
               <NavButton icon={Briefcase} label={t('become_provider')} onClick={() => user ? navigate("/provider-registration") : navigate("/auth")} />
             )}
             {user && <NavButton icon={MessageSquareText} label={t('messages')} onClick={() => navigate("/messages")} badge={unreadCount} />}
+            {isAdmin && <NavButton icon={Shield} label="Admin" onClick={() => navigate("/admin")} />}
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

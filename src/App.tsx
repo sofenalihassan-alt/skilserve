@@ -22,7 +22,9 @@ import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import Bookings from "./pages/Bookings";
 import ResetPassword from "./pages/ResetPassword";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import { AdminRoute } from "@/components/AdminRoute";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +61,7 @@ const App = () => {
                     <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
                     <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                     <Route path="/bookings" element={<ProtectedRoute><Bookings /></ProtectedRoute>} />
+                    <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </PushNotificationInit>

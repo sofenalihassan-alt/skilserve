@@ -271,6 +271,7 @@ export type Database = {
           id: string
           insurance_verified: boolean | null
           is_active: boolean | null
+          is_approved: boolean
           license_number: string | null
           specialization: string | null
           updated_at: string
@@ -287,6 +288,7 @@ export type Database = {
           id?: string
           insurance_verified?: boolean | null
           is_active?: boolean | null
+          is_approved?: boolean
           license_number?: string | null
           specialization?: string | null
           updated_at?: string
@@ -303,6 +305,7 @@ export type Database = {
           id?: string
           insurance_verified?: boolean | null
           is_active?: boolean | null
+          is_approved?: boolean
           license_number?: string | null
           specialization?: string | null
           updated_at?: string
@@ -400,6 +403,7 @@ export type Database = {
           id: string | null
           insurance_verified: boolean | null
           is_active: boolean | null
+          is_approved: boolean | null
           specialization: string | null
           updated_at: string | null
           user_id: string | null
