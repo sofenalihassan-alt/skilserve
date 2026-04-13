@@ -48,7 +48,7 @@ const DashboardTab = () => {
     });
 
     // Booking status counts
-    const statuses = ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'];
+    const statuses = ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'] as const;
     const counts: Record<string, number> = {};
     await Promise.all(statuses.map(async (s) => {
       const { count } = await supabase.from('bookings').select('id', { count: 'exact', head: true }).eq('status', s);
@@ -286,7 +286,7 @@ const BookingsTab = () => {
     setLoading(false);
   };
 
-  const handleStatusChange = async (id: string, status: string) => {
+  const handleStatusChange = async (id: string, status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled") => {
     const { error } = await supabase.from('bookings').update({ status }).eq('id', id);
     if (error) toast({ title: "Error", description: "Failed to update", variant: "destructive" });
     else { toast({ title: "Updated!" }); fetchBookings(); }
