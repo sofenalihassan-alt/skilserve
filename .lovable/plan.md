@@ -1,52 +1,89 @@
 
 
-# Booking System Enhancement
+# Admin Panel Implementation
 
 ## Overview
-Add a "Book" button to every provider card that opens a booking dialog. The dialog collects problem details, preferred date/time, and urgency. On submit, it creates a pending booking request. On the provider side (Bookings page), providers can manage requests with confirm/decline/start/complete workflow. Message button on booking cards is only shown after a booking is confirmed (except for emergency 24/7 providers where both message and book work simultaneously).
+Build a complete admin panel at `/admin` with role-based access. Your email (`alihassan39se@gmail.com`) will be hardcoded as the initial admin. The panel will be hidden from all normal users and providers.
 
-## 1. Create BookingDialog Component
-**New file:** `src/components/BookingDialog.tsx`
+## Database Changes
 
-A dialog/sheet that opens when "Book" is clicked on a provider card:
-- Fields: Problem description (textarea, required), preferred date (date picker), estimated duration (select: 1-8 hrs), additional notes, urgency toggle (normal/urgent)
-- Auto-calculates estimated cost from provider's hourly rate × duration
-- On submit: inserts into `bookings` table with status `pending`
-- Shows success toast with booking confirmation
-- Validates all inputs with Zod
+### 1. Migration: Add `is_approved` to `service_providers`
+Add a boolean column `is_approved` (default `false`) so new providers require admin approval before appearing. Update the RLS SELECT policy to only show approved+active providers to non-admins.
 
-## 2. Update ProviderCard -- Add Book Button
-**Edit:** `src/components/ProviderCard.tsx`
+### 2. Migration: Add admin RLS policies
+- Allow admins to SELECT all rows on `profiles`, `service_providers`, `bookings`, `user_roles`, `messages`, `reviews`, `website_feedback`, `testimonials`
+- Allow admins to UPDATE `service_providers` (for approval/suspension)
+- Allow admins to UPDATE `bookings` (for dispute resolution)
+- Allow admins to INSERT/UPDATE/DELETE `testimonials`
+- Allow admins to INSERT `user_roles` (to grant/revoke roles)
+- Allow admins to DELETE `user_roles`
+- All policies use `public.has_role(auth.uid(), 'admin')`
 
-- Add a "Book" button alongside Call and Message in the action row
-- For non-emergency providers: show Book + Call buttons; hide Message until booking is confirmed (this requires checking if user has an active/confirmed booking with this provider)
-- For emergency (24/7) providers: show all three buttons (Book, Call, Message) always
-- The Book button opens the `BookingDialog`
+### 3. Seed admin role
+Insert admin role for your account: find user by email in `auth.users`, insert into `user_roles` with role `'admin'`.
 
-## 3. Update Bookings Page -- Provider Management
-**Edit:** `src/pages/Bookings.tsx`
+## New Files
 
-Enhance the provider-side "Client Requests" tab:
-- Add summary stats at top: pending count, confirmed count, in-progress count, completed count
-- Show customer phone number (from profiles) on confirmed bookings
-- Message button only appears on confirmed+ bookings (provider side)
-- Add a filter/sort for booking status
-- Provider workflow: Pending → Confirm/Decline → Start Work → Mark Complete
+### `src/hooks/useAdmin.tsx`
+A hook that checks `has_role(auth.uid(), 'admin')` via RPC and caches the result. Returns `{ isAdmin, loading }`.
 
-## 4. Conditional Message Button Logic
-**Edit:** `src/components/ProviderCard.tsx`
+### `src/pages/Admin.tsx`
+Main admin page with tab-based layout:
 
-- Query `bookings` table to check if current user has a confirmed/in_progress booking with this provider
-- If yes OR if provider is 24/7 emergency: show Message button
-- If no confirmed booking and not emergency: hide Message button, show tooltip "Book first to message"
+**Dashboard tab:**
+- Stats cards: total users, providers, bookings, revenue (completed bookings sum)
+- Counts by booking status
+- Recent activity feed
 
-## What won't change
-- Database schema stays the same (bookings table already has all needed columns)
-- No new tables or migrations needed
-- RLS policies already support user inserts and provider reads
+**Users tab:**
+- Table of all profiles with search/filter
+- View user details, booking history
+- Ban/suspend capability (set a flag or delete)
 
-## Files
-- **Create:** `src/components/BookingDialog.tsx`
-- **Edit:** `src/components/ProviderCard.tsx`, `src/pages/Bookings.tsx`
-- No database changes needed
+**Providers tab:**
+- Table of all providers with approval status filter
+- Approve/Reject buttons for pending providers (sets `is_approved`)
+- Suspend/reactivate (sets `is_active`)
+- View provider details, ratings, booking count
+
+**Bookings tab:**
+- Table of all bookings with status filter
+- View booking details, cancel/refund actions
+- Dispute resolution
+
+**Content tab:**
+- Manage testimonials (add/edit/delete)
+- View website feedback with ratings
+- Manage service categories display
+
+**Settings tab:**
+- Change admin email/password (via `supabase.auth.updateUser`)
+- Platform settings (stored in a new `platform_settings` table or localStorage for now)
+
+### `src/components/AdminRoute.tsx`
+A route guard that checks admin role and redirects non-admins to `/`.
+
+## Edited Files
+
+### `src/App.tsx`
+- Add `/admin` route wrapped in `AdminRoute`
+
+### `src/components/Header.tsx`
+- Show "Admin" link only when `useAdmin().isAdmin` is true
+
+### `src/pages/ProviderRegistration.tsx`
+- After provider registration, set `is_approved = false` and show message "Your registration is pending admin approval"
+
+### `src/pages/Providers.tsx`
+- Filter query to only show `is_approved = true` providers
+
+## Security
+- All admin queries go through RLS policies using `has_role()` security definer function
+- No client-side role checks for data access -- all enforced at DB level
+- Admin route guard is UX only; real security is in RLS
+
+## Files Summary
+- **Create:** `src/hooks/useAdmin.tsx`, `src/pages/Admin.tsx`, `src/components/AdminRoute.tsx`
+- **Edit:** `src/App.tsx`, `src/components/Header.tsx`, `src/pages/ProviderRegistration.tsx`, `src/pages/Providers.tsx`
+- **Migrations:** Add `is_approved` column, admin RLS policies, seed admin role
 
