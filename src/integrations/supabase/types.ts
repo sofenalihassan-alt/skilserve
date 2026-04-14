@@ -136,6 +136,57 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_read: boolean
+          link: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      platform_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
@@ -314,6 +365,30 @@ export type Database = {
         }
         Relationships: []
       }
+      terms_acceptance: {
+        Row: {
+          accepted_at: string
+          id: string
+          ip_address: string | null
+          terms_version: string
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string
+          id?: string
+          ip_address?: string | null
+          terms_version?: string
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string
+          id?: string
+          ip_address?: string | null
+          terms_version?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       testimonials: {
         Row: {
           created_at: string
@@ -429,6 +504,13 @@ export type Database = {
         | "in_progress"
         | "completed"
         | "cancelled"
+      notification_type:
+        | "booking_update"
+        | "new_message"
+        | "review_received"
+        | "provider_approved"
+        | "provider_rejected"
+        | "system"
       service_category:
         | "plumbing"
         | "electrical"
@@ -578,6 +660,14 @@ export const Constants = {
         "in_progress",
         "completed",
         "cancelled",
+      ],
+      notification_type: [
+        "booking_update",
+        "new_message",
+        "review_received",
+        "provider_approved",
+        "provider_rejected",
+        "system",
       ],
       service_category: [
         "plumbing",
