@@ -496,6 +496,16 @@ const SettingsTab = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [updating, setUpdating] = useState(false);
+  const [platformSettings, setPlatformSettings] = useState<Record<string, string>>({});
+  const [savingSettings, setSavingSettings] = useState(false);
+
+  useEffect(() => {
+    supabase.from('platform_settings').select('key, value').then(({ data }) => {
+      const map: Record<string, string> = {};
+      (data || []).forEach((r) => { map[r.key] = r.value; });
+      setPlatformSettings(map);
+    });
+  }, []);
 
   const handleUpdateEmail = async () => {
     if (!newEmail) return;
@@ -525,8 +535,46 @@ const SettingsTab = () => {
     setConfirmPassword('');
   };
 
+  const handleSavePlatformSettings = async () => {
+    setSavingSettings(true);
+    const entries = Object.entries(platformSettings);
+    for (const [key, value] of entries) {
+      await supabase.from('platform_settings').update({ value, updated_at: new Date().toISOString() }).eq('key', key);
+    }
+    toast({ title: "Settings saved!" });
+    setSavingSettings(false);
+  };
+
   return (
     <div className="space-y-6 max-w-lg">
+      <Card>
+        <CardHeader>
+          <CardTitle>Contact & Platform Settings</CardTitle>
+          <CardDescription>These settings are displayed on the Contact page and used across the platform.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Contact Phone</Label>
+            <Input value={platformSettings.contact_phone || ''} onChange={(e) => setPlatformSettings({ ...platformSettings, contact_phone: e.target.value })} />
+          </div>
+          <div className="space-y-2">
+            <Label>Contact Email</Label>
+            <Input value={platformSettings.contact_email || ''} onChange={(e) => setPlatformSettings({ ...platformSettings, contact_email: e.target.value })} />
+          </div>
+          <div className="space-y-2">
+            <Label>Support Hours</Label>
+            <Input value={platformSettings.support_hours || ''} onChange={(e) => setPlatformSettings({ ...platformSettings, support_hours: e.target.value })} />
+          </div>
+          <div className="space-y-2">
+            <Label>Terms Version</Label>
+            <Input value={platformSettings.terms_version || ''} onChange={(e) => setPlatformSettings({ ...platformSettings, terms_version: e.target.value })} placeholder="e.g. 1.1" />
+            <p className="text-xs text-muted-foreground">Changing this will require all users to re-accept the Terms of Service.</p>
+          </div>
+          <Button onClick={handleSavePlatformSettings} disabled={savingSettings} size="sm">
+            {savingSettings ? 'Saving...' : 'Save Settings'}
+          </Button>
+        </CardContent>
+      </Card>
       <Card>
         <CardHeader>
           <CardTitle>Admin Account</CardTitle>
