@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NotificationCenter } from "@/components/NotificationCenter";
 import logo from "@/assets/logo.png";
 import {
   DropdownMenu,
@@ -85,6 +86,7 @@ export const Header = () => {
               <NavButton icon={Briefcase} label={t('become_provider')} onClick={() => user ? navigate("/provider-registration") : navigate("/auth")} />
             )}
             {user && <NavButton icon={MessageSquareText} label={t('messages')} onClick={() => navigate("/messages")} badge={unreadCount} />}
+            {user && <NotificationCenter />}
             {isAdmin && <NavButton icon={Shield} label="Admin" onClick={() => navigate("/admin")} />}
             
             <DropdownMenu>
@@ -128,6 +130,7 @@ export const Header = () => {
             <Button variant="ghost" size="icon" onClick={() => window.dispatchEvent(new Event('open-command-palette'))} title={t('find_services')}>
               <Search className="h-5 w-5" />
             </Button>
+            {user && <NotificationCenter />}
             <ThemeToggle />
           </div>
         </div>

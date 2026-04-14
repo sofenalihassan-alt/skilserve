@@ -37,8 +37,9 @@ export const Footer = () => {
               <Link to="/providers" className="hover:text-primary transition-colors">{t('find_services')}</Link>
               <Link to="/emergency" className="hover:text-primary transition-colors">{t('emergency')}</Link>
               <Link to="/provider-registration" className="hover:text-primary transition-colors">{t('become_provider')}</Link>
-              <Link to="#" className="hover:text-primary transition-colors">Terms of Service</Link>
-              <Link to="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
+              <Link to="/contact" className="hover:text-primary transition-colors">Contact Us</Link>
+              <Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
+              <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
             </div>
           </div>
         </div>

@@ -13,6 +13,8 @@ import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { CommandPalette } from "@/components/CommandPalette";
 import { BottomNav } from "@/components/BottomNav";
+import { TermsAcceptanceDialog } from "@/components/TermsAcceptanceDialog";
+import { AdminRoute } from "@/components/AdminRoute";
 import Index from "./pages/Index";
 import Providers from "./pages/Providers";
 import Auth from "./pages/Auth";
@@ -23,8 +25,10 @@ import Profile from "./pages/Profile";
 import Bookings from "./pages/Bookings";
 import ResetPassword from "./pages/ResetPassword";
 import Admin from "./pages/Admin";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
-import { AdminRoute } from "@/components/AdminRoute";
 
 const queryClient = new QueryClient();
 
@@ -50,10 +54,14 @@ const App = () => {
               <LanguageProvider>
                 <CommandPalette />
                 <BottomNav />
+                <TermsAcceptanceDialog />
                 <PushNotificationInit>
                   <Routes>
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/terms" element={<TermsOfService />} />
+                    <Route path="/privacy" element={<PrivacyPolicy />} />
+                    <Route path="/contact" element={<Contact />} />
                     <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
                     <Route path="/providers" element={<ProtectedRoute><Providers /></ProtectedRoute>} />
                     <Route path="/provider-registration" element={<ProtectedRoute><ProviderRegistration /></ProtectedRoute>} />
