@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { InvoiceGenerator } from '@/components/InvoiceGenerator';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -322,6 +323,12 @@ const Bookings = () => {
                 <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
                 Message
               </Button>
+            )}
+            {booking.status === 'completed' && (
+              <InvoiceGenerator
+                booking={booking}
+                customerName={isProviderView ? booking.profile?.full_name : undefined}
+              />
             )}
           </div>
         </CardContent>
