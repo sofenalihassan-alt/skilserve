@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { AvatarUpload } from '@/components/AvatarUpload';
 import { Separator } from '@/components/ui/separator';
 import { CountryStateSelector } from '@/components/CountryStateSelector';
+import { AvailabilityCalendar } from '@/components/AvailabilityCalendar';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -27,6 +28,7 @@ interface ProfileData {
 }
 
 interface ProviderData {
+  id: string;
   business_name: string;
   category: string;
   hourly_rate: number;
@@ -89,7 +91,7 @@ const Profile = () => {
   const fetchProviderData = async () => {
     if (!user) return;
     const { data } = await supabase.from('service_providers')
-      .select('business_name, category, hourly_rate, years_experience, specialization, is_active')
+      .select('id, business_name, category, hourly_rate, years_experience, specialization, is_active')
       .eq('user_id', user.id).maybeSingle();
     if (data) setProviderData(data);
   };
@@ -295,6 +297,10 @@ const Profile = () => {
                 </div>
               </CardContent>
             </Card>
+          )}
+
+          {providerData && (
+            <AvailabilityCalendar providerId={providerData.id} />
           )}
         </div>
       </main>
