@@ -1,178 +1,67 @@
 
 
-# Notification Center, Legal Pages, Contact/Support Page
+# Fix Terms Dialog + Provider Availability + Invoice Generation + Email Notifications
 
-## Overview
-Three major features in one pass: (1) In-app notification center for booking/message/review activity, (2) Terms of Service and Privacy Policy pages with mandatory user acceptance tracking, (3) Contact Us / Support page with admin-editable contact info.
+## 1. Fix Terms Acceptance Dialog Button Visibility
+The "Accept & Continue" button exists in the code but is likely being cut off on smaller viewports because the DialogContent doesn't scroll its own content.
 
-## Database Changes
+**Fix:** Wrap the dialog body (scroll area + checkbox + button) in a flex column with overflow-y-auto and max-height so the button is always visible. Add padding-bottom to ensure the button isn't hidden.
 
-### Migration 1: Create `notifications` table
-```sql
-CREATE TYPE notification_type AS ENUM ('booking_update', 'new_message', 'review_received', 'provider_approved', 'provider_rejected', 'system');
+**File:** `src/components/TermsAcceptanceDialog.tsx`
 
-CREATE TABLE notifications (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
-  type notification_type NOT NULL,
-  title text NOT NULL,
-  body text NOT NULL,
-  link text,
-  is_read boolean NOT NULL DEFAULT false,
-  created_at timestamptz NOT NULL DEFAULT now()
-);
+## 2. Provider Availability Calendar
 
-ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
--- Users see own notifications
-CREATE POLICY "Users can view own notifications" ON notifications FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can update own notifications" ON notifications FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Users can delete own notifications" ON notifications FOR DELETE USING (auth.uid() = user_id);
--- System/admin can insert
-CREATE POLICY "System can insert notifications" ON notifications FOR INSERT WITH CHECK (true);
--- Admins see all
-CREATE POLICY "Admins can view all notifications" ON notifications FOR SELECT USING (has_role(auth.uid(), 'admin'));
+### Database
+- Add `provider_availability` table with columns: `id`, `provider_id`, `day_of_week` (0-6), `start_time` (time), `end_time` (time), `is_available` (boolean), `specific_date` (date, nullable for one-off overrides)
+- RLS: providers can CRUD their own rows, anyone can SELECT
 
-ALTER PUBLICATION supabase_realtime ADD TABLE notifications;
-```
+### New Files
+- `src/components/AvailabilityCalendar.tsx` -- A weekly calendar grid where providers set their available slots (e.g., Mon 9AM-5PM). Shown on the provider's profile/settings page.
+- `src/components/ProviderAvailabilityView.tsx` -- Read-only view shown on provider cards or booking dialog so users see when the provider is free.
 
-### Migration 2: Create `terms_acceptance` table
-```sql
-CREATE TABLE terms_acceptance (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
-  terms_version text NOT NULL DEFAULT '1.0',
-  accepted_at timestamptz NOT NULL DEFAULT now(),
-  ip_address text,
-  UNIQUE(user_id, terms_version)
-);
+### Edits
+- `src/pages/Profile.tsx` -- Add availability management section for users who are providers
+- `src/components/BookingDialog.tsx` -- Show provider's available slots when picking date/time, disable unavailable times
 
-ALTER TABLE terms_acceptance ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own acceptance" ON terms_acceptance FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own acceptance" ON terms_acceptance FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Admins can view all" ON terms_acceptance FOR SELECT USING (has_role(auth.uid(), 'admin'));
-```
+## 3. Invoice/Receipt PDF Generation
 
-### Migration 3: Create `platform_settings` table
-```sql
-CREATE TABLE platform_settings (
-  key text PRIMARY KEY,
-  value text NOT NULL,
-  updated_at timestamptz NOT NULL DEFAULT now()
-);
+### New Files
+- `src/components/InvoiceGenerator.tsx` -- Component that generates a downloadable PDF receipt for completed bookings using browser-side PDF generation (jsPDF or html2canvas). Includes: booking ID, date, provider name, service description, duration, amount, status, both party details.
 
-ALTER TABLE platform_settings ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can read settings" ON platform_settings FOR SELECT USING (true);
-CREATE POLICY "Admins can update settings" ON platform_settings FOR UPDATE USING (has_role(auth.uid(), 'admin'));
-CREATE POLICY "Admins can insert settings" ON platform_settings FOR INSERT WITH CHECK (has_role(auth.uid(), 'admin'));
+### Edits
+- `src/pages/Bookings.tsx` -- Add "Download Receipt" button on completed bookings that triggers the PDF generation
 
--- Seed default contact info
-INSERT INTO platform_settings (key, value) VALUES
-  ('contact_phone', '03024942710'),
-  ('contact_email', 'alihassan39se@gmail.com'),
-  ('support_hours', 'Mon-Sat 9AM-6PM PKT'),
-  ('terms_version', '1.0');
-```
+## 4. Email Notifications
 
-### Migration 4: Trigger to auto-create notifications on booking status changes
-```sql
-CREATE OR REPLACE FUNCTION notify_booking_update()
-RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
-BEGIN
-  IF OLD.status IS DISTINCT FROM NEW.status THEN
-    -- Notify customer
-    INSERT INTO notifications (user_id, type, title, body, link)
-    VALUES (NEW.user_id, 'booking_update',
-      'Booking ' || NEW.status,
-      'Your booking has been ' || NEW.status || '.',
-      '/bookings');
-    -- Notify provider
-    INSERT INTO notifications (user_id, type, title, body, link)
-    SELECT sp.user_id, 'booking_update',
-      'Booking ' || NEW.status,
-      'A booking has been ' || NEW.status || '.',
-      '/bookings'
-    FROM service_providers sp WHERE sp.id = NEW.provider_id;
-  END IF;
-  RETURN NEW;
-END;
-$$;
+This requires setting up the email infrastructure. Steps:
+1. Check if an email domain is configured
+2. Set up email infrastructure
+3. Scaffold transactional email templates for:
+   - **Booking confirmation** -- sent to user when booking is created
+   - **Booking status update** -- sent to user/provider when status changes
+   - **New message notification** -- sent when a new message is received
+   - **Provider approved/rejected** -- sent when admin approves/rejects provider
+4. Wire up triggers in the relevant UI code
 
-CREATE TRIGGER trg_booking_notification
-AFTER UPDATE ON bookings FOR EACH ROW
-EXECUTE FUNCTION notify_booking_update();
-```
+### Templates to create
+- `booking-confirmation.tsx`
+- `booking-status-update.tsx`
+- `new-message-alert.tsx`
+- `provider-approval.tsx`
 
-### Migration 5: Trigger for new message notifications
-```sql
-CREATE OR REPLACE FUNCTION notify_new_message()
-RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
-BEGIN
-  INSERT INTO notifications (user_id, type, title, body, link)
-  VALUES (NEW.receiver_id, 'new_message', 'New Message',
-    'You have a new message.', '/messages');
-  RETURN NEW;
-END;
-$$;
+### Edits
+- `src/components/BookingDialog.tsx` -- invoke email after booking creation
+- `src/pages/Bookings.tsx` -- invoke email on status change actions
+- `src/pages/Admin.tsx` -- invoke email when approving/rejecting providers
 
-CREATE TRIGGER trg_message_notification
-AFTER INSERT ON messages FOR EACH ROW
-EXECUTE FUNCTION notify_new_message();
-```
+## Technical Details
+- **Availability table** uses day_of_week (0=Sun..6=Sat) for recurring weekly slots, with optional `specific_date` for date-specific overrides
+- **PDF generation** uses jsPDF library (client-side, no server needed)
+- **Email** uses Lovable's built-in email infrastructure with `send-transactional-email` Edge Function
 
-## New Files
-
-### `src/components/NotificationCenter.tsx`
-- Bell icon button in the Header with unread count badge
-- Dropdown/popover showing recent notifications grouped by type
-- "Mark all read" and individual mark-read on click
-- Real-time subscription to `notifications` table for live updates
-- Click notification navigates to its `link` field
-- "Clear all" button
-
-### `src/pages/TermsOfService.tsx`
-- Comprehensive Terms of Service page covering: user eligibility, account responsibilities, service provider obligations, booking & payment terms, dispute resolution, limitation of liability, termination, governing law (Pakistan), intellectual property, prohibited conduct
-- Professional layout with numbered sections and table of contents
-- Version display from `platform_settings`
-
-### `src/pages/PrivacyPolicy.tsx`
-- Full privacy policy: data collection, usage, sharing, cookies, security measures, user rights, data retention, third-party services, children's privacy, contact for privacy concerns
-- GDPR/local compliance language
-- Last updated date from terms_version
-
-### `src/pages/Contact.tsx`
-- Contact info pulled from `platform_settings` table (phone, email, support hours) so admin can change anytime
-- Contact form: name, email, subject, message -- submits to `website_feedback` table
-- FAQ section with common questions (accordion)
-- Office hours display
-- WhatsApp quick link using the contact phone
-
-### `src/components/TermsAcceptanceDialog.tsx`
-- Modal shown to authenticated users who haven't accepted current terms version
-- Checks `terms_acceptance` table for current version
-- User must scroll through and check "I agree" before proceeding
-- Records acceptance with timestamp in `terms_acceptance` table
-- Blocks app usage until accepted (shown as a modal overlay)
-
-## Edited Files
-
-### `src/App.tsx`
-- Add routes: `/terms`, `/privacy`, `/contact` (public, no ProtectedRoute)
-- Add `<TermsAcceptanceDialog />` inside AuthProvider for logged-in users
-
-### `src/components/Header.tsx`
-- Add `<NotificationCenter />` bell icon next to messages button (desktop)
-- Show notification bell on mobile top bar too
-
-### `src/components/Footer.tsx`
-- Update Terms/Privacy links to point to `/terms` and `/privacy`
-- Add "Contact Us" link to `/contact`
-
-### `src/pages/Admin.tsx` (Settings tab)
-- Add "Contact Settings" section to edit contact_phone, contact_email, support_hours from `platform_settings`
-- Add "Terms Version" field -- bumping version forces all users to re-accept
-
-## Summary
-- **Create:** `NotificationCenter.tsx`, `TermsAcceptanceDialog.tsx`, `TermsOfService.tsx`, `PrivacyPolicy.tsx`, `Contact.tsx`
-- **Edit:** `App.tsx`, `Header.tsx`, `Footer.tsx`, `Admin.tsx`
-- **Migrations:** 5 migrations (notifications table, terms_acceptance table, platform_settings table, booking notification trigger, message notification trigger)
+## Files Summary
+- **Create:** `src/components/AvailabilityCalendar.tsx`, `src/components/ProviderAvailabilityView.tsx`, `src/components/InvoiceGenerator.tsx`
+- **Edit:** `src/components/TermsAcceptanceDialog.tsx`, `src/pages/Profile.tsx`, `src/components/BookingDialog.tsx`, `src/pages/Bookings.tsx`, `src/pages/Admin.tsx`
+- **Migrations:** `provider_availability` table + RLS
+- **Email:** Domain check, infrastructure setup, 4 transactional templates, trigger wiring
 
