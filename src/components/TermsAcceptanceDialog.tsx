@@ -64,14 +64,14 @@ export const TermsAcceptanceDialog = () => {
 
   return (
     <Dialog open={show} onOpenChange={() => {}}>
-      <DialogContent className="max-w-md [&>button]:hidden" onPointerDownOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()}>
-        <DialogHeader>
+      <DialogContent className="max-w-md [&>button]:hidden flex flex-col max-h-[85vh]" onPointerDownOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()}>
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle>Terms of Service & Privacy Policy</DialogTitle>
           <DialogDescription>
             Please review and accept our terms to continue using Skill Serve (v{currentVersion}).
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="max-h-48 border rounded-md p-3 text-sm text-muted-foreground">
+        <ScrollArea className="flex-1 min-h-0 border rounded-md p-3 text-sm text-muted-foreground">
           <p className="mb-2">By using Skill Serve, you agree to our Terms of Service and Privacy Policy. These documents govern your use of the platform, including:</p>
           <ul className="list-disc pl-4 space-y-1">
             <li>Account registration and responsibilities</li>
@@ -86,15 +86,17 @@ export const TermsAcceptanceDialog = () => {
             Full documents: <Link to="/terms" className="text-primary underline" onClick={() => window.open("/terms", "_blank")}>Terms of Service</Link> | <Link to="/privacy" className="text-primary underline" onClick={() => window.open("/privacy", "_blank")}>Privacy Policy</Link>
           </p>
         </ScrollArea>
-        <div className="flex items-center gap-2 mt-2">
-          <Checkbox id="agree" checked={agreed} onCheckedChange={(v) => setAgreed(v === true)} />
-          <label htmlFor="agree" className="text-sm cursor-pointer">
-            I have read and agree to the Terms of Service and Privacy Policy
-          </label>
+        <div className="flex-shrink-0 space-y-3 pt-2">
+          <div className="flex items-center gap-2">
+            <Checkbox id="agree" checked={agreed} onCheckedChange={(v) => setAgreed(v === true)} />
+            <label htmlFor="agree" className="text-sm cursor-pointer">
+              I have read and agree to the Terms of Service and Privacy Policy
+            </label>
+          </div>
+          <Button onClick={handleAccept} disabled={!agreed || submitting} className="w-full">
+            {submitting ? "Accepting..." : "Accept & Continue"}
+          </Button>
         </div>
-        <Button onClick={handleAccept} disabled={!agreed || submitting} className="w-full mt-2">
-          {submitting ? "Accepting..." : "Accept & Continue"}
-        </Button>
       </DialogContent>
     </Dialog>
   );
