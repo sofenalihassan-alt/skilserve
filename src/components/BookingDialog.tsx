@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { ProviderAvailabilityView } from "@/components/ProviderAvailabilityView";
 
 import {
   Dialog,
@@ -201,6 +202,13 @@ export const BookingDialog = ({ open, onOpenChange, provider }: BookingDialogPro
               className="min-h-[60px]"
             />
           </div>
+
+          {/* Provider Availability */}
+          {provider.id && (
+            <div className="rounded-lg border border-border/50 p-3">
+              <ProviderAvailabilityView providerId={provider.id} />
+            </div>
+          )}
 
           {/* Estimated Cost */}
           <div className="rounded-lg bg-primary/5 border border-primary/20 p-4">
