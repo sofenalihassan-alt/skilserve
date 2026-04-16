@@ -125,13 +125,16 @@ export const Header = () => {
             )}
           </nav>
 
-          {/* Mobile: simplified top bar (bottom nav handles main navigation) */}
-          <div className="flex md:hidden items-center gap-1">
+          {/* Mobile: logo + search + notifications prominently at top */}
+          <div className="flex md:hidden items-center gap-2">
             <Button variant="ghost" size="icon" onClick={() => window.dispatchEvent(new Event('open-command-palette'))} title={t('find_services')}>
               <Search className="h-5 w-5" />
             </Button>
-            {user && <NotificationCenter />}
-            <ThemeToggle />
+            {user && (
+              <div className="relative">
+                <NotificationCenter />
+              </div>
+            )}
           </div>
         </div>
 
