@@ -9,6 +9,8 @@ import { AvatarUpload } from '@/components/AvatarUpload';
 import { Separator } from '@/components/ui/separator';
 import { CountryStateSelector } from '@/components/CountryStateSelector';
 import { AvailabilityCalendar } from '@/components/AvailabilityCalendar';
+import { VerificationCenter } from '@/components/VerificationCenter';
+import { DeleteAccountDialog } from '@/components/DeleteAccountDialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -35,6 +37,7 @@ interface ProviderData {
   years_experience: number | null;
   specialization: string | null;
   is_active: boolean;
+  verification_status: string;
 }
 
 const Profile = () => {
@@ -300,8 +303,27 @@ const Profile = () => {
           )}
 
           {providerData && (
+            <VerificationCenter
+              providerId={providerData.id}
+              verificationStatus={providerData.verification_status || 'unverified'}
+            />
+          )}
+
+          {providerData && (
             <AvailabilityCalendar providerId={providerData.id} />
           )}
+
+          <Card className="border-destructive/30 bg-destructive/5 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-destructive">Danger Zone</CardTitle>
+              <CardDescription>
+                Permanently delete your account. This cannot be undone.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <DeleteAccountDialog />
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>
