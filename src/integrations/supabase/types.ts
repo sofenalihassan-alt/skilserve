@@ -98,6 +98,57 @@ export type Database = {
         }
         Relationships: []
       }
+      disputes: {
+        Row: {
+          admin_notes: string | null
+          against_user_id: string
+          booking_id: string
+          created_at: string
+          description: string
+          evidence_urls: string[] | null
+          id: string
+          raised_by: string
+          reason: string
+          resolution: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: Database["public"]["Enums"]["dispute_status"]
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          against_user_id: string
+          booking_id: string
+          created_at?: string
+          description: string
+          evidence_urls?: string[] | null
+          id?: string
+          raised_by: string
+          reason: string
+          resolution?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["dispute_status"]
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          against_user_id?: string
+          booking_id?: string
+          created_at?: string
+          description?: string
+          evidence_urls?: string[] | null
+          id?: string
+          raised_by?: string
+          reason?: string
+          resolution?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["dispute_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           booking_id: string | null
@@ -378,6 +429,7 @@ export type Database = {
           specialization: string | null
           updated_at: string
           user_id: string
+          verification_status: Database["public"]["Enums"]["verification_status"]
           years_experience: number | null
         }
         Insert: {
@@ -395,6 +447,7 @@ export type Database = {
           specialization?: string | null
           updated_at?: string
           user_id: string
+          verification_status?: Database["public"]["Enums"]["verification_status"]
           years_experience?: number | null
         }
         Update: {
@@ -412,6 +465,7 @@ export type Database = {
           specialization?: string | null
           updated_at?: string
           user_id?: string
+          verification_status?: Database["public"]["Enums"]["verification_status"]
           years_experience?: number | null
         }
         Relationships: []
@@ -488,6 +542,48 @@ export type Database = {
         }
         Relationships: []
       }
+      verification_documents: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          doc_type: Database["public"]["Enums"]["verification_doc_type"]
+          file_path: string
+          id: string
+          provider_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["verification_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          doc_type: Database["public"]["Enums"]["verification_doc_type"]
+          file_path: string
+          id?: string
+          provider_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["verification_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          doc_type?: Database["public"]["Enums"]["verification_doc_type"]
+          file_path?: string
+          id?: string
+          provider_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["verification_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       website_feedback: {
         Row: {
           comment: string | null
@@ -555,6 +651,7 @@ export type Database = {
         | "in_progress"
         | "completed"
         | "cancelled"
+      dispute_status: "pending" | "investigating" | "resolved" | "rejected"
       notification_type:
         | "booking_update"
         | "new_message"
@@ -577,6 +674,13 @@ export type Database = {
         | "moving"
         | "security"
         | "tiling"
+      verification_doc_type:
+        | "cnic_front"
+        | "cnic_back"
+        | "selfie_with_id"
+        | "license"
+        | "certificate"
+      verification_status: "unverified" | "pending" | "verified" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -712,6 +816,7 @@ export const Constants = {
         "completed",
         "cancelled",
       ],
+      dispute_status: ["pending", "investigating", "resolved", "rejected"],
       notification_type: [
         "booking_update",
         "new_message",
@@ -736,6 +841,14 @@ export const Constants = {
         "security",
         "tiling",
       ],
+      verification_doc_type: [
+        "cnic_front",
+        "cnic_back",
+        "selfie_with_id",
+        "license",
+        "certificate",
+      ],
+      verification_status: ["unverified", "pending", "verified", "rejected"],
     },
   },
 } as const
