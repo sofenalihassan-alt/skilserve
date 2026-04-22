@@ -25,6 +25,7 @@ interface ProviderCardProps {
     insurance_verified?: boolean | null;
     availability_24_7?: boolean | null;
     avatar_url?: string | null;
+    verification_status?: string | null;
   };
   avgRating?: number;
   reviewCount?: number;
@@ -155,10 +156,16 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
               <Navigation className="h-3 w-3" strokeWidth={1.5} />
               {simulatedDistance}km Away
             </span>
+            {provider.verification_status === 'verified' && (
+              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400 ring-1 ring-amber-500/30">
+                <ShieldCheck className="h-3 w-3" strokeWidth={1.5} />
+                Verified ✓
+              </span>
+            )}
             {provider.insurance_verified && (
               <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                 <ShieldCheck className="h-3 w-3" strokeWidth={1.5} />
-                Verified
+                Insured
               </span>
             )}
             {provider.availability_24_7 && (
