@@ -14,6 +14,7 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { CommandPalette } from "@/components/CommandPalette";
 import { BottomNav } from "@/components/BottomNav";
 import { TermsAcceptanceDialog } from "@/components/TermsAcceptanceDialog";
+import { CookieConsent } from "@/components/CookieConsent";
 import { AdminRoute } from "@/components/AdminRoute";
 import Index from "./pages/Index";
 import Providers from "./pages/Providers";
@@ -55,6 +56,7 @@ const App = () => {
                 <CommandPalette />
                 <BottomNav />
                 <TermsAcceptanceDialog />
+                <CookieConsent />
                 <PushNotificationInit>
                   <Routes>
                     <Route path="/auth" element={<Auth />} />

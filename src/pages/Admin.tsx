@@ -16,9 +16,10 @@ import { toast } from "@/hooks/use-toast";
 import {
   LayoutDashboard, Users, Briefcase, CalendarDays, MessageSquareText,
   Star, Settings, CheckCircle, XCircle, Eye, Trash2, Plus, Edit,
-  Shield, TrendingUp, DollarSign, UserCheck, AlertTriangle
+  Shield, TrendingUp, DollarSign, UserCheck, AlertTriangle, ShieldCheck, Gavel
 } from "lucide-react";
 import { format } from "date-fns";
+import { AdminVerificationTab, AdminDisputesTab } from "@/components/admin/AdminVerificationAndDisputes";
 
 // ─── Dashboard Tab ───
 const DashboardTab = () => {
@@ -629,6 +630,8 @@ const Admin = () => {
             <TabsTrigger value="dashboard" className="gap-1"><LayoutDashboard className="h-4 w-4" /> Dashboard</TabsTrigger>
             <TabsTrigger value="users" className="gap-1"><Users className="h-4 w-4" /> Users</TabsTrigger>
             <TabsTrigger value="providers" className="gap-1"><Briefcase className="h-4 w-4" /> Providers</TabsTrigger>
+            <TabsTrigger value="verification" className="gap-1"><ShieldCheck className="h-4 w-4" /> Verification</TabsTrigger>
+            <TabsTrigger value="disputes" className="gap-1"><Gavel className="h-4 w-4" /> Disputes</TabsTrigger>
             <TabsTrigger value="bookings" className="gap-1"><CalendarDays className="h-4 w-4" /> Bookings</TabsTrigger>
             <TabsTrigger value="content" className="gap-1"><Star className="h-4 w-4" /> Content</TabsTrigger>
             <TabsTrigger value="settings" className="gap-1"><Settings className="h-4 w-4" /> Settings</TabsTrigger>
@@ -637,6 +640,8 @@ const Admin = () => {
           <TabsContent value="dashboard"><DashboardTab /></TabsContent>
           <TabsContent value="users"><UsersTab /></TabsContent>
           <TabsContent value="providers"><ProvidersTab /></TabsContent>
+          <TabsContent value="verification"><AdminVerificationTab /></TabsContent>
+          <TabsContent value="disputes"><AdminDisputesTab /></TabsContent>
           <TabsContent value="bookings"><BookingsTab /></TabsContent>
           <TabsContent value="content"><ContentTab /></TabsContent>
           <TabsContent value="settings"><SettingsTab /></TabsContent>

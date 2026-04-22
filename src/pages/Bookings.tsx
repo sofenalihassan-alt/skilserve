@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { InvoiceGenerator } from '@/components/InvoiceGenerator';
+import { DisputeDialog } from '@/components/DisputeDialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -26,7 +27,8 @@ import {
   Phone,
   Filter,
   Inbox,
-  BarChart3
+  BarChart3,
+  AlertTriangle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import type { Database } from '@/integrations/supabase/types';
@@ -202,10 +204,14 @@ const Bookings = () => {
     return ['confirmed', 'in_progress', 'completed'].includes(booking.status);
   };
 
+  const [disputeBookingId, setDisputeBookingId] = useState<string | null>(null);
+  const [disputeAgainstUserId, setDisputeAgainstUserId] = useState<string>('');
+
   const renderBookingCard = (booking: Booking, isProviderView: boolean = false) => {
     const status = statusConfig[booking.status];
     const showMessage = canMessageBooking(booking, isProviderView);
-    
+    const canDispute = ['in_progress', 'completed', 'cancelled'].includes(booking.status);
+    const otherPartyId = isProviderView ? booking.user_id : booking.provider?.user_id || '';
     return (
       <Card key={booking.id} className="border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group">
         <CardContent className="p-6">
@@ -329,6 +335,20 @@ const Bookings = () => {
                 booking={booking}
                 customerName={isProviderView ? booking.profile?.full_name : undefined}
               />
+            )}
+            {canDispute && otherPartyId && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-2 text-destructive hover:text-destructive"
+                onClick={() => {
+                  setDisputeBookingId(booking.id);
+                  setDisputeAgainstUserId(otherPartyId);
+                }}
+              >
+                <AlertTriangle className="h-4 w-4" strokeWidth={1.5} />
+                Report Issue
+              </Button>
             )}
           </div>
         </CardContent>
@@ -482,6 +502,14 @@ const Bookings = () => {
           )}
         </div>
       </main>
+      {disputeBookingId && (
+        <DisputeDialog
+          open={!!disputeBookingId}
+          onOpenChange={(o) => { if (!o) setDisputeBookingId(null); }}
+          bookingId={disputeBookingId}
+          againstUserId={disputeAgainstUserId}
+        />
+      )}
     </div>
   );
 };
