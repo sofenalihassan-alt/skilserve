@@ -94,9 +94,9 @@ const Profile = () => {
   const fetchProviderData = async () => {
     if (!user) return;
     const { data } = await supabase.from('service_providers')
-      .select('id, business_name, category, hourly_rate, years_experience, specialization, is_active')
+      .select('id, business_name, category, hourly_rate, years_experience, specialization, is_active, verification_status')
       .eq('user_id', user.id).maybeSingle();
-    if (data) setProviderData(data);
+    if (data) setProviderData(data as ProviderData);
   };
 
   const handleSave = async () => {
