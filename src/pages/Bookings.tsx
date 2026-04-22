@@ -204,10 +204,14 @@ const Bookings = () => {
     return ['confirmed', 'in_progress', 'completed'].includes(booking.status);
   };
 
+  const [disputeBookingId, setDisputeBookingId] = useState<string | null>(null);
+  const [disputeAgainstUserId, setDisputeAgainstUserId] = useState<string>('');
+
   const renderBookingCard = (booking: Booking, isProviderView: boolean = false) => {
     const status = statusConfig[booking.status];
     const showMessage = canMessageBooking(booking, isProviderView);
-    
+    const canDispute = ['in_progress', 'completed', 'cancelled'].includes(booking.status);
+    const otherPartyId = isProviderView ? booking.user_id : booking.provider?.user_id || '';
     return (
       <Card key={booking.id} className="border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group">
         <CardContent className="p-6">
