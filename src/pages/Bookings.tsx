@@ -502,6 +502,14 @@ const Bookings = () => {
           )}
         </div>
       </main>
+      {disputeBookingId && (
+        <DisputeDialog
+          open={!!disputeBookingId}
+          onOpenChange={(o) => { if (!o) setDisputeBookingId(null); }}
+          bookingId={disputeBookingId}
+          againstUserId={disputeAgainstUserId}
+        />
+      )}
     </div>
   );
 };
