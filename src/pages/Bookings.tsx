@@ -336,6 +336,20 @@ const Bookings = () => {
                 customerName={isProviderView ? booking.profile?.full_name : undefined}
               />
             )}
+            {canDispute && otherPartyId && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-2 text-destructive hover:text-destructive"
+                onClick={() => {
+                  setDisputeBookingId(booking.id);
+                  setDisputeAgainstUserId(otherPartyId);
+                }}
+              >
+                <AlertTriangle className="h-4 w-4" strokeWidth={1.5} />
+                Report Issue
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
