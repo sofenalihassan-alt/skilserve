@@ -268,7 +268,8 @@ const Messages = () => {
   const chatPartnerPhone = selectedUserInfo?.phone;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+
       <Header />
       <div className="container mx-auto px-4 py-4 md:py-8">
         <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">{t('messages')}</h1>
