@@ -274,12 +274,12 @@ const Messages = () => {
       <div className="container mx-auto px-4 py-4 md:py-8">
         <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">{t('messages')}</h1>
 
-        <div className="grid md:grid-cols-3 gap-4 h-[calc(100vh-180px)] md:h-[600px]">
+        <div className="grid md:grid-cols-3 gap-4 h-[calc(100dvh-240px)] md:h-[600px]">
           {/* Conversation List */}
           <Card className={`md:col-span-1 ${showChatOnMobile ? 'hidden md:block' : ''}`}>
             <CardHeader className="pb-3"><CardTitle className="text-lg">{t('all_messages')}</CardTitle></CardHeader>
             <CardContent className="p-0">
-              <ScrollArea className="h-[calc(100vh-300px)] md:h-[500px]">
+              <ScrollArea className="h-[calc(100dvh-360px)] md:h-[500px]">
                 {conversations.length === 0 ? (
                   <p className="text-center text-muted-foreground p-4">{t('no_messages')}</p>
                 ) : conversations.map((conv) => (
@@ -350,7 +350,7 @@ const Messages = () => {
                     </DropdownMenu>
                   </div>
                 </CardHeader>
-                <CardContent className="flex flex-col h-[calc(100vh-320px)] md:h-[520px]">
+                <CardContent className="flex flex-col h-[calc(100dvh-380px)] md:h-[520px]">
                   <ScrollArea className="flex-1 pr-2 md:pr-4">
                     <div className="space-y-3">
                       {messages.length === 0 && (
