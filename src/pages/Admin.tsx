@@ -626,16 +626,19 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="flex flex-wrap h-auto gap-1">
-            <TabsTrigger value="dashboard" className="gap-1"><LayoutDashboard className="h-4 w-4" /> Dashboard</TabsTrigger>
-            <TabsTrigger value="users" className="gap-1"><Users className="h-4 w-4" /> Users</TabsTrigger>
-            <TabsTrigger value="providers" className="gap-1"><Briefcase className="h-4 w-4" /> Providers</TabsTrigger>
-            <TabsTrigger value="verification" className="gap-1"><ShieldCheck className="h-4 w-4" /> Verification</TabsTrigger>
-            <TabsTrigger value="disputes" className="gap-1"><Gavel className="h-4 w-4" /> Disputes</TabsTrigger>
-            <TabsTrigger value="bookings" className="gap-1"><CalendarDays className="h-4 w-4" /> Bookings</TabsTrigger>
-            <TabsTrigger value="content" className="gap-1"><Star className="h-4 w-4" /> Content</TabsTrigger>
-            <TabsTrigger value="settings" className="gap-1"><Settings className="h-4 w-4" /> Settings</TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+            <TabsList className="inline-flex md:flex md:flex-wrap h-auto gap-1 w-max md:w-full">
+              <TabsTrigger value="dashboard" className="gap-1 whitespace-nowrap"><LayoutDashboard className="h-4 w-4" /> Dashboard</TabsTrigger>
+              <TabsTrigger value="users" className="gap-1 whitespace-nowrap"><Users className="h-4 w-4" /> Users</TabsTrigger>
+              <TabsTrigger value="providers" className="gap-1 whitespace-nowrap"><Briefcase className="h-4 w-4" /> Providers</TabsTrigger>
+              <TabsTrigger value="verification" className="gap-1 whitespace-nowrap"><ShieldCheck className="h-4 w-4" /> Verification</TabsTrigger>
+              <TabsTrigger value="disputes" className="gap-1 whitespace-nowrap"><Gavel className="h-4 w-4" /> Disputes</TabsTrigger>
+              <TabsTrigger value="bookings" className="gap-1 whitespace-nowrap"><CalendarDays className="h-4 w-4" /> Bookings</TabsTrigger>
+              <TabsTrigger value="content" className="gap-1 whitespace-nowrap"><Star className="h-4 w-4" /> Content</TabsTrigger>
+              <TabsTrigger value="settings" className="gap-1 whitespace-nowrap"><Settings className="h-4 w-4" /> Settings</TabsTrigger>
+            </TabsList>
+          </div>
+
 
           <TabsContent value="dashboard"><DashboardTab /></TabsContent>
           <TabsContent value="users"><UsersTab /></TabsContent>

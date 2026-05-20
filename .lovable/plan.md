@@ -1,135 +1,70 @@
+# Final Submission QA Pass
 
+A full sweep of the app to make sure every button works, no console errors appear, and the UI is polished enough for a class demo. **Excluding map integration and payment system** as requested.
 
-# Roadmap to Make Skill Serve a Top-Tier Public Platform
+## Scope
 
-You already have the basics (auth, roles, bookings, messaging, notifications, terms, invoices, availability, admin, SEO, error boundary, emails, Google sign-in). Here's what's actually missing for a **trustworthy, sticky, real-world marketplace**.
+I'll go page by page, click every button, watch the console + network tab, and fix anything that breaks or looks off.
 
----
+## What I'll check & fix
 
-## Tier 1 — Trust & Safety (do these BEFORE going public)
+### 1. Functional QA (every clickable element)
+- **Home (`Index`)** — Hero CTAs, service category cards, stats counters, testimonials, footer links
+- **Providers** — Search, filters, sort, provider card actions (Book, Call, Message, Feedback)
+- **Bookings** — Status filters, Report Issue (dispute), cancel/complete actions, invoice generator
+- **Messages** — Send, conversation switching, real-time updates, unread badges
+- **Profile** — Avatar upload, edit fields, address selector, delete account dialog, role switch
+- **Provider Registration** — Form validation, license auto-gen, submit flow
+- **Emergency** — 24/7 provider listing, direct call/message
+- **Admin** — Tabs (users, providers, bookings, verification, disputes, settings), approve/reject actions
+- **Auth** — Login, signup, Google OAuth, password reset, validation errors
+- **Mobile** — Bottom nav, "More" drawer, notification bell, command palette (Cmd+K)
+- **Header** — Theme toggle, language toggle, notification center, profile menu
 
-### 1. Provider Verification with Document Upload
-Right now `is_approved` is just a boolean an admin flips. There's no proof. Add:
-- CNIC (ID card) front/back upload
-- Selfie holding ID
-- Optional skill certificate / license document
-- Storage bucket `verification-docs` (private, admin-only read)
-- Admin sees documents inline before approving
-- Provider gets a "Verified ✓" gold badge once complete
+### 2. Error & glitch fixes
+- Catch and sanitize any unhandled Supabase errors (no raw error JSON shown to user)
+- Fix any broken `navigate()` targets or 404 links
+- Fix dialog focus-trap / scroll-lock issues
+- Fix forms that submit without validation feedback
+- Fix any console warnings (missing keys, controlled/uncontrolled inputs, missing alt text)
+- Ensure all `useEffect` cleanups exist for Supabase realtime channels
+- Verify RLS doesn't silently block legitimate reads (toast on empty data where appropriate)
 
-### 2. Two-Way Review System + Moderation
-Currently only users review providers. Add:
-- Providers rate users (no-shows, payment, behavior) → builds user reputation score
-- Review responses (provider can publicly reply to a review)
-- Report/flag button on reviews; admin moderation queue
-- Auto-hide reviews flagged 3+ times pending review
+### 3. UI polish
+- Consistent loading states (skeletons everywhere, no flash-of-empty)
+- Consistent empty states (illustration + helpful CTA on Bookings/Messages/Favorites when empty)
+- Mobile responsiveness check at 375px, 414px, 584px (current preview), 768px, 1024px
+- Touch targets ≥ 44px on mobile
+- Bottom nav doesn't overlap page content (add bottom padding on pages)
+- Header doesn't overlap content on scroll
+- Dark mode contrast pass on all custom colored badges
+- Toast messages — friendly wording, consistent variants
+- Button disabled states during async actions (prevent double-submit)
+- Hover/focus rings visible for keyboard users
 
-### 3. Dispute Resolution System
-For a marketplace, this is non-negotiable.
-- New table `disputes` (booking_id, raised_by, reason, evidence_urls, status, resolution)
-- "Report Issue" button on completed/in-progress bookings
-- Admin dispute panel with full booking + chat history visible
-- Resolution states: pending → investigating → resolved/refund-recommended
+### 4. Bilingual (EN/UR) check
+- Make sure all newly added strings (verification, disputes, delete account, cookie consent) have Urdu translations
+- RTL layout doesn't break the new components
 
-### 4. Block / Report User & Provider
-- `blocked_users` table — blocked users can't message or book each other
-- Report button on every profile with reason categories (fraud, abuse, fake, etc.)
-- Admin queue for reports
+### 5. Final smoke test
+- Sign up new user → verify email path works
+- Browse providers → book one → see booking in dashboard
+- Provider side: receive booking → confirm → complete
+- Leave review → appears on provider card
+- Report dispute → admin sees it
+- Delete account → fully cleaned up
 
----
+## Out of scope (per your request)
+- Map integration (Mapbox)
+- Payment integration
 
-## Tier 2 — Engagement & Retention
+## Deliverable
+A single focused build pass. I'll report back with a checklist of what was broken and what's fixed, organized by page so you can spot-check before submitting.
 
-### 5. Favorites / Saved Providers
-- `favorites` table (user_id, provider_id)
-- Heart icon on every provider card
-- "Saved" tab in profile so users can quickly rebook trusted providers
+## Question before I start
+There's a lot of surface area here. Do you want me to:
+- **(A) Just fix bugs & broken buttons** — fastest, safest, ~1 build cycle
+- **(B) Bugs + UI polish** — recommended, ~1-2 cycles
+- **(C) Everything above including bilingual + full smoke test** — most thorough
 
-### 6. Booking History Insights for Users
-- "Rebook" button on past completed bookings (one-click, prefilled)
-- Spending summary on profile (`Rs X spent on Y services this month`)
-
-### 7. Provider Portfolio Gallery
-- Providers upload up to 10 photos of past work (e.g., a carpenter's projects)
-- Storage bucket `portfolios`, lightbox viewer on provider card
-- Massively increases booking conversion
-
-### 8. Service Packages / Fixed-Price Offerings
-Right now everything is hourly. Add:
-- `provider_services` table: predefined packages (e.g., "AC Service - Rs 1500 fixed")
-- Users book a package directly, no hourly negotiation
-- Most users prefer fixed prices over hourly estimates
-
-### 9. Referral Program
-- Each user gets a unique referral code
-- Tracks signups + first-booking conversions
-- Future: discount credit (when payments are added)
-
----
-
-## Tier 3 — Operations & Quality
-
-### 10. Provider Earnings Dashboard
-- Dedicated page for providers showing: bookings this month, revenue, completion rate, response time, rating trend
-- Charts (Recharts) for visual trend
-- Helps providers improve, gives them reason to stay active
-
-### 11. Booking Reminders (Push + Email)
-- Auto-notification 24 hours and 1 hour before scheduled booking
-- Edge function with pg_cron schedule
-- Reduces no-shows dramatically
-
-### 12. Cancellation Policy & Tracking
-- Track cancellation reason (required field when cancelling)
-- Auto-calculate cancellation rate per user/provider
-- Show on profile (e.g., "95% reliability")
-- Admin can suspend users with high cancellation rates
-
-### 13. Service Area Radius for Providers
-- Providers set their service radius (e.g., 10km from their location)
-- Users only see providers who actually serve their area
-- Big quality-of-life improvement on the map
-
----
-
-## Tier 4 — Polish & Compliance
-
-### 14. Account Deletion (GDPR / legal requirement)
-- "Delete my account" button in profile
-- Edge function: anonymize bookings/messages, delete profile, revoke roles
-- Required for app store / public launch in many regions
-
-### 15. Cookie Consent Banner
-- One-time banner on first visit, choice stored in localStorage
-- Required for EU visitors and Pakistan's PDPB compliance
-- Links to Privacy Policy
-
-### 16. Sitemap.xml + robots.txt Optimization
-- Generate sitemap of all public routes
-- Helps Google index faster
-
-### 17. Multi-Image in Messages
-Currently text-only chat. Add image attachments — users want to send photos of broken pipes, damaged items, etc., to providers.
-
----
-
-## Recommended Build Order
-
-If you want to launch fast and iterate:
-
-**Phase 1 (Pre-launch, must-have):** Provider verification with documents (#1), Dispute system (#3), Account deletion (#14), Cookie consent (#15)
-
-**Phase 2 (Week 2-3, growth):** Favorites (#5), Service packages (#8), Provider portfolio (#7), Service radius (#13)
-
-**Phase 3 (Month 2, polish):** Two-way reviews (#2), Earnings dashboard (#10), Booking reminders (#11), Image messages (#17)
-
-**Phase 4 (later):** Referral program (#9), Cancellation tracking (#12), Block/report (#4), Insights (#6)
-
----
-
-## My Recommendation
-
-Start with **Phase 1** in one focused build cycle. These four items make your platform legally launch-ready and trustworthy. Everything else is value-add that you can ship iteratively after real users start coming in (their feedback will tell you what they want most).
-
-**Reply with the phase or specific item numbers you want to build first**, and I'll create a detailed implementation plan for that batch.
-
+Reply with A, B, or C and I'll start immediately.

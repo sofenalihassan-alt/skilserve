@@ -67,7 +67,7 @@ const Emergency = () => {
     name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Header />
       <section className="py-16 px-4">
         <div className="container mx-auto max-w-6xl">
