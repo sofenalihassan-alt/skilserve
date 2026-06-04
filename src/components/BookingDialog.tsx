@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { ProviderAvailabilityView } from "@/components/ProviderAvailabilityView";
+import { PackagesList, ServicePackage } from "@/components/PackagesList";
 
 import {
   Dialog,
@@ -65,8 +66,11 @@ export const BookingDialog = ({ open, onOpenChange, provider }: BookingDialogPro
   const [urgent, setUrgent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [selectedPackage, setSelectedPackage] = useState<ServicePackage | null>(null);
 
-  const estimatedCost = (provider.hourly_rate || 0) * duration;
+  const estimatedCost = selectedPackage
+    ? selectedPackage.price
+    : (provider.hourly_rate || 0) * duration;
 
   const handleSubmit = async () => {
     if (!user) {
@@ -122,6 +126,25 @@ export const BookingDialog = ({ open, onOpenChange, provider }: BookingDialogPro
         </DialogHeader>
 
         <div className="space-y-5 pt-2">
+          {/* Optional Packages */}
+          {provider.id && (
+            <div className="space-y-2">
+              <Label>Choose a Package (optional)</Label>
+              <PackagesList
+                providerId={provider.id}
+                selectedId={selectedPackage?.id}
+                onSelect={(p) => {
+                  if (selectedPackage?.id === p.id) {
+                    setSelectedPackage(null);
+                  } else {
+                    setSelectedPackage(p);
+                    setDuration(Math.max(1, Math.round(p.duration_minutes / 60)));
+                  }
+                }}
+              />
+            </div>
+          )}
+
           {/* Problem Description */}
           <div className="space-y-2">
             <Label htmlFor="description">Describe the Problem *</Label>
