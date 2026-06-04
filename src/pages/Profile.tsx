@@ -11,11 +11,14 @@ import { CountryStateSelector } from '@/components/CountryStateSelector';
 import { AvailabilityCalendar } from '@/components/AvailabilityCalendar';
 import { VerificationCenter } from '@/components/VerificationCenter';
 import { DeleteAccountDialog } from '@/components/DeleteAccountDialog';
+import { FavoritesView } from '@/components/FavoritesView';
+import { PackagesManager } from '@/components/PackagesManager';
+import { PortfolioManager } from '@/components/PortfolioManager';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { User, MapPin, Phone, Mail, Save, Shield, Briefcase } from 'lucide-react';
+import { User, MapPin, Phone, Mail, Save, Shield, Briefcase, Heart } from 'lucide-react';
 import { profileUpdateSchema, getSafeErrorMessage } from '@/lib/validation';
 
 interface ProfileData {
@@ -312,6 +315,27 @@ const Profile = () => {
           {providerData && (
             <AvailabilityCalendar providerId={providerData.id} />
           )}
+
+          {providerData && <PackagesManager providerId={providerData.id} />}
+
+          {providerData && <PortfolioManager providerId={providerData.id} />}
+
+          {/* Favorites */}
+          <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-red-500/10"><Heart className="h-5 w-5 text-red-500" /></div>
+                <div>
+                  <CardTitle>My Favorites</CardTitle>
+                  <CardDescription>Providers you've saved</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <FavoritesView />
+            </CardContent>
+          </Card>
+
 
           <Card className="border-destructive/30 bg-destructive/5 backdrop-blur-sm">
             <CardHeader>
