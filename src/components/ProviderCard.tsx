@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { FeedbackDialog } from "@/components/FeedbackDialog";
 import { BookingDialog } from "@/components/BookingDialog";
+import { FavoriteButton } from "@/components/FavoriteButton";
 
 interface ProviderCardProps {
   provider: {
@@ -108,6 +109,13 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
       <Card className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card p-0 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:border-primary/30">
         <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-br from-primary/10 via-transparent to-accent/10" />
 
+        {provider.id && (
+          <div className="absolute top-2 right-2 z-10">
+            <FavoriteButton providerId={provider.id} className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background" />
+          </div>
+        )}
+
+
         <div className="relative p-5 space-y-4">
           {/* Top: Avatar + Info + Badges */}
           <div className="flex items-start gap-4">
@@ -119,7 +127,10 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
             </Avatar>
 
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-base truncate text-foreground">
+              <h3
+                className="font-bold text-base truncate text-foreground hover:text-primary cursor-pointer transition-colors"
+                onClick={() => provider.id && navigate(`/provider/${provider.id}`)}
+              >
                 {provider.business_name}
               </h3>
               <p className="text-sm text-muted-foreground capitalize">
