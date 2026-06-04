@@ -18,6 +18,7 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { AdminRoute } from "@/components/AdminRoute";
 import Index from "./pages/Index";
 import Providers from "./pages/Providers";
+import ProviderDetail from "./pages/ProviderDetail";
 import Auth from "./pages/Auth";
 import ProviderRegistration from "./pages/ProviderRegistration";
 import Emergency from "./pages/Emergency";
@@ -66,6 +67,7 @@ const App = () => {
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
                     <Route path="/providers" element={<ProtectedRoute><Providers /></ProtectedRoute>} />
+                    <Route path="/provider/:id" element={<ProtectedRoute><ProviderDetail /></ProtectedRoute>} />
                     <Route path="/provider-registration" element={<ProtectedRoute><ProviderRegistration /></ProtectedRoute>} />
                     <Route path="/emergency" element={<ProtectedRoute><Emergency /></ProtectedRoute>} />
                     <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
