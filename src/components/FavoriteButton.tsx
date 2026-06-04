@@ -23,13 +23,13 @@ export const FavoriteButton = ({ providerId, className, variant = "icon" }: Prop
   useEffect(() => {
     if (!user || !providerId) return;
     let active = true;
-    supabase
+    (supabase as any)
       .from("favorites")
       .select("id")
       .eq("user_id", user.id)
       .eq("provider_id", providerId)
       .maybeSingle()
-      .then(({ data }) => {
+      .then(({ data }: any) => {
         if (active) setIsFav(!!data);
       });
     return () => {
@@ -50,9 +50,9 @@ export const FavoriteButton = ({ providerId, className, variant = "icon" }: Prop
     setIsFav(!prev);
     try {
       if (prev) {
-        await supabase.from("favorites").delete().eq("user_id", user.id).eq("provider_id", providerId);
+        await (supabase as any).from("favorites").delete().eq("user_id", user.id).eq("provider_id", providerId);
       } else {
-        await supabase.from("favorites").insert({ user_id: user.id, provider_id: providerId });
+        await (supabase as any).from("favorites").insert({ user_id: user.id, provider_id: providerId });
         toast({ title: "Saved", description: "Added to your favorites." });
       }
     } catch {

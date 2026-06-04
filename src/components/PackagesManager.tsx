@@ -27,7 +27,7 @@ export const PackagesManager = ({ providerId }: { providerId: string }) => {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from("service_packages").select("*").eq("provider_id", providerId).order("created_at", { ascending: false });
+    const { data } = await (supabase as any).from("service_packages").select("*").eq("provider_id", providerId).order("created_at", { ascending: false });
     setPackages((data as Pkg[]) || []);
     setLoading(false);
   };
@@ -42,7 +42,7 @@ export const PackagesManager = ({ providerId }: { providerId: string }) => {
       return;
     }
     setSaving(true);
-    const { error } = await supabase.from("service_packages").insert({
+    const { error } = await (supabase as any).from("service_packages").insert({
       provider_id: providerId,
       title: form.title.trim(),
       description: form.description.trim() || null,
@@ -60,13 +60,13 @@ export const PackagesManager = ({ providerId }: { providerId: string }) => {
   };
 
   const toggle = async (id: string, active: boolean) => {
-    await supabase.from("service_packages").update({ is_active: active }).eq("id", id);
+    await (supabase as any).from("service_packages").update({ is_active: active }).eq("id", id);
     load();
   };
 
   const remove = async (id: string) => {
     if (!confirm("Delete this package?")) return;
-    await supabase.from("service_packages").delete().eq("id", id);
+    await (supabase as any).from("service_packages").delete().eq("id", id);
     load();
   };
 

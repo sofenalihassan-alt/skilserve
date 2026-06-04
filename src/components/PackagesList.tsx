@@ -24,13 +24,13 @@ export const PackagesList = ({ providerId, onSelect, selectedId }: Props) => {
 
   useEffect(() => {
     let active = true;
-    supabase
+    (supabase as any)
       .from("service_packages")
       .select("*")
       .eq("provider_id", providerId)
       .eq("is_active", true)
       .order("price", { ascending: true })
-      .then(({ data }) => {
+      .then(({ data }: any) => {
         if (active) {
           setPackages((data as ServicePackage[]) || []);
           setLoading(false);

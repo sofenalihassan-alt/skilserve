@@ -23,7 +23,7 @@ export const PortfolioManager = ({ providerId }: { providerId: string }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
-    const { data } = await supabase.from("portfolio_items").select("id, image_url, caption").eq("provider_id", providerId).order("created_at", { ascending: false });
+    const { data } = await (supabase as any).from("portfolio_items").select("id, image_url, caption").eq("provider_id", providerId).order("created_at", { ascending: false });
     setItems((data as Item[]) || []);
   };
 
@@ -50,7 +50,7 @@ export const PortfolioManager = ({ providerId }: { providerId: string }) => {
       return;
     }
     const { data: pub } = supabase.storage.from("portfolio").getPublicUrl(path);
-    const { error: insErr } = await supabase.from("portfolio_items").insert({
+    const { error: insErr } = await (supabase as any).from("portfolio_items").insert({
       provider_id: providerId,
       image_url: pub.publicUrl,
     });
@@ -66,7 +66,7 @@ export const PortfolioManager = ({ providerId }: { providerId: string }) => {
 
   const remove = async (id: string, url: string) => {
     if (!confirm("Delete this photo?")) return;
-    await supabase.from("portfolio_items").delete().eq("id", id);
+    await (supabase as any).from("portfolio_items").delete().eq("id", id);
     try {
       const path = url.split("/portfolio/")[1];
       if (path) await supabase.storage.from("portfolio").remove([path]);

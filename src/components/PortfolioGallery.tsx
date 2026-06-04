@@ -17,13 +17,13 @@ export const PortfolioGallery = ({ providerId, max }: { providerId: string; max?
 
   useEffect(() => {
     let active = true;
-    supabase
+    (supabase as any)
       .from("portfolio_items")
       .select("id, image_url, caption")
       .eq("provider_id", providerId)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
+      .then(({ data }: any) => {
         if (active) {
           setItems((data as Item[]) || []);
           setLoading(false);
