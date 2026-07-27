@@ -63,7 +63,7 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}/auth?next=${encodeURIComponent(nextPath)}`,
     });
     if (error) {
       toast({
@@ -110,7 +110,7 @@ const Auth = () => {
         title: "Success",
         description: "Logged in successfully"
       });
-      navigate("/");
+      navigate(nextPath);
     }
     
     setLoading(false);
