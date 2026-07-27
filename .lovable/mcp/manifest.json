@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://xwsmkqsykwbgkbmdvqcg.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "skill-serve-mcp",
+      "version": "0.1.0",
+      "title": "Skill Serve"
+    },
+    "tools": [
+      {
+        "name": "search_providers",
+        "title": "Search service providers",
+        "description": "Search approved Skill Serve service providers by keyword, category, or 24/7 availability.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Free text matched against business name and specialization."
+            },
+            "category": {
+              "type": "string",
+              "description": "Service category, e.g. plumbing, electrical, carpentry."
+            },
+            "only_24_7": {
+              "type": "boolean",
+              "description": "Only return providers available 24/7 for emergencies."
+            },
+            "limit": {
+              "type": "number",
+              "description": "Max results, default 10."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_booking",
+        "title": "Create a booking",
+        "description": "Create a pending Skill Serve booking with a provider for the signed-in user.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "provider_id": {
+              "type": "string",
+              "description": "Provider id from search_providers."
+            },
+            "service_description": {
+              "type": "string",
+              "description": "What work is needed."
+            },
+            "scheduled_date": {
+              "type": "string",
+              "description": "Requested date/time as an ISO 8601 timestamp."
+            },
+            "estimated_duration": {
+              "type": "number",
+              "description": "Estimated hours of work."
+            },
+            "notes": {
+              "type": "string",
+              "description": "Extra notes for the provider."
+            }
+          },
+          "required": [
+            "provider_id",
+            "service_description",
+            "scheduled_date",
+            "estimated_duration"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_bookings",
+        "title": "List my bookings",
+        "description": "List the signed-in user's Skill Serve bookings, newest first, optionally filtered by status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "pending, confirmed, in_progress, completed or cancelled."
+            },
+            "limit": {
+              "type": "number",
+              "description": "Max results, default 20."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
