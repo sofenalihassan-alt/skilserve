@@ -245,6 +245,11 @@ const Bookings = () => {
                 {!isProviderView && booking.provider && (
                   <p className="text-sm text-muted-foreground capitalize">{booking.provider.category}</p>
                 )}
+                {isProviderView && (
+                  <div className="mt-1">
+                    <ClientRatingBadge clientId={booking.user_id} />
+                  </div>
+                )}
                 {/* Show phone for confirmed+ provider-side bookings */}
                 {isProviderView && showMessage && booking.profile?.phone && (
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
@@ -339,6 +344,17 @@ const Bookings = () => {
                 booking={booking}
                 customerName={isProviderView ? booking.profile?.full_name : undefined}
               />
+            )}
+            {isProviderView && booking.status === 'completed' && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-2"
+                onClick={() => setClientReviewBooking(booking)}
+              >
+                <Star className="h-4 w-4" strokeWidth={1.5} />
+                Rate Customer
+              </Button>
             )}
             {canDispute && otherPartyId && (
               <Button
