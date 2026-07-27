@@ -21,7 +21,7 @@ import {
 import { format } from "date-fns";
 import { AdminVerificationTab, AdminDisputesTab } from "@/components/admin/AdminVerificationAndDisputes";
 import { AdminAnalyticsTab } from "@/components/admin/AdminAnalytics";
-import { TrendingUp } from "lucide-react";
+
 
 // ─── Dashboard Tab ───
 const DashboardTab = () => {
