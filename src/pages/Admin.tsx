@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { AdminVerificationTab, AdminDisputesTab } from "@/components/admin/AdminVerificationAndDisputes";
+import { AdminAnalyticsTab } from "@/components/admin/AdminAnalytics";
+
 
 // ─── Dashboard Tab ───
 const DashboardTab = () => {
@@ -629,6 +631,7 @@ const Admin = () => {
           <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
             <TabsList className="inline-flex md:flex md:flex-wrap h-auto gap-1 w-max md:w-full">
               <TabsTrigger value="dashboard" className="gap-1 whitespace-nowrap"><LayoutDashboard className="h-4 w-4" /> Dashboard</TabsTrigger>
+              <TabsTrigger value="analytics" className="gap-1 whitespace-nowrap"><TrendingUp className="h-4 w-4" /> Analytics</TabsTrigger>
               <TabsTrigger value="users" className="gap-1 whitespace-nowrap"><Users className="h-4 w-4" /> Users</TabsTrigger>
               <TabsTrigger value="providers" className="gap-1 whitespace-nowrap"><Briefcase className="h-4 w-4" /> Providers</TabsTrigger>
               <TabsTrigger value="verification" className="gap-1 whitespace-nowrap"><ShieldCheck className="h-4 w-4" /> Verification</TabsTrigger>
@@ -641,6 +644,7 @@ const Admin = () => {
 
 
           <TabsContent value="dashboard"><DashboardTab /></TabsContent>
+          <TabsContent value="analytics"><AdminAnalyticsTab /></TabsContent>
           <TabsContent value="users"><UsersTab /></TabsContent>
           <TabsContent value="providers"><ProvidersTab /></TabsContent>
           <TabsContent value="verification"><AdminVerificationTab /></TabsContent>

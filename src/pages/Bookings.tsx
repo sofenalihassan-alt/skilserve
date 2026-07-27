@@ -9,6 +9,8 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { InvoiceGenerator } from '@/components/InvoiceGenerator';
 import { DisputeDialog } from '@/components/DisputeDialog';
+import { ClientReviewDialog } from '@/components/ClientReviewDialog';
+import { ClientRatingBadge } from '@/components/ClientRatingBadge';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -28,7 +30,8 @@ import {
   Filter,
   Inbox,
   BarChart3,
-  AlertTriangle
+  AlertTriangle,
+  Star
 } from 'lucide-react';
 import { format } from 'date-fns';
 import type { Database } from '@/integrations/supabase/types';
@@ -206,6 +209,7 @@ const Bookings = () => {
 
   const [disputeBookingId, setDisputeBookingId] = useState<string | null>(null);
   const [disputeAgainstUserId, setDisputeAgainstUserId] = useState<string>('');
+  const [clientReviewBooking, setClientReviewBooking] = useState<Booking | null>(null);
 
   const renderBookingCard = (booking: Booking, isProviderView: boolean = false) => {
     const status = statusConfig[booking.status];
@@ -240,6 +244,11 @@ const Bookings = () => {
                 </h3>
                 {!isProviderView && booking.provider && (
                   <p className="text-sm text-muted-foreground capitalize">{booking.provider.category}</p>
+                )}
+                {isProviderView && (
+                  <div className="mt-1">
+                    <ClientRatingBadge clientId={booking.user_id} />
+                  </div>
                 )}
                 {/* Show phone for confirmed+ provider-side bookings */}
                 {isProviderView && showMessage && booking.profile?.phone && (
@@ -335,6 +344,17 @@ const Bookings = () => {
                 booking={booking}
                 customerName={isProviderView ? booking.profile?.full_name : undefined}
               />
+            )}
+            {isProviderView && booking.status === 'completed' && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-2"
+                onClick={() => setClientReviewBooking(booking)}
+              >
+                <Star className="h-4 w-4" strokeWidth={1.5} />
+                Rate Customer
+              </Button>
             )}
             {canDispute && otherPartyId && (
               <Button
@@ -508,6 +528,16 @@ const Bookings = () => {
           onOpenChange={(o) => { if (!o) setDisputeBookingId(null); }}
           bookingId={disputeBookingId}
           againstUserId={disputeAgainstUserId}
+        />
+      )}
+      {clientReviewBooking && (
+        <ClientReviewDialog
+          open={!!clientReviewBooking}
+          onOpenChange={(o) => { if (!o) setClientReviewBooking(null); }}
+          bookingId={clientReviewBooking.id}
+          providerId={clientReviewBooking.provider_id}
+          clientId={clientReviewBooking.user_id}
+          clientName={clientReviewBooking.profile?.full_name}
         />
       )}
     </div>

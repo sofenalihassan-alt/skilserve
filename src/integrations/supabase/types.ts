@@ -21,6 +21,7 @@ export type Database = {
           id: string
           notes: string | null
           provider_id: string
+          reminder_sent_at: string | null
           scheduled_date: string
           service_description: string
           status: Database["public"]["Enums"]["booking_status"]
@@ -34,6 +35,7 @@ export type Database = {
           id?: string
           notes?: string | null
           provider_id: string
+          reminder_sent_at?: string | null
           scheduled_date: string
           service_description: string
           status?: Database["public"]["Enums"]["booking_status"]
@@ -47,6 +49,7 @@ export type Database = {
           id?: string
           notes?: string | null
           provider_id?: string
+          reminder_sent_at?: string | null
           scheduled_date?: string
           service_description?: string
           status?: Database["public"]["Enums"]["booking_status"]
@@ -97,6 +100,61 @@ export type Database = {
           receiver_id?: string
         }
         Relationships: []
+      }
+      client_reviews: {
+        Row: {
+          booking_id: string
+          client_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          provider_id: string
+          rating: number
+          updated_at: string
+        }
+        Insert: {
+          booking_id: string
+          client_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          provider_id: string
+          rating: number
+          updated_at?: string
+        }
+        Update: {
+          booking_id?: string
+          client_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          provider_id?: string
+          rating?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_reviews_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "public_service_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_reviews_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "service_providers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       disputes: {
         Row: {
