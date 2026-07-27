@@ -13,18 +13,22 @@ import { loginSchema, signupSchema, getSafeErrorMessage } from "@/lib/validation
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 
+const safeNext = (value: string | null) =>
+  value && value.startsWith("/") && !value.startsWith("//") ? value : "/";
+
 const Auth = () => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
   const [userType, setUserType] = useState<"user" | "provider">("user");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { signIn, signUp, user } = useAuth();
+  const nextPath = safeNext(new URLSearchParams(window.location.search).get("next"));
 
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate(nextPath);
     }
-  }, [user, navigate]);
+  }, [user, navigate, nextPath]);
 
   const handleForgotPassword = async () => {
     const emailInput = document.getElementById("login-email") as HTMLInputElement;
