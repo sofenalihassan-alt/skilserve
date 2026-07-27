@@ -26,26 +26,27 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {
             "query": {
-              "description": "Free text matched against business name and specialization.",
-              "type": "string"
+              "type": "string",
+              "description": "Free text matched against business name and specialization."
             },
             "category": {
-              "description": "Service category, e.g. plumbing, electrical, carpentry.",
-              "type": "string"
+              "type": "string",
+              "description": "Service category, e.g. plumbing, electrical, carpentry."
             },
             "only_24_7": {
-              "description": "Only return providers available 24/7 for emergencies.",
-              "type": "boolean"
+              "type": "boolean",
+              "description": "Only return providers available 24/7 for emergencies."
             },
             "limit": {
-              "description": "Max results, default 10.",
-              "type": "number"
+              "type": "number",
+              "description": "Max results, default 10."
             }
-          }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "outputSchema": null
       },
@@ -59,7 +60,6 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {
             "provider_id": {
@@ -79,8 +79,8 @@
               "description": "Estimated hours of work."
             },
             "notes": {
-              "description": "Extra notes for the provider.",
-              "type": "string"
+              "type": "string",
+              "description": "Extra notes for the provider."
             }
           },
           "required": [
@@ -88,7 +88,9 @@
             "service_description",
             "scheduled_date",
             "estimated_duration"
-          ]
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "outputSchema": null
       },
@@ -102,18 +104,19 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {
             "status": {
-              "description": "pending, confirmed, in_progress, completed or cancelled.",
-              "type": "string"
+              "type": "string",
+              "description": "pending, confirmed, in_progress, completed or cancelled."
             },
             "limit": {
-              "description": "Max results, default 20.",
-              "type": "number"
+              "type": "number",
+              "description": "Max results, default 20."
             }
-          }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "outputSchema": null
       }
