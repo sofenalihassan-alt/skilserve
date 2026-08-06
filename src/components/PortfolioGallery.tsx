@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageIcon } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Item {
   id: string;
@@ -11,6 +12,7 @@ interface Item {
 }
 
 export const PortfolioGallery = ({ providerId, max }: { providerId: string; max?: number }) => {
+  const { t } = useLanguage();
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<Item | null>(null);
@@ -44,7 +46,7 @@ export const PortfolioGallery = ({ providerId, max }: { providerId: string; max?
     return (
       <div className="text-center py-8 text-muted-foreground">
         <ImageIcon className="h-8 w-8 mx-auto mb-2 opacity-40" />
-        <p className="text-sm">No portfolio photos yet.</p>
+        <p className="text-sm">{t("no_portfolio")}</p>
       </div>
     );
   }

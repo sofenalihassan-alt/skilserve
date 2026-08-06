@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Package, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface ServicePackage {
   id: string;
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export const PackagesList = ({ providerId, onSelect, selectedId }: Props) => {
+  const { t } = useLanguage();
   const [packages, setPackages] = useState<ServicePackage[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +45,7 @@ export const PackagesList = ({ providerId, onSelect, selectedId }: Props) => {
 
   if (loading) return <Skeleton className="h-20 w-full" />;
   if (packages.length === 0) {
-    return <p className="text-sm text-muted-foreground text-center py-4">No packages offered yet.</p>;
+    return <p className="text-sm text-muted-foreground text-center py-4">{t("no_packages")}</p>;
   }
 
   return (
@@ -73,7 +75,7 @@ export const PackagesList = ({ providerId, onSelect, selectedId }: Props) => {
                 )}
                 <div className="flex items-center gap-1 mt-1.5 text-xs text-muted-foreground">
                   <Clock className="h-3 w-3" strokeWidth={1.5} />
-                  {p.duration_minutes} min
+                  {p.duration_minutes} {t("minutes_short")}
                 </div>
               </div>
               <span className="text-base font-bold text-primary shrink-0">Rs. {p.price}</span>
