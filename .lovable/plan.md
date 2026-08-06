@@ -1,64 +1,48 @@
-# Phase 2 — Engagement & Discovery
+# Phase 3 completion + full polish pass
 
-Building on Phase 1 (verification, disputes, account deletion). Phase 2 focuses on features that make users come back and help them find the right provider faster.
+Phase 3 already shipped two-way reviews (providers rating customers) and the Admin Analytics tab. What's left is automated booking reminders, plus a full retouch of everything built in Phases 2 and 3.
 
-## What's included
+## 1. Automated booking reminders
 
-### 1. Favorites / Saved Providers
-- New `favorites` table (user_id, provider_id, created_at) with RLS
-- Heart icon on every `ProviderCard` — tap to save/unsave (optimistic UI)
-- New **Favorites** tab in Profile showing all saved providers as cards
-- Empty state with "Browse Providers" CTA
+Reminders go out **24 hours before** and again **1 hour before** each confirmed booking, delivered as an in-app notification (bell icon) and a web push.
 
-### 2. Service Packages (fixed-price bundles)
-- New `service_packages` table (provider_id, title, description, price, duration_minutes, is_active)
-- Providers manage packages from a new **Packages** section in Profile (when in provider mode): add / edit / delete / toggle active
-- `ProviderCard` shows a "View Packages" expand if any active packages exist
-- `BookingDialog` gets a new "Select package" dropdown (optional) that auto-fills price + duration
+- New backend job runs every 15 minutes and looks for confirmed bookings entering either window.
+- Each booking gets at most one 24h reminder and one 1h reminder — tracked so nothing is sent twice.
+- Both the customer and the provider get notified.
+- Notification text is short and useful: service, time, and who it's with. Tapping it opens Bookings.
 
-### 3. Portfolio Gallery
-- New `portfolio_items` table (provider_id, image_url, caption, sort_order)
-- New public storage bucket `portfolio` with RLS (provider can write own, anyone can read)
-- Providers upload up to 12 photos from Profile → Portfolio section
-- New compact gallery strip on ProviderCard (3 thumbnails + "+N more") opens a lightbox dialog
+### Real push delivery
 
-### 4. Provider Detail Page (new route)
-- New route `/provider/:id` — full profile view consolidating: bio, badges, reviews list, packages, portfolio, availability calendar, book/call/message buttons
-- ProviderCard becomes clickable → navigates to detail page (action buttons keep working via stopPropagation)
-- Bilingual EN/UR support, mobile responsive
+The current push function only logs the payload — it never actually sends anything to the browser. It will be rewritten to do real Web Push (VAPID-signed), so message notifications and the new reminders both actually reach the device. The VAPID key is already configured.
 
-## What's deferred (was originally listed for Phase 2)
+## 2. Full retouch pass
 
-- **Service radius/location filter** — depends on map integration, which you asked me to skip. Will revisit when maps are in scope.
+**Bug sweep across Phase 2/3 surfaces**
+- Provider detail page, favorites, packages manager, portfolio manager/gallery, package selection inside booking, client review dialog and rating badge.
+- Every button verified to do something: no dead handlers, no silent failures. Errors surface as friendly toasts instead of raw backend messages.
+- Loading skeletons and empty states everywhere data is fetched (favorites with none saved, provider with no portfolio/packages/reviews, analytics with no data).
+- Guard against missing/deleted providers on `/provider/:id` — proper "not found" state instead of a blank page.
 
-## Technical Summary
+**Urdu + RTL coverage**
+- All new Phase 2/3 strings routed through the language context with Urdu translations.
+- RTL check on the new screens: icon direction, alignment, star rows, dialog footers, gallery strip.
 
-**New tables:** `favorites`, `service_packages`, `portfolio_items` (all with RLS — owner write, public read where appropriate)
-**New storage bucket:** `portfolio` (public read, owner write)
-**New files:**
-- `src/pages/ProviderDetail.tsx` (new route)
-- `src/components/FavoriteButton.tsx`
-- `src/components/PackagesManager.tsx` (provider-side CRUD)
-- `src/components/PortfolioManager.tsx` (provider-side upload)
-- `src/components/PortfolioGallery.tsx` (public view + lightbox)
-- `src/components/PackagesList.tsx` (public view)
+**Mobile responsiveness re-check**
+- Every page re-checked at phone width: bottom-nav clearance, no horizontal scroll, tap targets, dialogs and lightbox fitting the screen, provider detail tabs scrollable rather than wrapping.
+- Admin analytics charts made readable on small screens.
 
-**Edits:**
-- `src/components/ProviderCard.tsx` — add heart, portfolio strip, click-through
-- `src/pages/Profile.tsx` — add Favorites / Packages / Portfolio tabs
-- `src/pages/Bookings.tsx` (via BookingDialog) — package selector
-- `src/App.tsx` — register `/provider/:id` route
-- `src/contexts/LanguageContext.tsx` — Urdu strings for new UI
+**Consistency**
+- Uniform card radius, spacing and badge styling between older and newer components.
+- Consistent date/time and currency formatting across bookings, packages and analytics.
 
-**Safety:** No changes to auth, payments, or map. All new components are additive — existing flows continue to work unchanged. RLS audited before migration runs.
+## Technical summary
 
-## Build order (so nothing breaks mid-way)
+- Migration: add reminder tracking columns to `bookings` (the existing `reminder_sent_at` covers one window only; a second marker is needed for the two-stage schedule), enable `pg_cron` + `pg_net`, and schedule the job.
+- New edge function `send-booking-reminders`: scans due bookings with the service role, inserts rows into `notifications`, calls push, and stamps the reminder markers.
+- Rewrite `supabase/functions/send-push-notification/index.ts` to perform real VAPID Web Push and accept a generic `{ user_id, title, body, url }` payload so both messages and reminders use it.
+- Frontend edits confined to presentation: `ProviderDetail.tsx`, `FavoritesView.tsx`, `PackagesManager/List`, `PortfolioManager/Gallery`, `BookingDialog.tsx`, `ClientReviewDialog.tsx`, `ClientRatingBadge.tsx`, `admin/AdminAnalytics.tsx`, plus Urdu strings in `LanguageContext.tsx`.
+- No changes to auth, payments, or map.
 
-1. Migration: create all 3 tables + bucket + policies (one shot)
-2. Favorites (smallest, validates the table + UI pattern)
-3. Packages (manager + public list + booking integration)
-4. Portfolio (upload + gallery + lightbox)
-5. ProviderDetail page (ties everything together)
-6. Bilingual strings + final mobile pass
+## Open question
 
-Reply **approve** and I'll start with the migration.
+Reminders only fire for bookings with status **confirmed** (not pending or cancelled). If you'd rather also remind on pending bookings, say so and I'll widen it.
