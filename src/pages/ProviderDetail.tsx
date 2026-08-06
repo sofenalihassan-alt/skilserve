@@ -17,12 +17,14 @@ import { BookingDialog } from "@/components/BookingDialog";
 import { PackagesList } from "@/components/PackagesList";
 import { PortfolioGallery } from "@/components/PortfolioGallery";
 import { ProviderAvailabilityView } from "@/components/ProviderAvailabilityView";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const ProviderDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [provider, setProvider] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
   const [reviewerNames, setReviewerNames] = useState<Record<string, string>>({});
@@ -111,8 +113,8 @@ const ProviderDetail = () => {
       <div className="min-h-screen bg-background pb-20 md:pb-0">
         <Header />
         <div className="container mx-auto px-4 py-16 text-center">
-          <p className="text-muted-foreground">Provider not found.</p>
-          <Button onClick={() => navigate("/providers")} className="mt-4">Back to providers</Button>
+          <p className="text-muted-foreground">{t("provider_not_found")}</p>
+          <Button onClick={() => navigate("/providers")} className="mt-4">{t("browse_providers")}</Button>
         </div>
       </div>
     );
@@ -125,7 +127,7 @@ const ProviderDetail = () => {
       <Header />
       <main className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
         <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2">
-          <ArrowLeft className="h-4 w-4" /> Back
+          <ArrowLeft className="h-4 w-4" /> {t("back")}
         </Button>
 
         {/* Hero */}
@@ -148,17 +150,17 @@ const ProviderDetail = () => {
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star key={i} className={`h-4 w-4 ${i < Math.round(avgRating) ? "fill-yellow-500 text-yellow-500" : "text-muted-foreground/30"}`} />
                   ))}
-                  <span className="text-sm text-muted-foreground">{avgRating > 0 ? avgRating.toFixed(1) : "New"} ({reviews.length})</span>
+                  <span className="text-sm text-muted-foreground">{avgRating > 0 ? avgRating.toFixed(1) : t("new_provider")} ({reviews.length})</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {provider.verification_status === "verified" && (
                     <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold bg-amber-500/15 text-amber-600 ring-1 ring-amber-500/30">
-                      <ShieldCheck className="h-3 w-3" /> Verified
+                      <ShieldCheck className="h-3 w-3" /> {t("verified")}
                     </span>
                   )}
                   {provider.insurance_verified && (
                     <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold bg-emerald-500/10 text-emerald-600">
-                      <ShieldCheck className="h-3 w-3" /> Insured
+                      <ShieldCheck className="h-3 w-3" /> {t("insured")}
                     </span>
                   )}
                   {provider.availability_24_7 && (
@@ -183,18 +185,18 @@ const ProviderDetail = () => {
               </span>
               <div className="flex gap-2">
                 <Button onClick={() => user ? setBookingOpen(true) : navigate("/auth")} className="gap-2">
-                  <CalendarPlus className="h-4 w-4" /> Book
+                  <CalendarPlus className="h-4 w-4" /> {t("book")}
                 </Button>
                 <Button variant="outline" onClick={handleCall} className="gap-2">
-                  <Phone className="h-4 w-4" /> Call
+                  <Phone className="h-4 w-4" /> {t("call")}
                 </Button>
                 {canMessage ? (
                   <Button variant="outline" onClick={() => navigate("/messages", { state: { providerId: provider.user_id, providerName: provider.business_name } })} className="gap-2">
-                    <MessageSquareText className="h-4 w-4" /> Message
+                    <MessageSquareText className="h-4 w-4" /> {t("message")}
                   </Button>
                 ) : (
                   <Button variant="outline" disabled className="gap-2 opacity-50">
-                    <Lock className="h-4 w-4" /> Message
+                    <Lock className="h-4 w-4" /> {t("message")}
                   </Button>
                 )}
               </div>
@@ -204,7 +206,7 @@ const ProviderDetail = () => {
 
         {/* Packages */}
         <Card>
-          <CardHeader><CardTitle className="text-lg">Service Packages</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-lg">{t("service_packages")}</CardTitle></CardHeader>
           <CardContent>
             <PackagesList providerId={provider.id} />
           </CardContent>
@@ -212,7 +214,7 @@ const ProviderDetail = () => {
 
         {/* Portfolio */}
         <Card>
-          <CardHeader><CardTitle className="text-lg">Portfolio</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-lg">{t("portfolio")}</CardTitle></CardHeader>
           <CardContent>
             <PortfolioGallery providerId={provider.id} />
           </CardContent>
@@ -228,7 +230,7 @@ const ProviderDetail = () => {
 
         {/* Reviews */}
         <Card>
-          <CardHeader><CardTitle className="text-lg">Reviews ({reviews.length})</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-lg">{t("reviews")} ({reviews.length})</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             {reviews.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-4">No reviews yet.</p>
