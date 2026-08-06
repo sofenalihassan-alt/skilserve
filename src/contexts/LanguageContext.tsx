@@ -146,8 +146,13 @@ const translations: Record<string, Record<Language, string>> = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 
+const STORAGE_KEY = 'skillserve-language';
+
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguageState] = useState<Language>('en');
+  const [language, setLanguageState] = useState<Language>(() => {
+    if (typeof window === 'undefined') return 'en';
+    return localStorage.getItem(STORAGE_KEY) === 'ur' ? 'ur' : 'en';
+  });
   const [isTransitioning, setIsTransitioning] = useState(false);
   const pendingLang = useRef<Language | null>(null);
 
@@ -155,6 +160,11 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     if (lang === language) return;
     pendingLang.current = lang;
     setIsTransitioning(true);
+    try {
+      localStorage.setItem(STORAGE_KEY, lang);
+    } catch {
+      // ignore storage failures (private mode)
+    }
     // After fade-out completes, swap language then fade back in
     setTimeout(() => {
       setLanguageState(lang);
