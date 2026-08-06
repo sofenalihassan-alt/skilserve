@@ -21,6 +21,8 @@ export type Database = {
           id: string
           notes: string | null
           provider_id: string
+          reminder_1h_sent_at: string | null
+          reminder_24h_sent_at: string | null
           reminder_sent_at: string | null
           scheduled_date: string
           service_description: string
@@ -35,6 +37,8 @@ export type Database = {
           id?: string
           notes?: string | null
           provider_id: string
+          reminder_1h_sent_at?: string | null
+          reminder_24h_sent_at?: string | null
           reminder_sent_at?: string | null
           scheduled_date: string
           service_description: string
@@ -49,6 +53,8 @@ export type Database = {
           id?: string
           notes?: string | null
           provider_id?: string
+          reminder_1h_sent_at?: string | null
+          reminder_24h_sent_at?: string | null
           reminder_sent_at?: string | null
           scheduled_date?: string
           service_description?: string
