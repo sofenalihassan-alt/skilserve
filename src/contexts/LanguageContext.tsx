@@ -96,6 +96,51 @@ const translations: Record<string, Record<Language, string>> = {
   'no_messages': { en: 'No messages yet', ur: 'ابھی تک کوئی پیغام نہیں' },
   'send_message': { en: 'Send Message', ur: 'پیغام بھیجیں' },
   'type_message': { en: 'Type your message...', ur: 'اپنا پیغام لکھیں...' },
+
+  // Favorites
+  'favorites': { en: 'Favorites', ur: 'پسندیدہ' },
+  'no_favorites': { en: 'No favorites yet', ur: 'ابھی کوئی پسندیدہ نہیں' },
+  'no_favorites_desc': { en: 'Tap the heart on any provider to save them here.', ur: 'کسی بھی فراہم کنندہ پر دل دبائیں تاکہ وہ یہاں محفوظ ہو جائے۔' },
+  'browse_providers': { en: 'Browse Providers', ur: 'فراہم کنندگان دیکھیں' },
+  'saved': { en: 'Saved', ur: 'محفوظ کر لیا' },
+  'removed': { en: 'Removed', ur: 'ہٹا دیا گیا' },
+
+  // Packages
+  'service_packages': { en: 'Service Packages', ur: 'سروس پیکیجز' },
+  'packages_desc': { en: 'Offer fixed-price bundles to attract more bookings', ur: 'زیادہ بکنگ کے لیے مقررہ قیمت والے پیکیج پیش کریں' },
+  'no_packages': { en: 'No packages offered yet.', ur: 'ابھی کوئی پیکیج پیش نہیں کیا گیا۔' },
+  'no_packages_own': { en: 'No packages yet. Add your first above.', ur: 'ابھی کوئی پیکیج نہیں۔ اوپر سے پہلا شامل کریں۔' },
+  'add_package': { en: 'Add Package', ur: 'پیکیج شامل کریں' },
+  'title': { en: 'Title', ur: 'عنوان' },
+  'description': { en: 'Description', ur: 'تفصیل' },
+  'duration_minutes': { en: 'Duration (minutes)', ur: 'دورانیہ (منٹ)' },
+  'minutes_short': { en: 'min', ur: 'منٹ' },
+
+  // Portfolio
+  'portfolio': { en: 'Portfolio', ur: 'پورٹ فولیو' },
+  'portfolio_desc': { en: 'Show off your past work', ur: 'اپنا پچھلا کام دکھائیں' },
+  'no_portfolio': { en: 'No portfolio photos yet.', ur: 'ابھی کوئی تصویر نہیں۔' },
+  'add_photo': { en: 'Add Photo', ur: 'تصویر شامل کریں' },
+  'uploading': { en: 'Uploading…', ur: 'اپ لوڈ ہو رہا ہے…' },
+  'limit_reached': { en: 'Limit reached', ur: 'حد پوری ہو گئی' },
+
+  // Provider detail
+  'back': { en: 'Back', ur: 'واپس' },
+  'book': { en: 'Book', ur: 'بک کریں' },
+  'call': { en: 'Call', ur: 'کال' },
+  'message': { en: 'Message', ur: 'پیغام' },
+  'reviews': { en: 'Reviews', ur: 'جائزے' },
+  'no_reviews': { en: 'No reviews yet.', ur: 'ابھی کوئی جائزہ نہیں۔' },
+  'provider_not_found': { en: 'Provider not found.', ur: 'فراہم کنندہ نہیں ملا۔' },
+  'verified': { en: 'Verified', ur: 'تصدیق شدہ' },
+  'insured': { en: 'Insured', ur: 'بیمہ شدہ' },
+  'new_provider': { en: 'New', ur: 'نیا' },
+
+  // Common actions
+  'loading': { en: 'Loading…', ur: 'لوڈ ہو رہا ہے…' },
+  'delete': { en: 'Delete', ur: 'حذف کریں' },
+  'cancel': { en: 'Cancel', ur: 'منسوخ' },
+  'save': { en: 'Save', ur: 'محفوظ کریں' },
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
