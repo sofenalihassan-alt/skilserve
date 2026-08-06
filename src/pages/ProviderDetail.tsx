@@ -179,11 +179,11 @@ const ProviderDetail = () => {
 
             {provider.bio && <p className="text-sm text-muted-foreground mt-5 leading-relaxed">{provider.bio}</p>}
 
-            <div className="mt-5 flex items-center justify-between gap-3 pt-4 border-t">
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 pt-4 border-t">
               <span className="text-2xl font-bold text-primary">
                 Rs. {provider.hourly_rate}<span className="text-xs font-normal text-muted-foreground">/hr</span>
               </span>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button onClick={() => user ? setBookingOpen(true) : navigate("/auth")} className="gap-2">
                   <CalendarPlus className="h-4 w-4" /> {t("book")}
                 </Button>
@@ -233,7 +233,7 @@ const ProviderDetail = () => {
           <CardHeader><CardTitle className="text-lg">{t("reviews")} ({reviews.length})</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             {reviews.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">No reviews yet.</p>
+              <p className="text-sm text-muted-foreground text-center py-4">{t("no_reviews")}</p>
             ) : (
               reviews.map((r) => (
                 <div key={r.id} className="p-3 rounded-lg border bg-muted/20">
