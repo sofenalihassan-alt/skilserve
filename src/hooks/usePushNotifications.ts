@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
-// VAPID public key - generated for this project
-const VAPID_PUBLIC_KEY = 'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkGs-GDfSIULnnBrug0h9FZjYUHRVR7NqBd6SFhMfE';
+// VAPID public key - must match the VAPID_PUBLIC_KEY backend secret
+const VAPID_PUBLIC_KEY = 'BLMFvSSkW-kUGSIP_2nNBYw-K1WGrBHatCSQfuKw3pBwKt5qQ98Yp0vhWH41tW4cg_YcXNOV2W9HIUFr0cuhFeU';
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -31,11 +31,26 @@ export function usePushNotifications() {
         if (permission !== 'granted') return;
 
         const reg = registration as any;
+        const appServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
         let subscription = await reg.pushManager.getSubscription();
+
+        // Drop stale subscriptions created with a different server key.
+        if (subscription) {
+          const existing = subscription.options?.applicationServerKey as ArrayBuffer | undefined;
+          const matches =
+            existing &&
+            new Uint8Array(existing).length === appServerKey.length &&
+            new Uint8Array(existing).every((b, i) => b === appServerKey[i]);
+          if (!matches) {
+            await subscription.unsubscribe().catch(() => undefined);
+            subscription = null;
+          }
+        }
+
         if (!subscription) {
           subscription = await reg.pushManager.subscribe({
             userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+            applicationServerKey: appServerKey,
           });
         }
 

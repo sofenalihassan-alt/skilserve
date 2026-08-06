@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Item {
   id: string;
@@ -18,6 +19,7 @@ const MAX_ITEMS = 12;
 export const PortfolioManager = ({ providerId }: { providerId: string }) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [items, setItems] = useState<Item[]>([]);
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -80,8 +82,8 @@ export const PortfolioManager = ({ providerId }: { providerId: string }) => {
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-accent/10"><Images className="h-5 w-5 text-accent" /></div>
           <div className="flex-1">
-            <CardTitle>Portfolio</CardTitle>
-            <CardDescription>Show off your past work ({items.length}/{MAX_ITEMS})</CardDescription>
+            <CardTitle>{t("portfolio")}</CardTitle>
+            <CardDescription>{t("portfolio_desc")} ({items.length}/{MAX_ITEMS})</CardDescription>
           </div>
         </div>
       </CardHeader>
@@ -91,13 +93,13 @@ export const PortfolioManager = ({ providerId }: { providerId: string }) => {
           <Button asChild variant="outline" disabled={uploading || items.length >= MAX_ITEMS} className="w-full gap-2">
             <label htmlFor="portfolio-upload" className="cursor-pointer">
               <Upload className="h-4 w-4" />
-              {uploading ? "Uploading…" : items.length >= MAX_ITEMS ? "Limit reached" : "Add Photo"}
+              {uploading ? t("uploading") : items.length >= MAX_ITEMS ? t("limit_reached") : t("add_photo")}
             </label>
           </Button>
         </div>
 
         {items.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-4">No photos yet.</p>
+          <p className="text-sm text-muted-foreground text-center py-4">{t("no_portfolio")}</p>
         ) : (
           <div className="grid grid-cols-3 gap-2">
             {items.map((it) => (

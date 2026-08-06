@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Pkg {
   id: string;
@@ -20,6 +21,7 @@ interface Pkg {
 
 export const PackagesManager = ({ providerId }: { providerId: string }) => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [packages, setPackages] = useState<Pkg[]>([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ title: "", description: "", price: "", duration_minutes: "60" });
@@ -76,19 +78,19 @@ export const PackagesManager = ({ providerId }: { providerId: string }) => {
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/10"><Package className="h-5 w-5 text-primary" /></div>
           <div>
-            <CardTitle>Service Packages</CardTitle>
-            <CardDescription>Offer fixed-price bundles to attract more bookings</CardDescription>
+            <CardTitle>{t("service_packages")}</CardTitle>
+            <CardDescription>{t("packages_desc")}</CardDescription>
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4 rounded-lg border border-border/50 bg-background/30">
           <div className="space-y-2 md:col-span-2">
-            <Label>Title</Label>
+            <Label>{t("title")}</Label>
             <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Basic Plumbing Check" />
           </div>
           <div className="space-y-2 md:col-span-2">
-            <Label>Description</Label>
+            <Label>{t("description")}</Label>
             <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="What's included…" rows={2} />
           </div>
           <div className="space-y-2">
@@ -96,25 +98,25 @@ export const PackagesManager = ({ providerId }: { providerId: string }) => {
             <Input type="number" min="0" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
           </div>
           <div className="space-y-2">
-            <Label>Duration (minutes)</Label>
+            <Label>{t("duration_minutes")}</Label>
             <Input type="number" min="1" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: e.target.value })} />
           </div>
           <Button onClick={add} disabled={saving} className="md:col-span-2 gap-2">
-            <Plus className="h-4 w-4" /> {saving ? "Adding…" : "Add Package"}
+            <Plus className="h-4 w-4" /> {saving ? "…" : t("add_package")}
           </Button>
         </div>
 
         {loading ? (
-          <p className="text-sm text-muted-foreground">Loading…</p>
+          <p className="text-sm text-muted-foreground">{t("loading")}</p>
         ) : packages.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-4">No packages yet. Add your first above.</p>
+          <p className="text-sm text-muted-foreground text-center py-4">{t("no_packages_own")}</p>
         ) : (
           <div className="space-y-2">
             {packages.map((p) => (
               <div key={p.id} className="flex items-center justify-between gap-3 p-3 rounded-lg border border-border/50 bg-background/30">
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm truncate">{p.title}</p>
-                  <p className="text-xs text-muted-foreground">Rs. {p.price} · {p.duration_minutes} min</p>
+                  <p className="text-xs text-muted-foreground">Rs. {p.price} · {p.duration_minutes} {t("minutes_short")}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <Switch checked={p.is_active} onCheckedChange={(v) => toggle(p.id, v)} />

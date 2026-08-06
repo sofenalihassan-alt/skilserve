@@ -6,10 +6,12 @@ import { ProviderCardSkeleton } from "@/components/ProviderCardSkeleton";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const FavoritesView = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [providers, setProviders] = useState<any[]>([]);
   const [stats, setStats] = useState<Record<string, { avg: number; count: number }>>({});
   const [loading, setLoading] = useState(true);
@@ -63,10 +65,10 @@ export const FavoritesView = () => {
       <div className="text-center py-12 space-y-4">
         <Heart className="h-12 w-12 mx-auto text-muted-foreground/40" strokeWidth={1.5} />
         <div>
-          <h3 className="font-semibold">No favorites yet</h3>
-          <p className="text-sm text-muted-foreground mt-1">Tap the heart on any provider to save them here.</p>
+          <h3 className="font-semibold">{t("no_favorites")}</h3>
+          <p className="text-sm text-muted-foreground mt-1">{t("no_favorites_desc")}</p>
         </div>
-        <Button onClick={() => navigate("/providers")}>Browse Providers</Button>
+        <Button onClick={() => navigate("/providers")}>{t("browse_providers")}</Button>
       </div>
     );
   }
