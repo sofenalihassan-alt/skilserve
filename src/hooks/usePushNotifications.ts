@@ -31,11 +31,26 @@ export function usePushNotifications() {
         if (permission !== 'granted') return;
 
         const reg = registration as any;
+        const appServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
         let subscription = await reg.pushManager.getSubscription();
+
+        // Drop stale subscriptions created with a different server key.
+        if (subscription) {
+          const existing = subscription.options?.applicationServerKey as ArrayBuffer | undefined;
+          const matches =
+            existing &&
+            new Uint8Array(existing).length === appServerKey.length &&
+            new Uint8Array(existing).every((b, i) => b === appServerKey[i]);
+          if (!matches) {
+            await subscription.unsubscribe().catch(() => undefined);
+            subscription = null;
+          }
+        }
+
         if (!subscription) {
           subscription = await reg.pushManager.subscribe({
             userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+            applicationServerKey: appServerKey,
           });
         }
 
