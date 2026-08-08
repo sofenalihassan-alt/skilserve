@@ -75,57 +75,57 @@ All colors MUST be HSL.
   }
 
   .light {
-    --background: 210 17% 97%;
-    --foreground: 220 30% 12%;
+  --background: 210 100% 97%;
+  --foreground: 220 30% 12%;
 
-    --card: 35 25% 98%;
-    --card-foreground: 220 30% 12%;
+  --card: 210 100% 99%;
+  --card-foreground: 220 30% 12%;
 
-    --popover: 35 25% 98%;
-    --popover-foreground: 220 30% 12%;
+  --popover: 210 100% 99%;
+  --popover-foreground: 220 30% 12%;
 
-    --primary: 258 75% 52%;
-    --primary-foreground: 0 0% 100%;
+  --primary: 258 75% 52%;
+  --primary-foreground: 0 0% 100%;
 
-    --secondary: 35 20% 88%;
-    --secondary-foreground: 220 30% 12%;
+  --secondary: 210 60% 92%;
+  --secondary-foreground: 220 30% 12%;
 
-    --muted: 35 18% 86%;
-    --muted-foreground: 220 15% 35%;
+  --muted: 210 45% 91%;
+  --muted-foreground: 220 15% 35%;
 
-    --accent: 173 65% 38%;
-    --accent-foreground: 0 0% 100%;
+  --accent: 173 65% 38%;
+  --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 50%;
-    --destructive-foreground: 0 0% 100%;
+  --destructive: 0 72% 50%;
+  --destructive-foreground: 0 0% 100%;
 
-    --border: 35 15% 80%;
-    --input: 35 15% 80%;
-    --ring: 258 75% 52%;
+  --border: 210 30% 84%;
+  --input: 210 30% 84%;
+  --ring: 258 75% 52%;
 
-    --emergency: 348 72% 48%;
-    --emergency-foreground: 0 0% 100%;
+  --emergency: 348 72% 48%;
+  --emergency-foreground: 0 0% 100%;
 
-    --success: 160 65% 32%;
-    --success-foreground: 0 0% 100%;
+  --success: 160 65% 32%;
+  --success-foreground: 0 0% 100%;
 
-    --warning: 38 80% 45%;
-    --warning-foreground: 220 30% 12%;
+  --warning: 38 80% 45%;
+  --warning-foreground: 220 30% 12%;
 
-    --shadow-sm: 0 1px 2px 0 hsl(35 20% 30% / 0.06);
-    --shadow-md: 0 4px 6px -1px hsl(35 20% 30% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(35 20% 30% / 0.12);
-    --shadow-glow: 0 0 20px hsl(258 75% 52% / 0.15);
-    --shadow-glow-accent: 0 0 20px hsl(173 65% 38% / 0.1);
+  --shadow-sm: 0 1px 2px 0 hsl(210 30% 30% / 0.06);
+  --shadow-md: 0 4px 6px -1px hsl(210 30% 30% / 0.1);
+  --shadow-lg: 0 10px 15px -3px hsl(210 30% 30% / 0.12);
+  --shadow-glow: 0 0 20px hsl(258 75% 52% / 0.15);
+  --shadow-glow-accent: 0 0 20px hsl(173 65% 38% / 0.1);
 
-    --sidebar-background: 35 25% 94%;
-    --sidebar-foreground: 220 30% 12%;
-    --sidebar-primary: 258 75% 52%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 35 20% 88%;
-    --sidebar-accent-foreground: 220 30% 12%;
-    --sidebar-border: 35 15% 80%;
-    --sidebar-ring: 258 75% 52%;
+  --sidebar-background: 210 70% 95%;
+  --sidebar-foreground: 220 30% 12%;
+  --sidebar-primary: 258 75% 52%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 210 60% 92%;
+  --sidebar-accent-foreground: 220 30% 12%;
+  --sidebar-border: 210 30% 84%;
+  --sidebar-ring: 258 75% 52%;
   }
 }
 
@@ -148,8 +148,8 @@ All colors MUST be HSL.
   }
 
   .light body {
-    background: hsl(210 17% 97%);
-  }
+  background: hsl(210 100% 97%);
+}
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {
