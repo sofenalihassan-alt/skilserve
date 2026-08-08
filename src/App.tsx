@@ -17,6 +17,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { TermsAcceptanceDialog } from "@/components/TermsAcceptanceDialog";
 import { CookieConsent } from "@/components/CookieConsent";
 import { AdminRoute } from "@/components/AdminRoute";
+import { Analytics } from "@vercel/analytics/react";
 import Index from "./pages/Index";
 import Providers from "./pages/Providers";
 import ProviderDetail from "./pages/ProviderDetail";
@@ -85,6 +86,7 @@ const App = () => {
             </AuthProvider>
           </BrowserRouter>
           </SmoothScrollProvider>
+          <Analytics />
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
