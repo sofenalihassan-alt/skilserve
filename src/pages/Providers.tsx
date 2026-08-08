@@ -34,6 +34,7 @@ interface ProviderWithAvatar {
   updated_at: string | null;
   avatar_url: string | null;
   is_approved: boolean | null;
+  verification_status?: string | null;
 }
 
 interface ReviewStats {
