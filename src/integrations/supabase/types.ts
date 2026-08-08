@@ -819,6 +819,9 @@ export type Database = {
           specialization: string | null
           updated_at: string | null
           user_id: string | null
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
           years_experience: number | null
         }
         Relationships: []
