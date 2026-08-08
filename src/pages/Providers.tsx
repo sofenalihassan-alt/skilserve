@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import { Map, Filter, Search, MessageSquare, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LiveActivityToast } from "@/components/LiveActivityToast";
@@ -15,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { FeedbackDialog } from "@/components/FeedbackDialog";
 import { ProviderCardSkeleton, MapSkeleton } from "@/components/ProviderCardSkeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SavedSearches, type SearchFilters } from "@/components/SavedSearches";
 
 interface ProviderWithAvatar {
   id: string | null;
