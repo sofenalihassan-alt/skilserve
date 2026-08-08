@@ -316,6 +316,10 @@ const Profile = () => {
             <AvailabilityCalendar providerId={providerData.id} />
           )}
 
+          {providerData && <ProviderEarnings providerId={providerData.id} />}
+
+          <ReferralCard />
+
           {providerData && <PackagesManager providerId={providerData.id} />}
 
           {providerData && <PortfolioManager providerId={providerData.id} />}
