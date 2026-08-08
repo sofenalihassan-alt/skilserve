@@ -417,7 +417,29 @@ const Messages = () => {
                       {messages.map((msg) => (
                         <div key={msg.id} className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'} group`}>
                           <div className={`max-w-[80%] md:max-w-[70%] rounded-lg p-3 relative ${msg.sender_id === user.id ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                            <p className="break-words text-sm">{msg.message}</p>
+                            {msg.attachments && msg.attachments.length > 0 && (
+                              <div className={`grid gap-1.5 mb-2 ${msg.attachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                                {msg.attachments.map((path, i) => {
+                                  const url = imageUrls[path];
+                                  const all = (msg.attachments || []).map((p) => imageUrls[p]).filter(Boolean) as string[];
+                                  return url ? (
+                                    <button
+                                      key={path}
+                                      type="button"
+                                      onClick={() => setLightbox({ images: all, index: Math.min(i, all.length - 1) })}
+                                      className="block overflow-hidden rounded-md"
+                                    >
+                                      <img src={url} alt="Shared photo" loading="lazy" className="h-28 w-full object-cover" />
+                                    </button>
+                                  ) : (
+                                    <div key={path} className="h-28 w-full rounded-md bg-background/40 flex items-center justify-center">
+                                      <ImageIcon className="h-5 w-5 opacity-60" />
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                            {msg.message && <p className="break-words text-sm">{msg.message}</p>}
                             <p className="text-[10px] opacity-70 mt-1">{new Date(msg.created_at).toLocaleTimeString()}</p>
                             <button onClick={() => handleDeleteMessage(msg.id)}
                               className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
