@@ -452,12 +452,15 @@ const Messages = () => {
                       <div ref={messagesEndRef} />
                     </div>
                   </ScrollArea>
-                  <div className="flex gap-2 mt-3">
-                    <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder={t('type_message')} onKeyDown={(e) => e.key === 'Enter' && sendMessage()} disabled={loading} className="text-sm" />
-                    <Button onClick={sendMessage} disabled={loading || !newMessage.trim()} size="sm">
-                      <MessageSquareText className="h-4 w-4" />
-                    </Button>
+                  <div className="mt-3">
+                    <div className="flex gap-2 items-center">
+                      <ChatImageUpload files={attachFiles} onChange={setAttachFiles} disabled={loading} />
+                      <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
+                        placeholder={t('type_message')} onKeyDown={(e) => e.key === 'Enter' && sendMessage()} disabled={loading} className="text-sm" />
+                      <Button onClick={sendMessage} disabled={loading || (!newMessage.trim() && attachFiles.length === 0)} size="sm">
+                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquareText className="h-4 w-4" />}
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </>
