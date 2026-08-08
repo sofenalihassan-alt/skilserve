@@ -236,6 +236,47 @@ const Providers = () => {
                   <span>Rs. {priceRange[1]}</span>
                 </div>
               </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Minimum Rating</label>
+                <Select value={String(minRating)} onValueChange={(v) => setMinRating(Number(v))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">Any rating</SelectItem>
+                    <SelectItem value="3">3★ &amp; up</SelectItem>
+                    <SelectItem value="4">4★ &amp; up</SelectItem>
+                    <SelectItem value="4.5">4.5★ &amp; up</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Minimum Experience</label>
+                <Select value={String(minExperience)} onValueChange={(v) => setMinExperience(Number(v))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">Any experience</SelectItem>
+                    <SelectItem value="1">1+ years</SelectItem>
+                    <SelectItem value="3">3+ years</SelectItem>
+                    <SelectItem value="5">5+ years</SelectItem>
+                    <SelectItem value="10">10+ years</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                <label htmlFor="verified-only" className="text-sm font-medium">Verified providers only</label>
+                <Switch id="verified-only" checked={verifiedOnly} onCheckedChange={setVerifiedOnly} />
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                <label htmlFor="available-247" className="text-sm font-medium">Available 24/7</label>
+                <Switch id="available-247" checked={available247} onCheckedChange={setAvailable247} />
+              </div>
+
+              <div className="pt-2 border-t">
+                <SavedSearches currentFilters={currentFilters} onApply={applySavedFilters} />
+              </div>
             </div>
             <Button variant="outline" className="w-full" onClick={() => setShowMap(!showMap)}>
               <Map className="h-4 w-4 mr-2" strokeWidth={1.5} />{showMap ? "Hide Map" : "Show Map View"}
