@@ -98,7 +98,7 @@ const Providers = () => {
   }, [searchParams]);
 
   useEffect(() => { fetchProviders(); fetchReviewStats(); }, []);
-  useEffect(() => { applyFiltersAndSort(); }, [providers, category, priceRange, sortBy, searchQuery, reviewStats]);
+  useEffect(() => { applyFiltersAndSort(); }, [providers, category, priceRange, sortBy, searchQuery, reviewStats, minRating, verifiedOnly, available247, minExperience]);
 
   const fetchProviders = async () => {
     setLoading(true);
