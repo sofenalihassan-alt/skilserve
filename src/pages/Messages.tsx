@@ -62,6 +62,9 @@ const Messages = () => {
   const [selectedUserInfo, setSelectedUserInfo] = useState<{ name: string; avatarUrl: string | null; category: string | null; phone: string | null } | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const [attachFiles, setAttachFiles] = useState<File[]>([]);
+  const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
+  const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'message' | 'conversation'; id?: string } | null>(null);
