@@ -206,7 +206,7 @@ const translations: Record<string, Record<Language, string>> = {
   'save_search_failed': { en: 'Could not save this search.', ur: 'تلاش محفوظ نہیں ہو سکی۔' },
   'name_required': { en: 'Please enter a name.', ur: 'براہ کرم نام درج کریں۔' },
   'delete_failed': { en: 'Could not delete.', ur: 'حذف نہیں ہو سکا۔' },
-  'saved': { en: 'Saved', ur: 'محفوظ' },
+  
   'error': { en: 'Error', ur: 'خرابی' },
 };
 
