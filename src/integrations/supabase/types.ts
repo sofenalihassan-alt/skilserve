@@ -215,29 +215,32 @@ export type Database = {
       }
       messages: {
         Row: {
+          attachments: Json
           booking_id: string | null
           created_at: string
           id: string
           is_read: boolean | null
-          message: string
+          message: string | null
           receiver_id: string
           sender_id: string
         }
         Insert: {
+          attachments?: Json
           booking_id?: string | null
           created_at?: string
           id?: string
           is_read?: boolean | null
-          message: string
+          message?: string | null
           receiver_id: string
           sender_id: string
         }
         Update: {
+          attachments?: Json
           booking_id?: string | null
           created_at?: string
           id?: string
           is_read?: boolean | null
-          message?: string
+          message?: string | null
           receiver_id?: string
           sender_id?: string
         }
@@ -299,6 +302,33 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: string
+        }
+        Relationships: []
+      }
+      point_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          reason: string
+          reference_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          reason: string
+          reference_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          reason?: string
+          reference_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -425,6 +455,57 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          qualified_at: string | null
+          referred_id: string
+          referrer_id: string
+          status: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          qualified_at?: string | null
+          referred_id: string
+          referrer_id: string
+          status?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          qualified_at?: string | null
+          referred_id?: string
+          referrer_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           booking_id: string
@@ -476,6 +557,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      saved_searches: {
+        Row: {
+          created_at: string
+          filters: Json
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       service_providers: {
         Row: {
@@ -582,6 +690,24 @@ export type Database = {
           quote?: string
           rating?: number
           role?: string
+        }
+        Relationships: []
+      }
+      user_points: {
+        Row: {
+          balance: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -693,12 +819,24 @@ export type Database = {
           specialization: string | null
           updated_at: string | null
           user_id: string | null
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
           years_experience: number | null
         }
         Relationships: []
       }
     }
     Functions: {
+      award_points: {
+        Args: {
+          _amount: number
+          _reason: string
+          _reference_id?: string
+          _user_id: string
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

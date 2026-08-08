@@ -9,9 +9,11 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { MessageSquareText, Trash2, MoreVertical, Phone as PhoneIcon, ArrowLeft } from 'lucide-react';
+import { MessageSquareText, Trash2, MoreVertical, Phone as PhoneIcon, ArrowLeft, ImageIcon, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { messageSchema, getSafeErrorMessage } from '@/lib/validation';
+import { ChatImageUpload, MAX_CHAT_IMAGES } from '@/components/ChatImageUpload';
+import { ChatImageLightbox } from '@/components/ChatImageLightbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,7 +35,8 @@ interface Message {
   id: string;
   sender_id: string;
   receiver_id: string;
-  message: string;
+  message: string | null;
+  attachments?: string[] | null;
   created_at: string;
   is_read: boolean;
 }
@@ -59,6 +62,9 @@ const Messages = () => {
   const [selectedUserInfo, setSelectedUserInfo] = useState<{ name: string; avatarUrl: string | null; category: string | null; phone: string | null } | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const [attachFiles, setAttachFiles] = useState<File[]>([]);
+  const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
+  const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'message' | 'conversation'; id?: string } | null>(null);
@@ -161,25 +167,77 @@ const Messages = () => {
     const { data } = await supabase.from('messages').select('*')
       .or(`and(sender_id.eq.${user.id},receiver_id.eq.${partnerId}),and(sender_id.eq.${partnerId},receiver_id.eq.${user.id})`)
       .order('created_at', { ascending: true });
-    setMessages(data || []);
+
+    const normalized: Message[] = (data || []).map((m: any) => ({
+      id: m.id,
+      sender_id: m.sender_id,
+      receiver_id: m.receiver_id,
+      message: m.message,
+      attachments: Array.isArray(m.attachments) ? (m.attachments as string[]) : [],
+      created_at: m.created_at,
+      is_read: m.is_read,
+    }));
+    setMessages(normalized);
+
+    const paths = normalized.flatMap((m) => m.attachments || []);
+    if (paths.length > 0) {
+      const { data: signed } = await supabase.storage
+        .from('chat-images')
+        .createSignedUrls(paths, 3600);
+      if (signed) {
+        setImageUrls((prev) => {
+          const next = { ...prev };
+          signed.forEach((s: any) => { if (s.path && s.signedUrl) next[s.path] = s.signedUrl; });
+          return next;
+        });
+      }
+    }
+
     await supabase.from('messages').update({ is_read: true }).eq('receiver_id', user.id).eq('sender_id', partnerId);
   };
 
   const sendMessage = async () => {
     if (!selectedUserId || !user) return;
-    const validation = messageSchema.safeParse({ message: newMessage });
-    if (!validation.success) {
-      toast({ title: 'Validation Error', description: validation.error.errors[0].message, variant: 'destructive' });
-      return;
+    const text = newMessage.trim();
+    if (!text && attachFiles.length === 0) return;
+
+    if (text) {
+      const validation = messageSchema.safeParse({ message: text });
+      if (!validation.success) {
+        toast({ title: 'Validation Error', description: validation.error.errors[0].message, variant: 'destructive' });
+        return;
+      }
     }
+
     setLoading(true);
+    const uploaded: string[] = [];
+    for (const file of attachFiles.slice(0, MAX_CHAT_IMAGES)) {
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from('chat-images').upload(path, file, {
+        contentType: file.type,
+        upsert: false,
+      });
+      if (upErr) {
+        toast({ title: 'Error', description: getSafeErrorMessage(upErr), variant: 'destructive' });
+        setLoading(false);
+        return;
+      }
+      uploaded.push(path);
+    }
+
     const { error } = await supabase.from('messages').insert({
-      sender_id: user.id, receiver_id: selectedUserId, message: validation.data.message,
-    });
+      sender_id: user.id,
+      receiver_id: selectedUserId,
+      message: text || '',
+      attachments: uploaded,
+    } as any);
+
     if (error) {
       toast({ title: 'Error', description: getSafeErrorMessage(error), variant: 'destructive' });
     } else {
       setNewMessage('');
+      setAttachFiles([]);
       await fetchMessages(selectedUserId);
       await fetchConversations();
     }
@@ -359,7 +417,29 @@ const Messages = () => {
                       {messages.map((msg) => (
                         <div key={msg.id} className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'} group`}>
                           <div className={`max-w-[80%] md:max-w-[70%] rounded-lg p-3 relative ${msg.sender_id === user.id ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                            <p className="break-words text-sm">{msg.message}</p>
+                            {msg.attachments && msg.attachments.length > 0 && (
+                              <div className={`grid gap-1.5 mb-2 ${msg.attachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                                {msg.attachments.map((path, i) => {
+                                  const url = imageUrls[path];
+                                  const all = (msg.attachments || []).map((p) => imageUrls[p]).filter(Boolean) as string[];
+                                  return url ? (
+                                    <button
+                                      key={path}
+                                      type="button"
+                                      onClick={() => setLightbox({ images: all, index: Math.min(i, all.length - 1) })}
+                                      className="block overflow-hidden rounded-md"
+                                    >
+                                      <img src={url} alt="Shared photo" loading="lazy" className="h-28 w-full object-cover" />
+                                    </button>
+                                  ) : (
+                                    <div key={path} className="h-28 w-full rounded-md bg-background/40 flex items-center justify-center">
+                                      <ImageIcon className="h-5 w-5 opacity-60" />
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                            {msg.message && <p className="break-words text-sm">{msg.message}</p>}
                             <p className="text-[10px] opacity-70 mt-1">{new Date(msg.created_at).toLocaleTimeString()}</p>
                             <button onClick={() => handleDeleteMessage(msg.id)}
                               className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
@@ -372,12 +452,15 @@ const Messages = () => {
                       <div ref={messagesEndRef} />
                     </div>
                   </ScrollArea>
-                  <div className="flex gap-2 mt-3">
-                    <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder={t('type_message')} onKeyDown={(e) => e.key === 'Enter' && sendMessage()} disabled={loading} className="text-sm" />
-                    <Button onClick={sendMessage} disabled={loading || !newMessage.trim()} size="sm">
-                      <MessageSquareText className="h-4 w-4" />
-                    </Button>
+                  <div className="mt-3">
+                    <div className="flex gap-2 items-center">
+                      <ChatImageUpload files={attachFiles} onChange={setAttachFiles} disabled={loading} />
+                      <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
+                        placeholder={t('type_message')} onKeyDown={(e) => e.key === 'Enter' && sendMessage()} disabled={loading} className="text-sm" />
+                      <Button onClick={sendMessage} disabled={loading || (!newMessage.trim() && attachFiles.length === 0)} size="sm">
+                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquareText className="h-4 w-4" />}
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </>
@@ -389,6 +472,10 @@ const Messages = () => {
           </Card>
         </div>
       </div>
+
+      {lightbox && (
+        <ChatImageLightbox images={lightbox.images} startIndex={lightbox.index} onClose={() => setLightbox(null)} />
+      )}
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>

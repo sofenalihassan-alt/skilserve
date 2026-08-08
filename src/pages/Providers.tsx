@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import { Map, Filter, Search, MessageSquare, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LiveActivityToast } from "@/components/LiveActivityToast";
@@ -15,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { FeedbackDialog } from "@/components/FeedbackDialog";
 import { ProviderCardSkeleton, MapSkeleton } from "@/components/ProviderCardSkeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SavedSearches, type SearchFilters } from "@/components/SavedSearches";
 
 interface ProviderWithAvatar {
   id: string | null;
@@ -32,6 +34,7 @@ interface ProviderWithAvatar {
   updated_at: string | null;
   avatar_url: string | null;
   is_approved: boolean | null;
+  verification_status?: string | null;
 }
 
 interface ReviewStats {
@@ -48,6 +51,10 @@ const Providers = () => {
   const [category, setCategory] = useState("all");
   const [sortBy, setSortBy] = useState("rating");
   const [searchQuery, setSearchQuery] = useState("");
+  const [minRating, setMinRating] = useState(0);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [available247, setAvailable247] = useState(false);
+  const [minExperience, setMinExperience] = useState(0);
   const [reviewStats, setReviewStats] = useState<ReviewStats>({});
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const { toast } = useToast();
@@ -91,7 +98,7 @@ const Providers = () => {
   }, [searchParams]);
 
   useEffect(() => { fetchProviders(); fetchReviewStats(); }, []);
-  useEffect(() => { applyFiltersAndSort(); }, [providers, category, priceRange, sortBy, searchQuery, reviewStats]);
+  useEffect(() => { applyFiltersAndSort(); }, [providers, category, priceRange, sortBy, searchQuery, reviewStats, minRating, verifiedOnly, available247, minExperience]);
 
   const fetchProviders = async () => {
     setLoading(true);
@@ -142,11 +149,16 @@ const Providers = () => {
       );
     }
     filtered = filtered.filter(p => (p.hourly_rate ?? 0) >= priceRange[0] && (p.hourly_rate ?? 0) <= priceRange[1]);
+    if (minRating > 0) filtered = filtered.filter(p => (reviewStats[p.id || '']?.avg || 0) >= minRating);
+    if (verifiedOnly) filtered = filtered.filter(p => p.verification_status === 'verified');
+    if (available247) filtered = filtered.filter(p => p.availability_24_7 === true);
+    if (minExperience > 0) filtered = filtered.filter(p => (p.years_experience || 0) >= minExperience);
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'price-low': return (a.hourly_rate ?? 0) - (b.hourly_rate ?? 0);
         case 'price-high': return (b.hourly_rate ?? 0) - (a.hourly_rate ?? 0);
         case 'experience': return (b.years_experience || 0) - (a.years_experience || 0);
+        case 'newest': return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
         case 'rating':
           return (reviewStats[b.id || '']?.avg || 0) - (reviewStats[a.id || '']?.avg || 0);
         default: return 0;
@@ -155,7 +167,31 @@ const Providers = () => {
     setFilteredProviders(filtered);
   };
 
-  const clearFilters = () => { setCategory("all"); setPriceRange([0, 2000]); setSortBy("rating"); setSearchQuery(""); };
+  const currentFilters: SearchFilters = {
+    searchQuery, category, priceRange, minRating, verifiedOnly, available247, minExperience, sortBy,
+  };
+
+  const applySavedFilters = (f: SearchFilters) => {
+    setSearchQuery(f.searchQuery ?? "");
+    setCategory(f.category ?? "all");
+    setPriceRange(Array.isArray(f.priceRange) && f.priceRange.length === 2 ? f.priceRange : [0, 2000]);
+    setMinRating(f.minRating ?? 0);
+    setVerifiedOnly(!!f.verifiedOnly);
+    setAvailable247(!!f.available247);
+    setMinExperience(f.minExperience ?? 0);
+    setSortBy(f.sortBy ?? "rating");
+  };
+
+  const clearFilters = () => {
+    setCategory("all");
+    setPriceRange([0, 2000]);
+    setSortBy("rating");
+    setSearchQuery("");
+    setMinRating(0);
+    setVerifiedOnly(false);
+    setAvailable247(false);
+    setMinExperience(0);
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
@@ -200,6 +236,47 @@ const Providers = () => {
                   <span>Rs. {priceRange[1]}</span>
                 </div>
               </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Minimum Rating</label>
+                <Select value={String(minRating)} onValueChange={(v) => setMinRating(Number(v))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">Any rating</SelectItem>
+                    <SelectItem value="3">3★ &amp; up</SelectItem>
+                    <SelectItem value="4">4★ &amp; up</SelectItem>
+                    <SelectItem value="4.5">4.5★ &amp; up</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Minimum Experience</label>
+                <Select value={String(minExperience)} onValueChange={(v) => setMinExperience(Number(v))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">Any experience</SelectItem>
+                    <SelectItem value="1">1+ years</SelectItem>
+                    <SelectItem value="3">3+ years</SelectItem>
+                    <SelectItem value="5">5+ years</SelectItem>
+                    <SelectItem value="10">10+ years</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                <label htmlFor="verified-only" className="text-sm font-medium">Verified providers only</label>
+                <Switch id="verified-only" checked={verifiedOnly} onCheckedChange={setVerifiedOnly} />
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                <label htmlFor="available-247" className="text-sm font-medium">Available 24/7</label>
+                <Switch id="available-247" checked={available247} onCheckedChange={setAvailable247} />
+              </div>
+
+              <div className="pt-2 border-t">
+                <SavedSearches currentFilters={currentFilters} onApply={applySavedFilters} />
+              </div>
             </div>
             <Button variant="outline" className="w-full" onClick={() => setShowMap(!showMap)}>
               <Map className="h-4 w-4 mr-2" strokeWidth={1.5} />{showMap ? "Hide Map" : "Show Map View"}
@@ -241,6 +318,7 @@ const Providers = () => {
                     <SelectItem value="price-low">Price: Low to High</SelectItem>
                     <SelectItem value="price-high">Price: High to Low</SelectItem>
                     <SelectItem value="experience">Experience</SelectItem>
+                    <SelectItem value="newest">Newest</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

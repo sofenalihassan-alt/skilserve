@@ -14,6 +14,8 @@ import { DeleteAccountDialog } from '@/components/DeleteAccountDialog';
 import { FavoritesView } from '@/components/FavoritesView';
 import { PackagesManager } from '@/components/PackagesManager';
 import { PortfolioManager } from '@/components/PortfolioManager';
+import { ProviderEarnings } from '@/components/ProviderEarnings';
+import { ReferralCard } from '@/components/ReferralCard';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -315,6 +317,10 @@ const Profile = () => {
           {providerData && (
             <AvailabilityCalendar providerId={providerData.id} />
           )}
+
+          {providerData && <ProviderEarnings providerId={providerData.id} />}
+
+          <ReferralCard />
 
           {providerData && <PackagesManager providerId={providerData.id} />}
 

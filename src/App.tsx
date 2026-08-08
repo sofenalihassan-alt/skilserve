@@ -11,6 +11,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { SplashScreen } from "@/components/SplashScreen";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { useReferralCapture } from "@/hooks/useReferralCapture";
 import { CommandPalette } from "@/components/CommandPalette";
 import { BottomNav } from "@/components/BottomNav";
 import { TermsAcceptanceDialog } from "@/components/TermsAcceptanceDialog";
@@ -37,6 +38,7 @@ const queryClient = new QueryClient();
 
 const PushNotificationInit = ({ children }: { children: React.ReactNode }) => {
   usePushNotifications();
+  useReferralCapture();
   return <>{children}</>;
 };
 
