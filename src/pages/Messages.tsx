@@ -473,6 +473,10 @@ const Messages = () => {
         </div>
       </div>
 
+      {lightbox && (
+        <ChatImageLightbox images={lightbox.images} startIndex={lightbox.index} onClose={() => setLightbox(null)} />
+      )}
+
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
