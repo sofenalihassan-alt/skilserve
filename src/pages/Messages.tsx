@@ -164,25 +164,77 @@ const Messages = () => {
     const { data } = await supabase.from('messages').select('*')
       .or(`and(sender_id.eq.${user.id},receiver_id.eq.${partnerId}),and(sender_id.eq.${partnerId},receiver_id.eq.${user.id})`)
       .order('created_at', { ascending: true });
-    setMessages(data || []);
+
+    const normalized: Message[] = (data || []).map((m: any) => ({
+      id: m.id,
+      sender_id: m.sender_id,
+      receiver_id: m.receiver_id,
+      message: m.message,
+      attachments: Array.isArray(m.attachments) ? (m.attachments as string[]) : [],
+      created_at: m.created_at,
+      is_read: m.is_read,
+    }));
+    setMessages(normalized);
+
+    const paths = normalized.flatMap((m) => m.attachments || []);
+    if (paths.length > 0) {
+      const { data: signed } = await supabase.storage
+        .from('chat-images')
+        .createSignedUrls(paths, 3600);
+      if (signed) {
+        setImageUrls((prev) => {
+          const next = { ...prev };
+          signed.forEach((s: any) => { if (s.path && s.signedUrl) next[s.path] = s.signedUrl; });
+          return next;
+        });
+      }
+    }
+
     await supabase.from('messages').update({ is_read: true }).eq('receiver_id', user.id).eq('sender_id', partnerId);
   };
 
   const sendMessage = async () => {
     if (!selectedUserId || !user) return;
-    const validation = messageSchema.safeParse({ message: newMessage });
-    if (!validation.success) {
-      toast({ title: 'Validation Error', description: validation.error.errors[0].message, variant: 'destructive' });
-      return;
+    const text = newMessage.trim();
+    if (!text && attachFiles.length === 0) return;
+
+    if (text) {
+      const validation = messageSchema.safeParse({ message: text });
+      if (!validation.success) {
+        toast({ title: 'Validation Error', description: validation.error.errors[0].message, variant: 'destructive' });
+        return;
+      }
     }
+
     setLoading(true);
+    const uploaded: string[] = [];
+    for (const file of attachFiles.slice(0, MAX_CHAT_IMAGES)) {
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from('chat-images').upload(path, file, {
+        contentType: file.type,
+        upsert: false,
+      });
+      if (upErr) {
+        toast({ title: 'Error', description: getSafeErrorMessage(upErr), variant: 'destructive' });
+        setLoading(false);
+        return;
+      }
+      uploaded.push(path);
+    }
+
     const { error } = await supabase.from('messages').insert({
-      sender_id: user.id, receiver_id: selectedUserId, message: validation.data.message,
-    });
+      sender_id: user.id,
+      receiver_id: selectedUserId,
+      message: text || '',
+      attachments: uploaded,
+    } as any);
+
     if (error) {
       toast({ title: 'Error', description: getSafeErrorMessage(error), variant: 'destructive' });
     } else {
       setNewMessage('');
+      setAttachFiles([]);
       await fetchMessages(selectedUserId);
       await fetchConversations();
     }
