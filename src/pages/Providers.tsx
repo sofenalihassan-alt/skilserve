@@ -318,6 +318,7 @@ const Providers = () => {
                     <SelectItem value="price-low">Price: Low to High</SelectItem>
                     <SelectItem value="price-high">Price: High to Low</SelectItem>
                     <SelectItem value="experience">Experience</SelectItem>
+                    <SelectItem value="newest">Newest</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
