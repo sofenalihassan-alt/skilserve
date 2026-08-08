@@ -35,7 +35,8 @@ interface Message {
   id: string;
   sender_id: string;
   receiver_id: string;
-  message: string;
+  message: string | null;
+  attachments?: string[] | null;
   created_at: string;
   is_read: boolean;
 }
