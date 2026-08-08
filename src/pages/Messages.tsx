@@ -9,9 +9,11 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { MessageSquareText, Trash2, MoreVertical, Phone as PhoneIcon, ArrowLeft } from 'lucide-react';
+import { MessageSquareText, Trash2, MoreVertical, Phone as PhoneIcon, ArrowLeft, ImageIcon, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { messageSchema, getSafeErrorMessage } from '@/lib/validation';
+import { ChatImageUpload, MAX_CHAT_IMAGES } from '@/components/ChatImageUpload';
+import { ChatImageLightbox } from '@/components/ChatImageLightbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
