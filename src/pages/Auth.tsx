@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { REFERRAL_STORAGE_KEY } from "@/hooks/useReferralCapture";
 import { Label } from "@/components/ui/label";
 import { User, Briefcase, LogIn, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,12 @@ const Auth = () => {
   const navigate = useNavigate();
   const { signIn, signUp, user } = useAuth();
   const nextPath = safeNext(new URLSearchParams(window.location.search).get("next"));
+  useEffect(() => {
+    const ref = new URLSearchParams(window.location.search).get("ref");
+    if (ref && /^SS-[A-Z0-9]{4,12}$/i.test(ref.trim())) {
+      try { localStorage.setItem(REFERRAL_STORAGE_KEY, ref.trim().toUpperCase()); } catch { /* ignore */ }
+    }
+  }, []);
 
   useEffect(() => {
     if (user) {
