@@ -51,6 +51,10 @@ const Providers = () => {
   const [category, setCategory] = useState("all");
   const [sortBy, setSortBy] = useState("rating");
   const [searchQuery, setSearchQuery] = useState("");
+  const [minRating, setMinRating] = useState(0);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [available247, setAvailable247] = useState(false);
+  const [minExperience, setMinExperience] = useState(0);
   const [reviewStats, setReviewStats] = useState<ReviewStats>({});
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const { toast } = useToast();
