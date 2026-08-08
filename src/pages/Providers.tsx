@@ -149,11 +149,16 @@ const Providers = () => {
       );
     }
     filtered = filtered.filter(p => (p.hourly_rate ?? 0) >= priceRange[0] && (p.hourly_rate ?? 0) <= priceRange[1]);
+    if (minRating > 0) filtered = filtered.filter(p => (reviewStats[p.id || '']?.avg || 0) >= minRating);
+    if (verifiedOnly) filtered = filtered.filter(p => p.verification_status === 'verified');
+    if (available247) filtered = filtered.filter(p => p.availability_24_7 === true);
+    if (minExperience > 0) filtered = filtered.filter(p => (p.years_experience || 0) >= minExperience);
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'price-low': return (a.hourly_rate ?? 0) - (b.hourly_rate ?? 0);
         case 'price-high': return (b.hourly_rate ?? 0) - (a.hourly_rate ?? 0);
         case 'experience': return (b.years_experience || 0) - (a.years_experience || 0);
+        case 'newest': return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
         case 'rating':
           return (reviewStats[b.id || '']?.avg || 0) - (reviewStats[a.id || '']?.avg || 0);
         default: return 0;
@@ -162,7 +167,31 @@ const Providers = () => {
     setFilteredProviders(filtered);
   };
 
-  const clearFilters = () => { setCategory("all"); setPriceRange([0, 2000]); setSortBy("rating"); setSearchQuery(""); };
+  const currentFilters: SearchFilters = {
+    searchQuery, category, priceRange, minRating, verifiedOnly, available247, minExperience, sortBy,
+  };
+
+  const applySavedFilters = (f: SearchFilters) => {
+    setSearchQuery(f.searchQuery ?? "");
+    setCategory(f.category ?? "all");
+    setPriceRange(Array.isArray(f.priceRange) && f.priceRange.length === 2 ? f.priceRange : [0, 2000]);
+    setMinRating(f.minRating ?? 0);
+    setVerifiedOnly(!!f.verifiedOnly);
+    setAvailable247(!!f.available247);
+    setMinExperience(f.minExperience ?? 0);
+    setSortBy(f.sortBy ?? "rating");
+  };
+
+  const clearFilters = () => {
+    setCategory("all");
+    setPriceRange([0, 2000]);
+    setSortBy("rating");
+    setSearchQuery("");
+    setMinRating(0);
+    setVerifiedOnly(false);
+    setAvailable247(false);
+    setMinExperience(0);
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
