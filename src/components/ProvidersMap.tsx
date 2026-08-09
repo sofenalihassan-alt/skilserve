@@ -4,7 +4,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -31,10 +31,12 @@ interface Provider {
   years_experience: number | null;
 }
 
+// Public Mapbox token supplied by the app owner via environment config.
+const mapboxToken = (import.meta.env.VITE_MAPBOX_PUBLIC_TOKEN as string | undefined) ?? '';
+
 const ProvidersMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [mapboxToken, setMapboxToken] = useState('');
   const [providers, setProviders] = useState<Provider[]>([]);
   const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -104,25 +106,15 @@ const ProvidersMap = () => {
       <Card className="p-8 border border-primary/20">
         <div className="text-center space-y-4">
           <MapPin className="h-12 w-12 text-primary mx-auto" />
-          <h3 className="text-xl font-bold">Enable Map View</h3>
+          <h3 className="text-xl font-bold">Map view unavailable</h3>
           <p className="text-muted-foreground max-w-md mx-auto">
-            Enter your Mapbox public token to view providers on the map. Get your free token at{' '}
-            <a href="https://mapbox.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-              mapbox.com
-            </a>
+            The map is not configured yet. Please browse providers in list view.
           </p>
-          <div className="max-w-md mx-auto">
-            <Input
-              type="text"
-              placeholder="pk.eyJ1Ij..."
-              onChange={(e) => setMapboxToken(e.target.value)}
-              className="text-center"
-            />
-          </div>
         </div>
       </Card>
     );
   }
+
 
   return (
     <>
