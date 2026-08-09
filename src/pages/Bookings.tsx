@@ -242,7 +242,7 @@ const Bookings = () => {
                     ? booking.profile?.full_name || 'Customer'
                     : booking.provider?.business_name || 'Provider'
                   }
-                </h3>
+                </h2>
                 {!isProviderView && booking.provider && (
                   <p className="text-sm text-muted-foreground capitalize">{booking.provider.category}</p>
                 )}
@@ -493,7 +493,7 @@ const Bookings = () => {
                       <Inbox className="h-12 w-12 mx-auto text-muted-foreground mb-4" strokeWidth={1.5} />
                       <h2 className="text-lg font-semibold">
                         {statusFilter === 'all' ? 'No client requests' : `No ${statusFilter} requests`}
-                      </h3>
+                      </h2>
                       <p className="text-muted-foreground mt-2">
                         {statusFilter === 'all' ? "You haven't received any booking requests yet" : 'Try a different filter'}
                       </p>

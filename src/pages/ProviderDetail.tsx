@@ -18,6 +18,7 @@ import { PackagesList } from "@/components/PackagesList";
 import { PortfolioGallery } from "@/components/PortfolioGallery";
 import { ProviderAvailabilityView } from "@/components/ProviderAvailabilityView";
 import { useLanguage } from "@/contexts/LanguageContext";
+import Seo from "@/components/Seo";
 
 const ProviderDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -122,8 +123,30 @@ const ProviderDetail = () => {
 
   const initials = (provider.business_name || "?").split(" ").map((w: string) => w[0]).join("").toUpperCase().slice(0, 2);
 
+  const seoTitle = `${provider.business_name} — ${provider.category} | Skill Serve`.slice(0, 60);
+  const seoDescription = `Book ${provider.business_name}, a verified ${provider.category} professional on Skill Serve. View services, portfolio, reviews and availability.`.slice(0, 158);
+  const providerJsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    name: provider.business_name,
+    description: provider.description || seoDescription,
+    serviceType: provider.category,
+    url: `https://skillserveweb.lovable.app/provider/${id}`,
+    ...(provider.avatar_url ? { image: provider.avatar_url } : {}),
+    ...(provider.rating && provider.total_reviews
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: provider.rating,
+            reviewCount: provider.total_reviews,
+          },
+        }
+      : {}),
+  };
+
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <Seo title={seoTitle} description={seoDescription} type="profile" jsonLd={providerJsonLd} />
       <Header />
       <main className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
         <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2">
