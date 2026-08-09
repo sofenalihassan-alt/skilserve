@@ -22,6 +22,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { User, MapPin, Phone, Mail, Save, Shield, Briefcase, Heart } from 'lucide-react';
 import { profileUpdateSchema, getSafeErrorMessage } from '@/lib/validation';
+import Seo from "@/components/Seo";
 
 interface ProfileData {
   full_name: string;
@@ -157,6 +158,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <Seo title={"My Profile | Skill Serve"} description={"Manage your Skill Serve account details, saved addresses, favourites and notification preferences."} noindex />
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-8">

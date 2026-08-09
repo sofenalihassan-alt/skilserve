@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
+import Seo from "@/components/Seo";
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -328,6 +329,7 @@ const Messages = () => {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
 
+      <Seo title={"Messages | Skill Serve"} description={"Chat directly with your service providers on Skill Serve to discuss job details, timing and pricing."} noindex />
       <Header />
       <div className="container mx-auto px-4 py-4 md:py-8">
         <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">{t('messages')}</h1>

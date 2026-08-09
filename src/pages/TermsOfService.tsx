@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
+import Seo from "@/components/Seo";
 
 const TermsOfService = () => {
   const [version, setVersion] = useState("1.0");
@@ -13,6 +14,7 @@ const TermsOfService = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <Seo title={"Terms of Service | Skill Serve"} description={"Read the terms and conditions that govern the use of Skill Serve, our marketplace connecting customers with verified service providers."} />
       <Header />
       <div className="container mx-auto px-4 py-10 max-w-3xl prose prose-sm dark:prose-invert">
         <h1>Terms of Service</h1>

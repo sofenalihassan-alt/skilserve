@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import Seo from "@/components/Seo";
 
 interface EmergencyProvider {
   id: string;
@@ -68,6 +69,7 @@ const Emergency = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <Seo title={"24/7 Emergency Services | Skill Serve"} description={"Need urgent help? Find verified 24/7 emergency plumbers, electricians and repair professionals available right now in your area."} />
       <Header />
       <section className="py-16 px-4">
         <div className="container mx-auto max-w-6xl">

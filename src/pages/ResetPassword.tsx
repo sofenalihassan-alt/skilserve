@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
+import Seo from "@/components/Seo";
 
 const resetSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
@@ -141,6 +142,7 @@ const ResetPassword = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"Reset Your Password | Skill Serve"} description={"Set a new password for your Skill Serve account to regain access to your bookings and messages."} noindex />
       <Header />
       <div className="container mx-auto px-4 py-16">
         <Card className="max-w-md mx-auto p-8">

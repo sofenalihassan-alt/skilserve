@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Briefcase } from "lucide-react";
 import { providerSchema, getSafeErrorMessage } from "@/lib/validation";
+import Seo from "@/components/Seo";
 
 interface ExistingProvider {
   id: string;
@@ -140,6 +141,7 @@ const ProviderRegistration = () => {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
 
+      <Seo title={"Become a Service Provider | Skill Serve"} description={"Join Skill Serve as a verified professional. Create your profile, showcase your work and receive booking requests from local customers."} />
       <Header />
       <div className="container mx-auto px-4 py-16">
         <Card className="max-w-2xl mx-auto p-8 border border-primary/20">

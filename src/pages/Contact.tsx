@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
+import Seo from "@/components/Seo";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100),
@@ -83,6 +84,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <Seo title={"Contact Us | Skill Serve"} description={"Get in touch with the Skill Serve team for support, partnership enquiries or feedback about our local services marketplace."} />
       <Header />
       <div className="container mx-auto px-4 py-10 max-w-4xl">
         <h1 className="text-3xl font-bold mb-2">Contact Us</h1>

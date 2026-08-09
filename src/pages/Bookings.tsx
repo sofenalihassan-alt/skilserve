@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import type { Database } from '@/integrations/supabase/types';
+import Seo from "@/components/Seo";
 
 type BookingStatus = Database['public']['Enums']['booking_status'];
 
@@ -391,6 +392,7 @@ const Bookings = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <Seo title={"My Bookings | Skill Serve"} description={"View, track and manage all your Skill Serve service bookings, from pending requests to completed jobs."} noindex />
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-5xl mx-auto">
