@@ -803,6 +803,30 @@ export type Database = {
       }
     }
     Views: {
+      public_profiles: {
+        Row: {
+          avatar_url: string | null
+          city: string | null
+          full_name: string | null
+          id: string | null
+          state: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          city?: string | null
+          full_name?: string | null
+          id?: string | null
+          state?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          city?: string | null
+          full_name?: string | null
+          id?: string | null
+          state?: string | null
+        }
+        Relationships: []
+      }
       public_service_providers: {
         Row: {
           availability_24_7: boolean | null
