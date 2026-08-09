@@ -20,52 +20,41 @@ export const Hero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden">
-      <div className="container mx-auto px-4 py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-4xl text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-            <span className="block">{t("hero_title_1")}</span>
-            <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              {t("hero_title_2")}
-            </span>
+    <section className="relative bg-gradient-to-br from-primary/10 via-background to-secondary/20 py-8 sm:py-14 px-4">
+      <div className="container mx-auto max-w-6xl">
+        <div className="text-center space-y-3 sm:space-y-5">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
+            {t('hero_title_1')}
+            <span className="block text-primary mt-1">{t('hero_title_2')}</span>
           </h1>
-
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            {t("hero_subtitle")}
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+            {t('hero_subtitle')}
           </p>
-
-          <div className="mx-auto mt-8 flex w-full max-w-3xl flex-col gap-3 rounded-2xl border border-border/60 bg-card/60 p-3 shadow-lg backdrop-blur-sm sm:mt-10 md:flex-row">
-            <div className="relative flex-1">
-              <Search className="absolute start-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder={t("search_placeholder")}
-                aria-label={t("search_placeholder")}
-                className="h-12 ps-10"
+          
+          <div className="flex flex-col md:flex-row gap-3 max-w-2xl mx-auto mt-8">
+            <div className="flex-1 relative">
+              <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input 
+                placeholder={t('search_placeholder')} 
+                className="ps-10 h-12"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
-
             <div className="relative md:w-64">
-              <MapPin className="absolute start-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder={t("location_placeholder")}
-                aria-label={t("location_placeholder")}
-                className="h-12 ps-10"
+              <MapPin className="absolute start-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input 
+                placeholder={t('location_placeholder')} 
+                className="ps-10 h-12"
                 value={locationQuery}
                 onChange={(e) => setLocationQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
-
             <MagneticButton>
-              <Button
-                size="lg"
-                className="h-12 w-full px-8 md:w-auto"
-                onClick={handleSearch}
-              >
-                {t("search")}
+              <Button size="lg" className="h-12 px-8" onClick={handleSearch}>
+                {t('search')}
               </Button>
             </MagneticButton>
           </div>
