@@ -37,19 +37,11 @@ export const useReferralCapture = () => {
         return;
       }
 
-      const { data: owner } = await db
-        .from('referral_codes')
-        .select('user_id')
-        .eq('code', code.trim().toUpperCase())
-        .maybeSingle();
+      if (cancelled) return;
 
-      if (!owner || owner.user_id === user.id || cancelled) {
-        try { localStorage.removeItem(REFERRAL_STORAGE_KEY); } catch { /* ignore */ }
-        return;
-      }
-
+      // The inviter is resolved server-side from the code; invalid or
+      // self-referrals are rejected by the database and ignored here.
       await db.from('referrals').insert({
-        referrer_id: owner.user_id,
         referred_id: user.id,
         code: code.trim().toUpperCase(),
       });
