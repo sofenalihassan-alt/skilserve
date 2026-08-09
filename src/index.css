@@ -194,6 +194,29 @@ All colors MUST be HSL.
   background: hsl(var(--background));
 }
 
+@layer base {
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    min-height: 100vh;
+    background: hsl(var(--background));
+  }
+
 .dark body {
   background:
     radial-gradient(
@@ -246,4 +269,5 @@ All colors MUST be HSL.
     @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
   }
   
+}
 }
