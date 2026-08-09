@@ -56,24 +56,35 @@ export const Header = () => {
 
   const handleSignOut = async () => { await signOut(); navigate("/"); };
 
-  const NavButton = ({ icon: Icon, label, onClick, title, badge }: { icon: React.ElementType; label: string; onClick: () => void; title?: string; badge?: number }) => (
+ const NavButton = ({
+  icon: Icon,
+  label,
+  onClick,
+  title,
+  badge,
+}: {
+  icon: React.ElementType;
+  label: string;
+  onClick: () => void;
+  title?: string;
+  badge?: number;
+}) => (
   <Button
-      variant="ghost"
-      onClick={onClick}
-      title={title || label}
-      className="gap-2 relative"
-    >
-      <Icon className="h-4 w-4 shrink-0" />
-      {label}
-      <Icon className="h-4 w-4" />
-      <span className="hidden lg:inline">{label}</span>
-      {!!badge && badge > 0 && (
-        <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-[10px] font-bold">
-          {badge > 99 ? '99+' : badge}
-        </span>
-      )}
-    </Button>
-  );
+    variant="ghost"
+    onClick={onClick}
+    title={title || label}
+    className="relative gap-2"
+  >
+    <Icon className="h-4 w-4 shrink-0" />
+    <span>{label}</span>
+
+    {badge !== undefined && badge > 0 && (
+      <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
+        {badge > 99 ? "99+" : badge}
+      </span>
+    )}
+  </Button>
+);
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
