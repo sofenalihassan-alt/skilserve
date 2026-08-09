@@ -25,17 +25,23 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const cronSecret = Deno.env.get("REMINDERS_CRON_SECRET") ?? "";
 
-  // Only the internal scheduler (service-role key) may trigger reminders.
+  // Only the internal scheduler (shared cron secret or service-role key) may run this.
   const authHeader = req.headers.get("Authorization") ?? "";
-  const apiKey = req.headers.get("apikey") ?? "";
   const bearer = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
-  if (bearer !== serviceRoleKey && apiKey !== serviceRoleKey) {
+  const providedSecret = req.headers.get("x-cron-secret") ?? "";
+  const authorized =
+    bearer === serviceRoleKey ||
+    (cronSecret.length > 0 && (providedSecret === cronSecret || bearer === cronSecret));
+
+  if (!authorized) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
