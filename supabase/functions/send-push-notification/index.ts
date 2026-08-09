@@ -26,6 +26,34 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // --- Authentication: internal service-role calls, or a signed-in user ---
+    const authHeader = req.headers.get("Authorization") ?? "";
+    if (!authHeader.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const token = authHeader.slice("Bearer ".length).trim();
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const isInternal = token === serviceRoleKey;
+
+    let callerId: string | null = null;
+    if (!isInternal) {
+      const authClient = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_ANON_KEY")!,
+      );
+      const { data, error } = await authClient.auth.getClaims(token);
+      if (error || !data?.claims?.sub) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      callerId = data.claims.sub as string;
+    }
+
     const payload = (await req.json()) as Body;
 
     const userId = payload.user_id ?? payload.receiver_id;
@@ -37,6 +65,15 @@ Deno.serve(async (req) => {
     if (!userId || typeof userId !== "string") {
       return new Response(JSON.stringify({ error: "user_id is required" }), {
         status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Signed-in users may only trigger notifications for themselves; this
+    // prevents enumerating which accounts have push subscriptions.
+    if (!isInternal && userId !== callerId) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
