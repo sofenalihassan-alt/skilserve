@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import Seo from "@/components/Seo";
 
 interface EmergencyProvider {
   id: string;
@@ -68,6 +69,7 @@ const Emergency = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <Seo title={"24/7 Emergency Services | Skill Serve"} description={"Need urgent help? Find verified 24/7 emergency plumbers, electricians and repair professionals available right now in your area."} />
       <Header />
       <section className="py-16 px-4">
         <div className="container mx-auto max-w-6xl">
@@ -87,7 +89,7 @@ const Emergency = () => {
           ) : providers.length === 0 ? (
             <Card className="p-12 text-center">
               <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-2">No Emergency Providers Available</h3>
+              <h2 className="text-xl font-bold mb-2">No Emergency Providers Available</h2>
               <p className="text-muted-foreground">No providers have opted for 24/7 emergency availability yet.</p>
             </Card>
           ) : (
@@ -102,7 +104,7 @@ const Emergency = () => {
                           <AvatarFallback className="bg-primary/20 text-primary font-bold">{getInitials(provider.business_name || "?")}</AvatarFallback>
                         </Avatar>
                         <div>
-                          <h3 className="font-bold text-lg">{provider.business_name}</h3>
+                          <h2 className="font-bold text-lg">{provider.business_name}</h2>
                           <p className="text-sm text-muted-foreground capitalize">{provider.category?.replace('_', ' ')}</p>
                         </div>
                       </div>

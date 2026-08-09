@@ -13,6 +13,7 @@ import { toast } from "@/hooks/use-toast";
 import { loginSchema, signupSchema, getSafeErrorMessage } from "@/lib/validation";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
+import Seo from "@/components/Seo";
 
 const safeNext = (value: string | null) =>
   value && value.startsWith("/") && !value.startsWith("//") ? value : "/";
@@ -181,6 +182,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <Seo title={"Sign In or Create an Account | Skill Serve"} description={"Log in or sign up for Skill Serve to book verified local professionals, manage your bookings and chat with service providers."} noindex />
       <Header />
       
       <div className="container mx-auto px-4 py-16">

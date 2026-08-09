@@ -21,6 +21,7 @@ import {
 import { format } from "date-fns";
 import { AdminVerificationTab, AdminDisputesTab } from "@/components/admin/AdminVerificationAndDisputes";
 import { AdminAnalyticsTab } from "@/components/admin/AdminAnalytics";
+import Seo from "@/components/Seo";
 
 
 // ─── Dashboard Tab ───
@@ -615,6 +616,7 @@ const SettingsTab = () => {
 const Admin = () => {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <Seo title={"Admin Dashboard | Skill Serve"} description={"Internal Skill Serve admin dashboard for managing providers, bookings, disputes and platform settings."} noindex />
       <Header />
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center gap-3 mb-8">

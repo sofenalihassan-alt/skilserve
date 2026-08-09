@@ -1,3 +1,4 @@
+import Seo from "@/components/Seo";
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Header } from '@/components/Header';
@@ -328,6 +329,7 @@ const Messages = () => {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
 
+      <Seo title={"Messages | Skill Serve"} description={"Chat directly with your service providers on Skill Serve to discuss job details, timing and pricing."} noindex />
       <Header />
       <div className="container mx-auto px-4 py-4 md:py-8">
         <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">{t('messages')}</h1>
@@ -378,7 +380,7 @@ const Messages = () => {
               <>
                 <CardHeader className="pb-3">
                   <div className="flex items-center gap-3">
-                    <Button variant="ghost" size="icon" className="md:hidden shrink-0" onClick={() => { setSelectedUserId(null); setSelectedUserInfo(null); }}>
+                    <Button variant="ghost" size="icon" aria-label="Back to conversations" className="md:hidden shrink-0" onClick={() => { setSelectedUserId(null); setSelectedUserInfo(null); }}>
                       <ArrowLeft className="h-5 w-5" />
                     </Button>
                     <Avatar className="h-10 w-10 shrink-0">
@@ -393,12 +395,12 @@ const Messages = () => {
                         <p className="text-xs text-accent capitalize">{chatPartnerCategory}</p>
                       )}
                     </div>
-                    <Button variant="outline" size="icon" className="shrink-0" onClick={() => handleCall(selectedUserId, chatPartnerPhone)} title="Call">
+                    <Button variant="outline" size="icon" aria-label="Call" className="shrink-0" onClick={() => handleCall(selectedUserId, chatPartnerPhone)} title="Call">
                       <PhoneIcon className="h-4 w-4" />
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="shrink-0"><MoreVertical className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" aria-label="More options" className="shrink-0"><MoreVertical className="h-4 w-4" /></Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={handleDeleteConversation} className="text-destructive">

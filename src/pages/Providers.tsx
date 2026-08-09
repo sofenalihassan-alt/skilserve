@@ -17,6 +17,7 @@ import { FeedbackDialog } from "@/components/FeedbackDialog";
 import { ProviderCardSkeleton, MapSkeleton } from "@/components/ProviderCardSkeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SavedSearches, type SearchFilters } from "@/components/SavedSearches";
+import Seo from "@/components/Seo";
 
 interface ProviderWithAvatar {
   id: string | null;
@@ -195,6 +196,17 @@ const Providers = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <Seo
+        title={"Browse Service Providers | Skill Serve"}
+        description={"Search and filter verified local service providers by category, rating, price and distance. Book trusted professionals in minutes on Skill Serve."}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Service Providers",
+          description: "Directory of verified local service providers on Skill Serve.",
+          url: "https://skillserveweb.lovable.app/providers",
+        }}
+      />
       <Header />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">

@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import type { Database } from '@/integrations/supabase/types';
+import Seo from "@/components/Seo";
 
 type BookingStatus = Database['public']['Enums']['booking_status'];
 
@@ -236,12 +237,12 @@ const Bookings = () => {
                 </div>
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-lg truncate">
+                <h2 className="font-semibold text-lg truncate">
                   {isProviderView 
                     ? booking.profile?.full_name || 'Customer'
                     : booking.provider?.business_name || 'Provider'
                   }
-                </h3>
+                </h2>
                 {!isProviderView && booking.provider && (
                   <p className="text-sm text-muted-foreground capitalize">{booking.provider.category}</p>
                 )}
@@ -391,6 +392,7 @@ const Bookings = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <Seo title={"My Bookings | Skill Serve"} description={"View, track and manage all your Skill Serve service bookings, from pending requests to completed jobs."} noindex />
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-5xl mx-auto">
@@ -438,7 +440,7 @@ const Bookings = () => {
                   <Card className="border-border/50 bg-card/50">
                     <CardContent className="py-16 text-center">
                       <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" strokeWidth={1.5} />
-                      <h3 className="text-lg font-semibold">No bookings yet</h3>
+                      <h2 className="text-lg font-semibold">No bookings yet</h2>
                       <p className="text-muted-foreground mt-2">Browse providers and book a service</p>
                       <Button onClick={() => navigate('/providers')} className="mt-4">Find Providers</Button>
                     </CardContent>
@@ -489,9 +491,9 @@ const Bookings = () => {
                   <Card className="border-border/50 bg-card/50">
                     <CardContent className="py-16 text-center">
                       <Inbox className="h-12 w-12 mx-auto text-muted-foreground mb-4" strokeWidth={1.5} />
-                      <h3 className="text-lg font-semibold">
+                      <h2 className="text-lg font-semibold">
                         {statusFilter === 'all' ? 'No client requests' : `No ${statusFilter} requests`}
-                      </h3>
+                      </h2>
                       <p className="text-muted-foreground mt-2">
                         {statusFilter === 'all' ? "You haven't received any booking requests yet" : 'Try a different filter'}
                       </p>
@@ -510,7 +512,7 @@ const Bookings = () => {
                 <Card className="border-border/50 bg-card/50">
                   <CardContent className="py-16 text-center">
                     <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" strokeWidth={1.5} />
-                    <h3 className="text-lg font-semibold">No bookings yet</h3>
+                    <h2 className="text-lg font-semibold">No bookings yet</h2>
                     <p className="text-muted-foreground mt-2">Browse providers and book a service</p>
                     <Button onClick={() => navigate('/providers')} className="mt-4">Find Providers</Button>
                   </CardContent>

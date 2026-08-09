@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
+import Seo from "@/components/Seo";
 
 const PrivacyPolicy = () => {
   const [version, setVersion] = useState("1.0");
@@ -13,6 +14,7 @@ const PrivacyPolicy = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <Seo title={"Privacy Policy | Skill Serve"} description={"Learn how Skill Serve collects, uses and protects your personal data when you book or provide local services on our platform."} />
       <Header />
       <div className="container mx-auto px-4 py-10 max-w-3xl prose prose-sm dark:prose-invert">
         <h1>Privacy Policy</h1>

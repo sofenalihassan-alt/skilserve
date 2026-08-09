@@ -6,12 +6,14 @@ import { Testimonials } from "@/components/Testimonials";
 import { EmergencyServices } from "@/components/EmergencyServices";
 import { Footer } from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
+import Seo from "@/components/Seo";
 
 const Index = () => {
   const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <Seo title={"Skill Serve — Find Trusted Service Providers Near You"} description={"Book verified plumbers, electricians, cleaners and more near you. Compare ratings, chat with pros and get 24/7 emergency help on Skill Serve."} />
       <Header />
       <Hero />
       <StatsCounter />
