@@ -168,7 +168,7 @@ const ProvidersTab = () => {
   const fetchProviders = async () => {
     setLoading(true);
     const { data } = await supabase.from('service_providers')
-      .select('*, profiles!service_providers_user_id_fkey(full_name, phone, avatar_url)')
+      .select('id, user_id, business_name, category, specialization, hourly_rate, bio, years_experience, insurance_verified, is_active, is_approved, verification_status, availability_24_7, created_at, updated_at, profiles!service_providers_user_id_fkey(full_name, phone, avatar_url)')
       .order('created_at', { ascending: false });
     setProviders(data || []);
     setLoading(false);
