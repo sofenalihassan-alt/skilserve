@@ -57,7 +57,14 @@ export const Header = () => {
   const handleSignOut = async () => { await signOut(); navigate("/"); };
 
   const NavButton = ({ icon: Icon, label, onClick, title, badge }: { icon: React.ElementType; label: string; onClick: () => void; title?: string; badge?: number }) => (
-    <Button variant="ghost" onClick={onClick} title={title || label} className="gap-2 relative">
+  <Button
+      variant="ghost"
+      onClick={onClick}
+      title={title || label}
+      className="gap-2 relative"
+    >
+      <Icon className="h-4 w-4 shrink-0" />
+      {label}
       <Icon className="h-4 w-4" />
       <span className="hidden lg:inline">{label}</span>
       {!!badge && badge > 0 && (
@@ -125,11 +132,21 @@ export const Header = () => {
             )}
           </nav>
 
-          {/* Mobile: logo + search + notifications prominently at top */}
-          <div className="flex md:hidden items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={() => window.dispatchEvent(new Event('open-command-palette'))} title={t('find_services')} aria-label={t('find_services')}>
+                    {/* Mobile: search + theme + notifications */}
+          <div className="flex md:hidden items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => window.dispatchEvent(new Event('open-command-palette'))}
+              title={t('find_services')}
+              aria-label={t('find_services')}
+              className="h-9 w-9"
+            >
               <Search className="h-5 w-5" />
             </Button>
+
+            <ThemeToggle />
+
             {user && (
               <div className="relative">
                 <NotificationCenter />
