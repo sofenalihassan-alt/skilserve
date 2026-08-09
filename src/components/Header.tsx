@@ -91,7 +91,7 @@ export const Header = () => {
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon"><Globe className="h-4 w-4" /></Button>
+                <Button variant="outline" size="icon" aria-label="Change language"><Globe className="h-4 w-4" /></Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem onClick={() => setLanguage("en")}>English</DropdownMenuItem>
@@ -104,7 +104,7 @@ export const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 rounded-full border border-border p-1 pe-3 hover:bg-accent/10 transition-colors">
+                  <button aria-label={t('account')} className="flex items-center gap-2 rounded-full border border-border p-1 pe-3 hover:bg-accent/10 transition-colors">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={avatarUrl || undefined} />
                       <AvatarFallback className="bg-primary/20 text-primary text-sm font-bold">{fullName?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
@@ -127,7 +127,7 @@ export const Header = () => {
 
           {/* Mobile: logo + search + notifications prominently at top */}
           <div className="flex md:hidden items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={() => window.dispatchEvent(new Event('open-command-palette'))} title={t('find_services')}>
+            <Button variant="ghost" size="icon" onClick={() => window.dispatchEvent(new Event('open-command-palette'))} title={t('find_services')} aria-label={t('find_services')}>
               <Search className="h-5 w-5" />
             </Button>
             {user && (

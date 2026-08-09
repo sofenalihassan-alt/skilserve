@@ -237,7 +237,7 @@ const Bookings = () => {
                 </div>
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-lg truncate">
+                <h2 className="font-semibold text-lg truncate">
                   {isProviderView 
                     ? booking.profile?.full_name || 'Customer'
                     : booking.provider?.business_name || 'Provider'
@@ -440,7 +440,7 @@ const Bookings = () => {
                   <Card className="border-border/50 bg-card/50">
                     <CardContent className="py-16 text-center">
                       <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" strokeWidth={1.5} />
-                      <h3 className="text-lg font-semibold">No bookings yet</h3>
+                      <h2 className="text-lg font-semibold">No bookings yet</h2>
                       <p className="text-muted-foreground mt-2">Browse providers and book a service</p>
                       <Button onClick={() => navigate('/providers')} className="mt-4">Find Providers</Button>
                     </CardContent>
@@ -491,7 +491,7 @@ const Bookings = () => {
                   <Card className="border-border/50 bg-card/50">
                     <CardContent className="py-16 text-center">
                       <Inbox className="h-12 w-12 mx-auto text-muted-foreground mb-4" strokeWidth={1.5} />
-                      <h3 className="text-lg font-semibold">
+                      <h2 className="text-lg font-semibold">
                         {statusFilter === 'all' ? 'No client requests' : `No ${statusFilter} requests`}
                       </h3>
                       <p className="text-muted-foreground mt-2">
@@ -512,7 +512,7 @@ const Bookings = () => {
                 <Card className="border-border/50 bg-card/50">
                   <CardContent className="py-16 text-center">
                     <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" strokeWidth={1.5} />
-                    <h3 className="text-lg font-semibold">No bookings yet</h3>
+                    <h2 className="text-lg font-semibold">No bookings yet</h2>
                     <p className="text-muted-foreground mt-2">Browse providers and book a service</p>
                     <Button onClick={() => navigate('/providers')} className="mt-4">Find Providers</Button>
                   </CardContent>

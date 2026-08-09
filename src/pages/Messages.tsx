@@ -380,7 +380,7 @@ const Messages = () => {
               <>
                 <CardHeader className="pb-3">
                   <div className="flex items-center gap-3">
-                    <Button variant="ghost" size="icon" className="md:hidden shrink-0" onClick={() => { setSelectedUserId(null); setSelectedUserInfo(null); }}>
+                    <Button variant="ghost" size="icon" aria-label="Back to conversations" className="md:hidden shrink-0" onClick={() => { setSelectedUserId(null); setSelectedUserInfo(null); }}>
                       <ArrowLeft className="h-5 w-5" />
                     </Button>
                     <Avatar className="h-10 w-10 shrink-0">
@@ -395,12 +395,12 @@ const Messages = () => {
                         <p className="text-xs text-accent capitalize">{chatPartnerCategory}</p>
                       )}
                     </div>
-                    <Button variant="outline" size="icon" className="shrink-0" onClick={() => handleCall(selectedUserId, chatPartnerPhone)} title="Call">
+                    <Button variant="outline" size="icon" aria-label="Call" className="shrink-0" onClick={() => handleCall(selectedUserId, chatPartnerPhone)} title="Call">
                       <PhoneIcon className="h-4 w-4" />
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="shrink-0"><MoreVertical className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" aria-label="More options" className="shrink-0"><MoreVertical className="h-4 w-4" /></Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={handleDeleteConversation} className="text-destructive">

@@ -89,7 +89,7 @@ const Emergency = () => {
           ) : providers.length === 0 ? (
             <Card className="p-12 text-center">
               <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-2">No Emergency Providers Available</h3>
+              <h2 className="text-xl font-bold mb-2">No Emergency Providers Available</h2>
               <p className="text-muted-foreground">No providers have opted for 24/7 emergency availability yet.</p>
             </Card>
           ) : (
@@ -104,7 +104,7 @@ const Emergency = () => {
                           <AvatarFallback className="bg-primary/20 text-primary font-bold">{getInitials(provider.business_name || "?")}</AvatarFallback>
                         </Avatar>
                         <div>
-                          <h3 className="font-bold text-lg">{provider.business_name}</h3>
+                          <h2 className="font-bold text-lg">{provider.business_name}</h2>
                           <p className="text-sm text-muted-foreground capitalize">{provider.category?.replace('_', ' ')}</p>
                         </div>
                       </div>
