@@ -133,12 +133,12 @@ const ProviderDetail = () => {
     serviceType: provider.category,
     url: `https://skillserveweb.lovable.app/provider/${id}`,
     ...(provider.avatar_url ? { image: provider.avatar_url } : {}),
-    ...(provider.rating && provider.total_reviews
+    ...(reviews.length
       ? {
           aggregateRating: {
             "@type": "AggregateRating",
-            ratingValue: provider.rating,
-            reviewCount: provider.total_reviews,
+            ratingValue: Number(avgRating.toFixed(1)),
+            reviewCount: reviews.length,
           },
         }
       : {}),
