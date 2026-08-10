@@ -178,7 +178,7 @@ const ProviderRegistration = () => {
               </Select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="hourlyRate">Hourly Rate (PKR) *</Label>
                 <Input id="hourlyRate" value={formValues.hourlyRate} onChange={(e) => setFormValues({ ...formValues, hourlyRate: e.target.value })} type="number" min="0" step="0.01" placeholder="1000" required />

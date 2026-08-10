@@ -101,7 +101,7 @@ export const PortfolioManager = ({ providerId }: { providerId: string }) => {
         {items.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4">{t("no_portfolio")}</p>
         ) : (
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {items.map((it) => (
               <div key={it.id} className="relative aspect-square group rounded-lg overflow-hidden border border-border/50">
                 <img src={it.image_url} alt="" className="w-full h-full object-cover" />

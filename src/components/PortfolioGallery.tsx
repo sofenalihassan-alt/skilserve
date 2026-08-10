@@ -36,7 +36,7 @@ export const PortfolioGallery = ({ providerId, max }: { providerId: string; max?
 
   if (loading) {
     return (
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {[1, 2, 3].map((i) => <Skeleton key={i} className="aspect-square rounded-lg" />)}
       </div>
     );
@@ -56,7 +56,7 @@ export const PortfolioGallery = ({ providerId, max }: { providerId: string; max?
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {shown.map((it, i) => (
           <button
             key={it.id}
