@@ -23,7 +23,7 @@ export const Hero = () => {
     <section className="relative overflow-hidden">
       <div className="container mx-auto px-4 py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-4xl text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 className="text-[2rem] font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
             <span className="block">{t("hero_title_1")}</span>
             <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               {t("hero_title_2")}
