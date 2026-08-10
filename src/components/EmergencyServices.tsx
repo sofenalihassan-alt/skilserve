@@ -47,16 +47,17 @@ export const EmergencyServices = () => {
                 Fast response
               </span>
             </div>
-
-            <div className="mt-8">
-              <MagneticButton className="inline-block">
+            <div className="mt-8 w-full">
+              <MagneticButton className="block w-full max-w-full">
                 <Button
                   size="lg"
-                  className="h-12 bg-emergency px-6 text-base font-semibold text-emergency-foreground shadow-lg shadow-emergency/20 transition-all hover:bg-emergency/90 hover:shadow-xl hover:shadow-emergency/25 sm:h-13 sm:px-8 sm:text-lg"
+                  className="h-12 w-full max-w-full bg-emergency px-4 text-sm font-semibold text-emergency-foreground shadow-lg shadow-emergency/20 transition-all hover:bg-emergency/90 hover:shadow-xl hover:shadow-emergency/25 sm:h-13 sm:px-8 sm:text-lg"
                   onClick={() => navigate("/emergency")}
                 >
-                  <AlertCircle className="me-2 h-5 w-5" />
-                  {t("view_emergency")}
+                  <AlertCircle className="me-2 h-5 w-5 shrink-0" />
+                  <span className="truncate">
+                    {t("view_emergency")}
+                  </span>
                 </Button>
               </MagneticButton>
             </div>
