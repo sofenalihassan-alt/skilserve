@@ -7,6 +7,7 @@ import { EmergencyServices } from "@/components/EmergencyServices";
 import { Footer } from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Seo from "@/components/Seo";
+import { FAQ } from "@/components/FAQ";
 
 const Index = () => {
   const { t } = useLanguage();
@@ -20,6 +21,7 @@ const Index = () => {
       <ServiceCategories />
       <Testimonials />
       <EmergencyServices />
+      <FAQ />
       
         <section className="relative overflow-hidden bg-primary/5 px-4 py-16 sm:py-20">
         <div className="pointer-events-none absolute left-1/2 top-0 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
