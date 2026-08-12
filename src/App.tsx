@@ -34,8 +34,16 @@ import Contact from "./pages/Contact";
 import OAuthConsent from "./pages/OAuthConsent";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
-
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 const PushNotificationInit = ({ children }: { children: React.ReactNode }) => {
   usePushNotifications();
   useReferralCapture();
