@@ -9,7 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Map, Filter, Search, MessageSquare, RefreshCw } from "lucide-react";
+import {
+  Map,
+  Filter,
+  Search,
+  MessageSquare,
+  RefreshCw,
+  SlidersHorizontal,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LiveActivityToast } from "@/components/LiveActivityToast";
 import { useToast } from "@/hooks/use-toast";
