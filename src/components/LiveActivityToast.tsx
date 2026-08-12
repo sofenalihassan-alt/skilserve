@@ -46,7 +46,7 @@ export const LiveActivityToast = () => {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -40, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="pointer-events-auto flex items-center gap-3 rounded-xl bg-card/95 backdrop-blur-md border border-border/60 shadow-lg px-4 py-3 max-w-xs"
+            className="mx-auto mb-4 flex w-full max-w-2xl items-center gap-3 rounded-xl border border-border/60 bg-card/95 px-4 py-3 shadow-lg backdrop-blur-md"
           >
             <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary/10 shrink-0">
               <Zap className="h-4 w-4 text-primary" strokeWidth={1.5} />

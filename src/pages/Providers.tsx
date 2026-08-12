@@ -222,8 +222,11 @@ const Providers = () => {
           url: "https://skillserveweb.lovable.app/providers",
         }}
       />
-      <Header />
-      <div className="container mx-auto px-4 py-8">
+        <Header />
+
+        <LiveActivityToast />
+
+        <div className="container mx-auto px-4 py-8">
         <div>
         <div className="mb-6 space-y-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -542,8 +545,6 @@ const Providers = () => {
         onOpenChange={setFeedbackOpen}
         type="website"
       />
-
-      <LiveActivityToast />
     </div>
   );
 };
