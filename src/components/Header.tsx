@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, User, Globe, LogOut, MessageSquareText, Home, Search, AlertTriangle, Briefcase, CalendarDays, Phone, Shield } from "lucide-react";
+import { User, Globe, LogOut, MessageSquareText, Home, Search, AlertTriangle, Briefcase, CalendarDays, Phone, Shield } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [fullName, setFullName] = useState<string>('');
   const [unreadCount, setUnreadCount] = useState(0);
@@ -143,202 +142,28 @@ export const Header = () => {
             )}
           </nav>
 
-            {/* Mobile: search + theme + notifications */}
-            <div className="flex md:hidden items-center gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-                className="h-9 w-9"
-              >
-                {isMenuOpen ? (
-                  <X className="h-5 w-5" />
-                ) : (
-                  <Menu className="h-5 w-5" />
-                )}
-              </Button>
+                    {/* Mobile: search + theme + notifications */}
+          <div className="flex md:hidden items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => window.dispatchEvent(new Event('open-command-palette'))}
+              title={t('find_services')}
+              aria-label={t('find_services')}
+              className="h-9 w-9"
+            >
+              <Search className="h-5 w-5" />
+            </Button>
 
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => window.dispatchEvent(new Event('open-command-palette'))}
-                title={t('find_services')}
-                aria-label={t('find_services')}
-                className="h-9 w-9"
-              >
-                <Search className="h-5 w-5" />
-              </Button>
+            <ThemeToggle />
 
-              <ThemeToggle />
-
-              {user && (
-                <div className="relative">
-                  <NotificationCenter />
-                </div>
-              )}
-            </div>
-        </div>
-        {isMenuOpen && (
-  <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-xl">
-    <nav className="flex flex-col gap-1 p-3">
-      <Button
-        variant="ghost"
-        className="justify-start gap-3"
-        onClick={() => {
-          navigate("/");
-          setIsMenuOpen(false);
-        }}
-      >
-        <Home className="h-4 w-4" />
-        {t("home")}
-      </Button>
-
-      <Button
-        variant="ghost"
-        className="justify-start gap-3"
-        onClick={() => {
-          window.dispatchEvent(new Event("open-command-palette"));
-          setIsMenuOpen(false);
-        }}
-      >
-        <Search className="h-4 w-4" />
-        {t("find_services")}
-      </Button>
-
-      <Button
-        variant="ghost"
-        className="justify-start gap-3"
-        onClick={() => {
-          navigate("/emergency");
-          setIsMenuOpen(false);
-        }}
-      >
-        <AlertTriangle className="h-4 w-4" />
-        {t("emergency")}
-      </Button>
-
-      {!isProvider && (
-        <Button
-          variant="ghost"
-          className="justify-start gap-3"
-          onClick={() => {
-            navigate(user ? "/provider-registration" : "/auth");
-            setIsMenuOpen(false);
-          }}
-        >
-          <Briefcase className="h-4 w-4" />
-          {t("become_provider")}
-        </Button>
-      )}
-
-      {user && (
-        <>
-          <Button
-            variant="ghost"
-            className="justify-start gap-3"
-            onClick={() => {
-              navigate("/messages");
-              setIsMenuOpen(false);
-            }}
-          >
-            <MessageSquareText className="h-4 w-4" />
-            {t("messages")}
-            {unreadCount > 0 && (
-              <span className="ms-auto rounded-full bg-destructive px-2 py-0.5 text-xs text-destructive-foreground">
-                {unreadCount > 99 ? "99+" : unreadCount}
-              </span>
+            {user && (
+              <div className="relative">
+                <NotificationCenter />
+              </div>
             )}
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="justify-start gap-3"
-            onClick={() => {
-              navigate("/profile");
-              setIsMenuOpen(false);
-            }}
-          >
-            <User className="h-4 w-4" />
-            {t("profile")}
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="justify-start gap-3"
-            onClick={() => {
-              navigate("/bookings");
-              setIsMenuOpen(false);
-            }}
-          >
-            <CalendarDays className="h-4 w-4" />
-            {t("my_bookings")}
-          </Button>
-        </>
-      )}
-
-      {isAdmin && (
-        <Button
-          variant="ghost"
-          className="justify-start gap-3"
-          onClick={() => {
-            navigate("/admin");
-            setIsMenuOpen(false);
-          }}
-        >
-          <Shield className="h-4 w-4" />
-          Admin
-        </Button>
-      )}
-
-      <div className="my-1 border-t border-border" />
-
-      <div className="flex items-center justify-between px-3 py-2">
-        <span className="text-sm text-muted-foreground">Language</span>
-        <div className="flex gap-1">
-          <Button
-            variant={language === "en" ? "secondary" : "ghost"}
-            size="sm"
-            onClick={() => setLanguage("en")}
-          >
-            English
-          </Button>
-          <Button
-            variant={language === "ur" ? "secondary" : "ghost"}
-            size="sm"
-            onClick={() => setLanguage("ur")}
-          >
-            اردو
-          </Button>
+          </div>
         </div>
-      </div>
-
-      {user && (
-        <Button
-          variant="ghost"
-          className="justify-start gap-3 text-destructive hover:text-destructive"
-          onClick={handleSignOut}
-        >
-          <LogOut className="h-4 w-4" />
-          {t("logout")}
-        </Button>
-      )}
-
-      {!user && (
-        <Button
-          className="mt-1"
-          onClick={() => {
-            navigate("/auth");
-            setIsMenuOpen(false);
-          }}
-        >
-          <User className="h-4 w-4 me-2" />
-          {t("login")}
-        </Button>
-      )}
-    </nav>
-  </div>
-)}
 
       </div>
     </header>
