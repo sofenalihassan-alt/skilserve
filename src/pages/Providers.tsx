@@ -16,7 +16,15 @@ import {
   MessageSquare,
   RefreshCw,
   SlidersHorizontal,
-} from "lucide-react";
+  X,
+} 
+from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { LiveActivityToast } from "@/components/LiveActivityToast";
 import { useToast } from "@/hooks/use-toast";
@@ -65,9 +73,9 @@ const Providers = () => {
   const [minExperience, setMinExperience] = useState(0);
   const [reviewStats, setReviewStats] = useState<ReviewStats>({});
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
-
   // Pull-to-refresh state
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -216,91 +224,231 @@ const Providers = () => {
       />
       <Header />
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <aside className="lg:w-80 space-y-6">
-            <div className="bg-card rounded-lg p-6 border space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold flex items-center gap-2"><Filter className="h-5 w-5" strokeWidth={1.5} />Filters</h2>
-                <Button variant="ghost" size="sm" onClick={clearFilters}>Clear</Button>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Search</label>
-                <div className="relative">
-                  <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
-                  <Input placeholder="Search providers..." className="ps-9" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Service Category</label>
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger><SelectValue placeholder="All Services" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Services</SelectItem>
-                    <SelectItem value="electrical">Electrical</SelectItem>
-                    <SelectItem value="plumbing">Plumbing</SelectItem>
-                    <SelectItem value="carpentry">Carpentry</SelectItem>
-                    <SelectItem value="cleaning">Cleaning</SelectItem>
-                    <SelectItem value="painting">Painting</SelectItem>
-                    <SelectItem value="hvac">HVAC</SelectItem>
-                    <SelectItem value="landscaping">Landscaping</SelectItem>
-                    <SelectItem value="handyman">Handyman</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-4">
-                <label className="text-sm font-medium">Price Range (Rs/hr)</label>
-                <Slider value={priceRange} onValueChange={setPriceRange} max={2000} step={50} className="w-full" />
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>Rs. {priceRange[0]}</span>
-                  <span>Rs. {priceRange[1]}</span>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Minimum Rating</label>
-                <Select value={String(minRating)} onValueChange={(v) => setMinRating(Number(v))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">Any rating</SelectItem>
-                    <SelectItem value="3">3★ &amp; up</SelectItem>
-                    <SelectItem value="4">4★ &amp; up</SelectItem>
-                    <SelectItem value="4.5">4.5★ &amp; up</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Minimum Experience</label>
-                <Select value={String(minExperience)} onValueChange={(v) => setMinExperience(Number(v))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">Any experience</SelectItem>
-                    <SelectItem value="1">1+ years</SelectItem>
-                    <SelectItem value="3">3+ years</SelectItem>
-                    <SelectItem value="5">5+ years</SelectItem>
-                    <SelectItem value="10">10+ years</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center justify-between gap-3">
-                <label htmlFor="verified-only" className="text-sm font-medium">Verified providers only</label>
-                <Switch id="verified-only" checked={verifiedOnly} onCheckedChange={setVerifiedOnly} />
-              </div>
-
-              <div className="flex items-center justify-between gap-3">
-                <label htmlFor="available-247" className="text-sm font-medium">Available 24/7</label>
-                <Switch id="available-247" checked={available247} onCheckedChange={setAvailable247} />
-              </div>
-
-              <div className="pt-2 border-t">
-                <SavedSearches currentFilters={currentFilters} onApply={applySavedFilters} />
-              </div>
+        <div>
+        <div className="mb-6 space-y-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            
+            {/* Search */}
+            <div className="relative flex-1">
+              <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search providers..."
+                className="ps-9"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
-            <Button variant="outline" className="w-full" onClick={() => setShowMap(!showMap)}>
-              <Map className="h-4 w-4 mr-2" strokeWidth={1.5} />{showMap ? "Hide Map" : "Show Map View"}
+
+            {/* Filters */}
+            <Button
+              variant="outline"
+              onClick={() => setFiltersOpen(true)}
+              className="gap-2"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              Filters
             </Button>
-          </aside>
+
+            {/* Sort */}
+            <div className="sm:w-48">
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="rating">Rating</SelectItem>
+                  <SelectItem value="price-low">Price: Low to High</SelectItem>
+                  <SelectItem value="price-high">Price: High to Low</SelectItem>
+                  <SelectItem value="experience">Experience</SelectItem>
+                  <SelectItem value="newest">Newest</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Map */}
+            <Button
+              variant="outline"
+              onClick={() => setShowMap(!showMap)}
+              className="gap-2"
+            >
+              <Map className="h-4 w-4" />
+              {showMap ? "Hide Map" : "Map"}
+            </Button>
+          </div>
+        </div>
+        <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
+  <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+    <SheetHeader>
+      <SheetTitle className="flex items-center justify-between">
+        <span className="flex items-center gap-2">
+          <Filter className="h-5 w-5" />
+          Filters
+        </span>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={clearFilters}
+        >
+          Clear
+        </Button>
+      </SheetTitle>
+    </SheetHeader>
+
+    <div className="mt-6 space-y-6">
+
+      {/* Service Category */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium">
+          Service Category
+        </label>
+
+        <Select value={category} onValueChange={setCategory}>
+          <SelectTrigger>
+            <SelectValue placeholder="All Services" />
+          </SelectTrigger>
+
+          <SelectContent>
+            <SelectItem value="all">All Services</SelectItem>
+            <SelectItem value="electrical">Electrical</SelectItem>
+            <SelectItem value="plumbing">Plumbing</SelectItem>
+            <SelectItem value="carpentry">Carpentry</SelectItem>
+            <SelectItem value="cleaning">Cleaning</SelectItem>
+            <SelectItem value="painting">Painting</SelectItem>
+            <SelectItem value="hvac">HVAC</SelectItem>
+            <SelectItem value="landscaping">Landscaping</SelectItem>
+            <SelectItem value="handyman">Handyman</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Price */}
+      <div className="space-y-3">
+        <label className="text-sm font-medium">
+          Price Range (Rs/hr)
+        </label>
+
+        <Slider
+          value={priceRange}
+          onValueChange={setPriceRange}
+          max={2000}
+          step={50}
+        />
+
+        <div className="flex justify-between text-sm text-muted-foreground">
+          <span>Rs. {priceRange[0]}</span>
+          <span>Rs. {priceRange[1]}</span>
+        </div>
+      </div>
+
+      {/* Rating */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium">
+          Minimum Rating
+        </label>
+
+        <Select
+          value={String(minRating)}
+          onValueChange={(v) => setMinRating(Number(v))}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+
+          <SelectContent>
+            <SelectItem value="0">Any rating</SelectItem>
+            <SelectItem value="3">3★ & up</SelectItem>
+            <SelectItem value="4">4★ & up</SelectItem>
+            <SelectItem value="4.5">4.5★ & up</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Experience */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium">
+          Minimum Experience
+        </label>
+
+        <Select
+          value={String(minExperience)}
+          onValueChange={(v) => setMinExperience(Number(v))}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+
+          <SelectContent>
+            <SelectItem value="0">Any experience</SelectItem>
+            <SelectItem value="1">1+ years</SelectItem>
+            <SelectItem value="3">3+ years</SelectItem>
+            <SelectItem value="5">5+ years</SelectItem>
+            <SelectItem value="10">10+ years</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Verified */}
+      <div className="flex items-center justify-between">
+        <label
+          htmlFor="verified-only"
+          className="text-sm font-medium"
+        >
+          Verified providers only
+        </label>
+
+        <Switch
+          id="verified-only"
+          checked={verifiedOnly}
+          onCheckedChange={setVerifiedOnly}
+        />
+      </div>
+
+      {/* Available 24/7 */}
+      <div className="flex items-center justify-between">
+        <label
+          htmlFor="available-247"
+          className="text-sm font-medium"
+        >
+          Available 24/7
+        </label>
+
+        <Switch
+          id="available-247"
+          checked={available247}
+          onCheckedChange={setAvailable247}
+        />
+      </div>
+
+      {/* Saved Searches */}
+      <div className="border-t pt-5">
+        <SavedSearches
+          currentFilters={currentFilters}
+          onApply={applySavedFilters}
+        />
+      </div>
+
+      {/* Bottom actions */}
+      <div className="flex gap-3 border-t pt-5">
+        <Button
+          variant="outline"
+          className="flex-1"
+          onClick={clearFilters}
+        >
+          Clear
+        </Button>
+
+        <Button
+          className="flex-1"
+          onClick={() => setFiltersOpen(false)}
+        >
+          Apply Filters
+        </Button>
+      </div>
+
+    </div>
+  </SheetContent>
+</Sheet>
           <main className="flex-1" ref={listRef} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
             {/* Pull-to-refresh indicator */}
             <AnimatePresence>
