@@ -316,7 +316,7 @@ const Providers = () => {
 
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold mb-2">Service Providers Near You</h1>
+                <h1 className="text-2xl font-bold mb-2 sm:text-3xl">Service Providers Near You</h1>
                 <p className="text-muted-foreground">
                   {loading ? 'Loading...' : `Found ${filteredProviders.length} providers`}
                   {category !== "all" && ` in ${category}`}
