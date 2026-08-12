@@ -88,7 +88,7 @@ export const BottomNav = () => {
               key={path}
               onClick={() => navigate(path)}
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-lg transition-colors relative",
+                "flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg py-2 transition-colors relative",
                 active ? "text-primary" : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -98,7 +98,14 @@ export const BottomNav = () => {
                   {badge > 99 ? '99+' : badge}
                 </span>
               )}
-              <span className={cn("text-[10px]", active ? "font-semibold" : "font-medium")}>{label}</span>
+              <span
+                className={cn(
+                  "max-w-full truncate px-1 text-[10px]",
+                  active ? "font-semibold" : "font-medium"
+                )}
+              >
+                {label}
+              </span>
             </button>
           );
         })}
@@ -106,9 +113,9 @@ export const BottomNav = () => {
         {/* More drawer trigger */}
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
           <DrawerTrigger asChild>
-            <button className="flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-lg transition-colors text-muted-foreground hover:text-foreground">
+            <button className="flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg py-2 text-muted-foreground transition-colors hover:text-foreground">
               <MoreHorizontal className="h-5 w-5" strokeWidth={1.5} />
-              <span className="text-[10px] font-medium">More</span>
+              <span className="max-w-full truncate px-1 text-[10px] font-medium">More</span>
             </button>
           </DrawerTrigger>
           <DrawerContent>
