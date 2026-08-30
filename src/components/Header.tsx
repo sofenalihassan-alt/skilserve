@@ -101,7 +101,7 @@ export const Header = () => {
             <NavButton icon={Search} label={t('find_services')} onClick={() => window.dispatchEvent(new Event('open-command-palette'))} />
             <NavButton icon={AlertTriangle} label={t('emergency')} onClick={() => navigate("/emergency")} />
             {!isProvider && (
-              <NavButton icon={Briefcase} label={t('become_provider')} onClick={() => user ? navigate("/provider-registration") : navigate(authRedirect())} />
+              <NavButton icon={Briefcase} label={t('become_provider')} onClick={() => user ? navigate("/provider-registration") : navigate(authRedirect("/provider-registration"))} />
             )}
             {user && <NavButton icon={MessageSquareText} label={t('messages')} onClick={() => navigate("/messages")} badge={unreadCount} />}
             {user && <NotificationCenter />}
