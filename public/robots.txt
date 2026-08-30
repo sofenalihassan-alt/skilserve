@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://skillserveweb.lovable.app/sitemap.xml
+Sitemap: https://skilserve.lovable.app/sitemap.xml
