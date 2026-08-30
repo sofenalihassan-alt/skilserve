@@ -1,3 +1,4 @@
+import { authRedirect } from "@/lib/authRedirect";
 import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -41,7 +42,7 @@ export const FavoriteButton = ({ providerId, className, variant = "icon" }: Prop
     e.stopPropagation();
     e.preventDefault();
     if (!user) {
-      navigate("/auth");
+      navigate(authRedirect());
       return;
     }
     if (busy) return;

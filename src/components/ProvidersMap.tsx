@@ -165,8 +165,11 @@ const ProvidersMap = () => {
               </div>
 
               <DrawerFooter className="flex-row gap-2">
-                <Button variant="outline" size="sm" className="flex-1 gap-2">
-                  <Phone className="h-4 w-4" />Call
+                <Button variant="outline" size="sm" className="flex-1 gap-2" onClick={() => {
+                  setDrawerOpen(false);
+                  navigate(`/provider/${selectedProvider.id}`);
+                }}>
+                  <Phone className="h-4 w-4" />Contact
                 </Button>
                 <Button variant="outline" size="sm" className="flex-1 gap-2" onClick={() => {
                   setDrawerOpen(false);
@@ -176,11 +179,12 @@ const ProvidersMap = () => {
                 </Button>
                 <Button size="sm" className="flex-1 gap-2" onClick={() => {
                   setDrawerOpen(false);
-                  navigate(`/providers?search=${encodeURIComponent(selectedProvider.business_name)}`);
+                  navigate(`/provider/${selectedProvider.id}`);
                 }}>
                   <CalendarPlus className="h-4 w-4" />Book
                 </Button>
               </DrawerFooter>
+
             </>
           )}
         </DrawerContent>

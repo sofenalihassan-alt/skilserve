@@ -1,3 +1,4 @@
+import { authRedirect } from "@/lib/authRedirect";
 import { useState, useEffect } from "react";
 import { User, Globe, LogOut, MessageSquareText, Home, Search, AlertTriangle, Briefcase, CalendarDays, Phone, Shield } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -100,7 +101,7 @@ export const Header = () => {
             <NavButton icon={Search} label={t('find_services')} onClick={() => window.dispatchEvent(new Event('open-command-palette'))} />
             <NavButton icon={AlertTriangle} label={t('emergency')} onClick={() => navigate("/emergency")} />
             {!isProvider && (
-              <NavButton icon={Briefcase} label={t('become_provider')} onClick={() => user ? navigate("/provider-registration") : navigate("/auth")} />
+              <NavButton icon={Briefcase} label={t('become_provider')} onClick={() => user ? navigate("/provider-registration") : navigate(authRedirect("/provider-registration"))} />
             )}
             {user && <NavButton icon={MessageSquareText} label={t('messages')} onClick={() => navigate("/messages")} badge={unreadCount} />}
             {user && <NotificationCenter />}
@@ -138,7 +139,7 @@ export const Header = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button onClick={() => navigate("/auth")}><User className="h-4 w-4 me-2" /><span className="hidden lg:inline">{t('login')}</span></Button>
+              <Button onClick={() => navigate(authRedirect())}><User className="h-4 w-4 me-2" /><span className="hidden lg:inline">{t('login')}</span></Button>
             )}
           </nav>
 

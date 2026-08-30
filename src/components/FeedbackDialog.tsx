@@ -1,3 +1,4 @@
+import { authRedirect } from "@/lib/authRedirect";
 import { useState } from "react";
 import { Star, MessageSquare } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -27,7 +28,7 @@ export const FeedbackDialog = ({ open, onOpenChange, type, providerName, provide
 
   const handleSubmit = async () => {
     if (!user) {
-      navigate("/auth");
+      navigate(authRedirect());
       return;
     }
     if (rating === 0) {

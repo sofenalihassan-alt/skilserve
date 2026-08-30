@@ -1,3 +1,4 @@
+import { authRedirect } from "@/lib/authRedirect";
 import { useState } from "react";
 import { format } from "date-fns";
 import { z } from "zod";
@@ -74,7 +75,7 @@ export const BookingDialog = ({ open, onOpenChange, provider }: BookingDialogPro
 
   const handleSubmit = async () => {
     if (!user) {
-      navigate("/auth");
+      navigate(authRedirect());
       return;
     }
 
