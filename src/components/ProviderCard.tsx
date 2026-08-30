@@ -1,3 +1,4 @@
+import { authRedirect } from "@/lib/authRedirect";
 import { useState, useMemo, useEffect } from "react";
 import { Star, Clock, Briefcase, Phone, MessageSquareText, ThumbsUp, ShieldCheck, Navigation, CalendarPlus, Lock } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -73,7 +74,7 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
     .slice(0, 2);
 
   const handleCall = async () => {
-    if (!user) { navigate('/auth'); return; }
+    if (!user) { navigate(authRedirect()); return; }
     const { data } = await supabase.from('profiles').select('phone').eq('id', provider.user_id!).maybeSingle();
     const phone = data?.phone;
     if (!phone) {
@@ -100,7 +101,7 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
   };
 
   const handleBook = () => {
-    if (!user) { navigate('/auth'); return; }
+    if (!user) { navigate(authRedirect()); return; }
     setBookingOpen(true);
   };
 

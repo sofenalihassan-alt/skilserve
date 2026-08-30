@@ -1,3 +1,4 @@
+import { authRedirect } from "@/lib/authRedirect";
 import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -126,7 +127,7 @@ const Emergency = () => {
                           <Phone className="h-4 w-4 mr-2" />Call
                         </Button>
                         <Button variant="outline" className="flex-1" onClick={() => {
-                          if (!user) { navigate('/auth'); return; }
+                          if (!user) { navigate(authRedirect()); return; }
                           navigate('/messages', { state: { providerId: provider.user_id, providerName: provider.business_name } });
                         }}>
                           <MessageSquareText className="h-4 w-4 mr-2" />Msg

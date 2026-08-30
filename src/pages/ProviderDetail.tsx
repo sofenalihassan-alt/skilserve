@@ -1,3 +1,4 @@
+import { authRedirect } from "@/lib/authRedirect";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -86,7 +87,7 @@ const ProviderDetail = () => {
   const canMessage = provider?.availability_24_7 || hasConfirmedBooking;
 
   const handleCall = async () => {
-    if (!user) { navigate("/auth"); return; }
+    if (!user) { navigate(authRedirect()); return; }
     const { data } = await supabase.from("profiles").select("phone").eq("id", provider.user_id).maybeSingle();
     const phone = data?.phone;
     if (!phone) {
@@ -207,7 +208,7 @@ const ProviderDetail = () => {
                 Rs. {provider.hourly_rate}<span className="text-xs font-normal text-muted-foreground">/hr</span>
               </span>
               <div className="flex flex-wrap gap-2">
-                <Button onClick={() => user ? setBookingOpen(true) : navigate("/auth")} className="gap-2">
+                <Button onClick={() => user ? setBookingOpen(true) : navigate(authRedirect())} className="gap-2">
                   <CalendarPlus className="h-4 w-4" /> {t("book")}
                 </Button>
                 <Button variant="outline" onClick={handleCall} className="gap-2">
