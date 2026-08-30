@@ -1,3 +1,4 @@
+import { authRedirect } from "@/lib/authRedirect";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Home, Map, CalendarDays, MessageSquareText, MoreHorizontal, AlertTriangle, Briefcase, Globe, Shield, LogOut, User } from "lucide-react";
@@ -128,7 +129,7 @@ export const BottomNav = () => {
                 <DrawerItem icon={Briefcase} label={t('become_provider')} onClick={() => go("/provider-registration")} />
               )}
               {!user && (
-                <DrawerItem icon={Briefcase} label={t('become_provider')} onClick={() => go("/auth")} />
+                <DrawerItem icon={Briefcase} label={t("become_provider")} onClick={() => go(authRedirect("/provider-registration"))} />
               )}
               {isAdmin && (
                 <DrawerItem icon={Shield} label="Admin" onClick={() => go("/admin")} />
@@ -144,7 +145,7 @@ export const BottomNav = () => {
               {user ? (
                 <DrawerItem icon={LogOut} label={t('logout')} onClick={handleSignOut} destructive />
               ) : (
-                <DrawerItem icon={User} label={t('login')} onClick={() => go("/auth")} />
+                <DrawerItem icon={User} label={t("login")} onClick={() => go(authRedirect())} />
               )}
             </div>
           </DrawerContent>
