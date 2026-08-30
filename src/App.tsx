@@ -77,11 +77,12 @@ const App = () => {
                     <Route path="/privacy" element={<PrivacyPolicy />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
-                    <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-                    <Route path="/providers" element={<ProtectedRoute><Providers /></ProtectedRoute>} />
-                    <Route path="/provider/:id" element={<ProtectedRoute><ProviderDetail /></ProtectedRoute>} />
+                    <Route path="/" element={<Index />} />
+                    <Route path="/providers" element={<Providers />} />
+                    <Route path="/provider/:id" element={<ProviderDetail />} />
                     <Route path="/provider-registration" element={<ProtectedRoute><ProviderRegistration /></ProtectedRoute>} />
-                    <Route path="/emergency" element={<ProtectedRoute><Emergency /></ProtectedRoute>} />
+                    <Route path="/emergency" element={<Emergency />} />
+
                     <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
                     <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                     <Route path="/bookings" element={<ProtectedRoute><Bookings /></ProtectedRoute>} />
