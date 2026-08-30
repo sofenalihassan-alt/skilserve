@@ -210,7 +210,7 @@ const Providers = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-0">
+    <div className="min-h-[100dvh] bg-background pb-20 md:pb-0">
       <Seo
         title={"Browse Service Providers | Skill Serve"}
         description={"Search and filter verified local service providers by category, rating, price and distance. Book trusted professionals in minutes on Skill Serve."}
