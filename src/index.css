@@ -4,8 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/*
+  ============================================================
+  SKILL SERVE DESIGN SYSTEM
+  ============================================================
 */
 
 @layer base {
@@ -181,62 +183,154 @@ All colors MUST be HSL.
     --sidebar-border: 222 22% 20%;
     --sidebar-ring: 213 90% 64%;
   }
-}
 
-@layer base {
-  * {
+  /*
+    ==========================================================
+    GLOBAL DOCUMENT RESET
+    ==========================================================
+  */
+
+  *,
+  *::before,
+  *::after {
     @apply border-border;
-  }
-
- body {
-  @apply bg-background text-foreground antialiased;
-  min-height: 100vh;
-  background: hsl(var(--background));
-}
-
-@layer base {
-
-  * {
-    @apply border-border;
+    box-sizing: border-box;
   }
 
   html {
-    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
-      "Segoe UI", sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    background: hsl(var(--background));
+
+    font-family:
+      Inter,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+
     font-size: 16px;
     line-height: 1.5;
+
     scroll-behavior: smooth;
     text-rendering: optimizeLegibility;
+
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    /*
+      Prevent the browser from creating a white overscroll
+      area around the application.
+    */
+    overscroll-behavior-y: none;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-width: 100%;
     min-height: 100vh;
+    min-height: 100dvh;
+
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+
+    @apply antialiased;
+
+    overflow-x: hidden;
+  }
+
+  /*
+    Critical for the fixed mobile BottomNav.
+    The application itself must occupy the complete viewport.
+  */
+  #root {
+    width: 100%;
+    min-width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+
     background: hsl(var(--background));
   }
 
-.dark body {
-  background:
-    radial-gradient(
-      ellipse 80% 50% at 50% -20%,
-      hsl(213 90% 64% / 0.10),
-      transparent
-    ),
-    radial-gradient(
-      ellipse 60% 40% at 80% 80%,
-      hsl(197 80% 55% / 0.06),
-      transparent
-    ),
-    linear-gradient(
-      180deg,
-      hsl(var(--background)),
-      hsl(222 35% 5%)
-    );
-}
+  /*
+    Dark mode page background.
+  */
+  .dark body,
+  .dark #root {
+    background:
+      radial-gradient(
+        ellipse 80% 50% at 50% -20%,
+        hsl(213 90% 64% / 0.10),
+        transparent
+      ),
+      radial-gradient(
+        ellipse 60% 40% at 80% 80%,
+        hsl(197 80% 55% / 0.06),
+        transparent
+      ),
+      linear-gradient(
+        180deg,
+        hsl(var(--background)),
+        hsl(222 35% 5%)
+      );
 
-  /* Custom scrollbar */
+    color: hsl(var(--foreground));
+  }
+
+  /*
+    ==========================================================
+    MOBILE VIEWPORT / SAFE AREA
+    ==========================================================
+  */
+
+  @media (max-width: 767px) {
+    html,
+    body,
+    #root {
+      width: 100%;
+      min-height: 100dvh;
+      background: hsl(var(--background));
+    }
+
+    /*
+      Prevent white overscroll below fixed navigation.
+    */
+    body {
+      overscroll-behavior: none;
+    }
+
+    .dark body,
+    .dark #root {
+      background:
+        radial-gradient(
+          ellipse 80% 50% at 50% -20%,
+          hsl(213 90% 64% / 0.10),
+          transparent
+        ),
+        radial-gradient(
+          ellipse 60% 40% at 80% 80%,
+          hsl(197 80% 55% / 0.06),
+          transparent
+        ),
+        linear-gradient(
+          180deg,
+          hsl(var(--background)),
+          hsl(222 35% 5%)
+        );
+    }
+  }
+
+  /*
+    ==========================================================
+    CUSTOM SCROLLBAR
+    ==========================================================
+  */
+
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -254,20 +348,62 @@ All colors MUST be HSL.
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground));
   }
+
+  /*
+    Firefox scrollbar
+  */
+  * {
+    scrollbar-color: hsl(var(--muted)) hsl(var(--background));
+    scrollbar-width: thin;
+  }
 }
 
 @layer components {
+  /*
+    ==========================================================
+    GLASS CARD
+    ==========================================================
+  */
+
   .glass-card {
     @apply bg-card/50 backdrop-blur-xl border border-border/50;
   }
+
+  /*
+    ==========================================================
+    GLOW EFFECT
+    ==========================================================
+  */
 
   .glow-effect {
     box-shadow: var(--shadow-glow);
   }
 
+  /*
+    ==========================================================
+    GRADIENT TEXT
+    ==========================================================
+  */
+
   .gradient-text {
     @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
   }
-  
 }
+
+/*
+  ============================================================
+  MOBILE BOTTOM NAVIGATION PROTECTION
+  ============================================================
+
+  These utilities ensure the fixed navigation sits completely
+  against the bottom edge of the viewport.
+
+  The background extends through the device safe-area instead
+  of allowing the browser/page background to appear underneath.
+*/
+
+@layer utilities {
+  .mobile-bottom-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
