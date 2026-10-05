@@ -19,7 +19,7 @@ export default defineTool({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    let q = supabaseForUser(ctx)
+    let q = supabaseForUser({ token: ctx.getToken() ?? "" })
       .from("bookings")
       .select(
         "id, provider_id, service_description, scheduled_date, estimated_duration, status, total_amount, notes, created_at",

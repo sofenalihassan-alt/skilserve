@@ -9,12 +9,12 @@ import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.24.0";
 import { createClient } from "npm:@supabase/supabase-js@^2.81.1";
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.24.0";
 import { z } from "npm:zod@^3.25.76";
-function supabaseForUser(ctx) {
+function supabaseForUser({ token = "" } = {}) {
   return createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_PUBLISHABLE_KEY,
+    process.env.SUPABASE_URL ?? "",
+    process.env.SUPABASE_PUBLISHABLE_KEY ?? "",
     {
-      global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+      global: { headers: { Authorization: `Bearer ${token}` } },
       auth: { persistSession: false, autoRefreshToken: false }
     }
   );
@@ -67,7 +67,7 @@ var list_my_bookings_default = defineTool2({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    let q = supabaseForUser(ctx).from("bookings").select(
+    let q = supabaseForUser({ token: ctx.getToken() ?? "" }).from("bookings").select(
       "id, provider_id, service_description, scheduled_date, estimated_duration, status, total_amount, notes, created_at"
     ).order("scheduled_date", { ascending: false }).limit(Math.min(limit ?? 20, 50));
     if (status) q = q.eq("status", status);
@@ -98,7 +98,7 @@ var create_booking_default = defineTool3({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const supabase = supabaseForUser(ctx);
+    const supabase = supabaseForUser({ token: ctx.getToken() ?? "" });
     const { data: provider } = await supabase.from("public_service_providers").select("id, hourly_rate").eq("id", input.provider_id).maybeSingle();
     if (!provider) {
       return {

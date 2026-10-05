@@ -21,7 +21,7 @@ export default defineTool({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    const supabase = supabaseForUser(ctx);
+    const supabase = supabaseForUser({ token: ctx.getToken() ?? "" });
     const { data: provider } = await supabase
       .from("public_service_providers")
       .select("id, hourly_rate")
