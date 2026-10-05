@@ -43,7 +43,7 @@ export default defineTool({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    let q = supabaseForUser(ctx)
+    let q = supabaseForUser({ token: ctx.getToken() ?? "" })
       .from("public_service_providers")
       .select(
         "id, business_name, category, specialization, bio, hourly_rate, years_experience, availability_24_7",

@@ -34,7 +34,7 @@ var search_providers_default = defineTool({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    let q = supabaseForUser(ctx).from("public_service_providers").select(
+    let q = supabaseForUser({ token: ctx.getToken() ?? "" }).from("public_service_providers").select(
       "id, business_name, category, specialization, bio, hourly_rate, years_experience, availability_24_7"
     ).eq("is_active", true).eq("is_approved", true).limit(Math.min(limit ?? 10, 25));
     if (category) q = q.eq("category", category);
