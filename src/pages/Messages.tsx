@@ -146,7 +146,7 @@ const Messages = () => {
       const ids = Array.from(userIds);
       const [{ data: profiles }, { data: providers }] = await Promise.all([
         supabase.from('profiles').select('id, full_name, avatar_url, phone').in('id', ids),
-        supabase.from('service_providers').select('user_id, category').in('user_id', ids),
+        supabase.from('public_service_providers').select('user_id, category').in('user_id', ids),
       ]);
       const providerMap = new Map(providers?.map(p => [p.user_id, p.category]) || []);
       profiles?.forEach((profile) => {
