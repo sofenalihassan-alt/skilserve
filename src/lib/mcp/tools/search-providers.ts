@@ -5,16 +5,18 @@ import { z } from "zod";
 declare const process: { env: Record<string, string | undefined> };
 
 
-export function supabaseForUser(ctx: ToolContext) {
+// Defaults keep the bundled (type-stripped) edge function type-safe.
+export function supabaseForUser({ token = "" } = {}) {
   return createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_PUBLISHABLE_KEY!,
+    process.env.SUPABASE_URL ?? "",
+    process.env.SUPABASE_PUBLISHABLE_KEY ?? "",
     {
-      global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+      global: { headers: { Authorization: `Bearer ${token}` } },
       auth: { persistSession: false, autoRefreshToken: false },
     },
   );
 }
+export type { ToolContext };
 
 export default defineTool({
   name: "search_providers",
@@ -41,7 +43,7 @@ export default defineTool({
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
-    let q = supabaseForUser(ctx)
+    let q = supabaseForUser({ token: ctx.getToken() ?? "" })
       .from("public_service_providers")
       .select(
         "id, business_name, category, specialization, bio, hourly_rate, years_experience, availability_24_7",

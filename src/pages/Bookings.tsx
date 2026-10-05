@@ -122,7 +122,7 @@ const Bookings = () => {
       const bookingsWithProviders = await Promise.all(
         data.map(async (booking) => {
           const { data: provider } = await supabase
-            .from('service_providers')
+            .from('public_service_providers')
             .select('business_name, category, hourly_rate, user_id')
             .eq('id', booking.provider_id)
             .maybeSingle();
