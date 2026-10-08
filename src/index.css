@@ -297,6 +297,10 @@
       background: hsl(var(--background));
     }
 
+    #root {
+      padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+    }
+
     /*
       Prevent white overscroll below fixed navigation.
     */
@@ -403,6 +407,10 @@
 */
 
 @layer utilities {
+  .pb-safe {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+  }
+
   .mobile-bottom-safe {
     padding-bottom: env(safe-area-inset-bottom);
   }
