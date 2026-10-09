@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, lazy, Suspense } from 'react';
+import { Loader2 } from 'lucide-react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,13 +22,13 @@ import Index from "./pages/Index";
 import Providers from "./pages/Providers";
 import ProviderDetail from "./pages/ProviderDetail";
 import Auth from "./pages/Auth";
-import ProviderRegistration from "./pages/ProviderRegistration";
+const ProviderRegistration = lazy(() => import("./pages/ProviderRegistration"));
 import Emergency from "./pages/Emergency";
-import Messages from "./pages/Messages";
-import Profile from "./pages/Profile";
-import Bookings from "./pages/Bookings";
+const Messages = lazy(() => import("./pages/Messages"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Bookings = lazy(() => import("./pages/Bookings"));
 import ResetPassword from "./pages/ResetPassword";
-import Admin from "./pages/Admin";
+const Admin = lazy(() => import("./pages/Admin"));
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Contact from "./pages/Contact";
@@ -70,6 +71,7 @@ const App = () => {
                 <TermsAcceptanceDialog />
                 <CookieConsent />
                 <PushNotificationInit>
+                  <Suspense fallback={<div role="status" aria-label="Loading" className="flex min-h-screen items-center justify-center bg-background"><Loader2 aria-hidden="true" className="h-8 w-8 animate-spin text-primary motion-reduce:animate-none" /></div>}>
                   <Routes>
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
@@ -89,6 +91,7 @@ const App = () => {
                     <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
+                  </Suspense>
                 </PushNotificationInit>
               </LanguageProvider>
             </AuthProvider>
