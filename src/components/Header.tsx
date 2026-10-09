@@ -10,7 +10,7 @@ import { useAdmin } from "@/hooks/useAdmin";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationCenter } from "@/components/NotificationCenter";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo-header.webp";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -90,18 +90,19 @@ export const Header = () => {
     <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70 border-b border-border/60">
       <div className="container mx-auto px-3 md:px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => navigate("/")}
             aria-label={t('skill_serve')}
-            className="flex items-center gap-2 md:gap-2.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex shrink-0 items-center gap-2 md:gap-2.5 h-auto p-0 hover:bg-transparent focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <span className="relative flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-[var(--shadow-glow)] ring-1 ring-white/20 overflow-hidden">
-              <img src={logo} alt="" className="h-full w-full object-cover" />
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center md:h-11 md:w-11">
+              <img src={logo} alt="" width={176} height={176} fetchPriority="high" className="h-full w-full object-contain" />
             </span>
-            <span className="font-heading text-lg md:text-xl font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <span className="font-heading text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               {t('skill_serve')}
             </span>
-          </button>
+          </Button>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
