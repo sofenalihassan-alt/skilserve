@@ -15,6 +15,8 @@ export default {
     extend: {
       fontFamily: {
         urdu: ['Noto Naskh Arabic', 'serif'],
+        heading: ['Outfit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Figtree', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
