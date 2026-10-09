@@ -87,13 +87,21 @@ export const Header = () => {
 );
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-            <img src={logo} alt="Skill Serve" className="h-10 w-10 rounded-lg object-cover" />
-            <span className="text-xl font-bold hidden sm:inline">{t('skill_serve')}</span>
-          </div>
+    <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70 border-b border-border/60">
+      <div className="container mx-auto px-3 md:px-4">
+        <div className="flex items-center justify-between h-14 md:h-16">
+          <button
+            onClick={() => navigate("/")}
+            aria-label={t('skill_serve')}
+            className="flex items-center gap-2 md:gap-2.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="relative flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-[var(--shadow-glow)] ring-1 ring-white/20 overflow-hidden">
+              <img src={logo} alt="" className="h-full w-full object-cover" />
+            </span>
+            <span className="font-heading text-lg md:text-xl font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              {t('skill_serve')}
+            </span>
+          </button>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
@@ -143,17 +151,17 @@ export const Header = () => {
             )}
           </nav>
 
-                    {/* Mobile: search + theme + notifications */}
-          <div className="flex md:hidden items-center gap-1">
+          {/* Mobile: search + theme + notifications in a compact glass pill */}
+          <div className="flex md:hidden items-center gap-0.5 rounded-full border border-border/60 bg-card/70 px-1.5 py-1 shadow-[var(--shadow-sm)] backdrop-blur-xl">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => window.dispatchEvent(new Event('open-command-palette'))}
               title={t('find_services')}
               aria-label={t('find_services')}
-              className="h-9 w-9"
+              className="h-8 w-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10"
             >
-              <Search className="h-5 w-5" />
+              <Search className="h-[18px] w-[18px]" />
             </Button>
 
             <ThemeToggle />
