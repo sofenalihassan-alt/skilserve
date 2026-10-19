@@ -4,7 +4,9 @@ import { forwardRef } from 'react';
 
 const MotionButton = motion.create(Button);
 
-export const PressButton = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
+type PressButtonProps = Omit<ButtonProps, 'onAnimationStart' | 'onDrag' | 'onDragStart' | 'onDragEnd'>;
+
+export const PressButton = forwardRef<HTMLButtonElement, PressButtonProps>((props, ref) => {
   const reducedMotion = useReducedMotion();
   return <MotionButton ref={ref} whileTap={reducedMotion || props.disabled ? undefined : { scale: 0.98 }} transition={{ type: 'spring', stiffness: 450, damping: 28 }} {...props} />;
 });

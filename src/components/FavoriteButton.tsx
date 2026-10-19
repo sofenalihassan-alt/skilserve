@@ -57,10 +57,10 @@ export const FavoriteButton = ({ providerId, className, variant = "icon" }: Prop
     setIsFav(!prev);
     try {
       if (prev) {
-        const { error } = await supabase.from("favorites").delete().eq("user_id", user.id).eq("provider_id", providerId);
+        const { error } = await (supabase as any).from("favorites").delete().eq("user_id", user.id).eq("provider_id", providerId);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("favorites").insert({ user_id: user.id, provider_id: providerId });
+        const { error } = await (supabase as any).from("favorites").insert({ user_id: user.id, provider_id: providerId });
         if (error) throw error;
         toast({ title: t('saved') });
       }
