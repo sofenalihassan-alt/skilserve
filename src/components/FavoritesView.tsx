@@ -3,8 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { ProviderCard } from "@/components/ProviderCard";
 import { ProviderCardSkeleton } from "@/components/ProviderCardSkeleton";
-import { Heart } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/EmptyState";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -62,14 +61,7 @@ export const FavoritesView = () => {
 
   if (providers.length === 0) {
     return (
-      <div className="text-center py-12 space-y-4">
-        <Heart className="h-12 w-12 mx-auto text-muted-foreground/40" strokeWidth={1.5} />
-        <div>
-          <h3 className="font-semibold">{t("no_favorites")}</h3>
-          <p className="text-sm text-muted-foreground mt-1">{t("no_favorites_desc")}</p>
-        </div>
-        <Button onClick={() => navigate("/providers")}>{t("browse_providers")}</Button>
-      </div>
+      <EmptyState kind="favorites" title={t("no_favorites")} description={t("no_favorites_desc")} action={t("browse_providers")} onAction={() => navigate("/providers")} />
     );
   }
 

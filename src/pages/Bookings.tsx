@@ -36,6 +36,7 @@ import {
 import { format } from 'date-fns';
 import type { Database } from '@/integrations/supabase/types';
 import Seo from "@/components/Seo";
+import { EmptyState } from '@/components/EmptyState';
 
 type BookingStatus = Database['public']['Enums']['booking_status'];
 
@@ -437,14 +438,7 @@ const Bookings = () => {
 
               <TabsContent value="my-bookings" className="space-y-4">
                 {bookings.length === 0 ? (
-                  <Card className="border-border/50 bg-card/50">
-                    <CardContent className="py-16 text-center">
-                      <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" strokeWidth={1.5} />
-                      <h2 className="text-lg font-semibold">No bookings yet</h2>
-                      <p className="text-muted-foreground mt-2">Browse providers and book a service</p>
-                      <Button onClick={() => navigate('/providers')} className="mt-4">Find Providers</Button>
-                    </CardContent>
-                  </Card>
+                  <EmptyState kind="bookings" title={t('empty_bookings_title')} description={t('empty_bookings_desc')} action={t('browse_providers')} onAction={() => navigate('/providers')} />
                 ) : (
                   bookings.map((booking) => renderBookingCard(booking, false))
                 )}
@@ -488,17 +482,7 @@ const Bookings = () => {
 
                 {/* List */}
                 {filteredProviderBookings.length === 0 ? (
-                  <Card className="border-border/50 bg-card/50">
-                    <CardContent className="py-16 text-center">
-                      <Inbox className="h-12 w-12 mx-auto text-muted-foreground mb-4" strokeWidth={1.5} />
-                      <h2 className="text-lg font-semibold">
-                        {statusFilter === 'all' ? 'No client requests' : `No ${statusFilter} requests`}
-                      </h2>
-                      <p className="text-muted-foreground mt-2">
-                        {statusFilter === 'all' ? "You haven't received any booking requests yet" : 'Try a different filter'}
-                      </p>
-                    </CardContent>
-                  </Card>
+                  <EmptyState kind="bookings" title={t(statusFilter === 'all' ? 'empty_requests_title' : 'empty_filtered_requests')} description={t(statusFilter === 'all' ? 'empty_requests_desc' : 'empty_filtered_desc')} action={t(statusFilter === 'all' ? 'update_profile' : 'view_all_requests')} onAction={() => statusFilter === 'all' ? navigate('/profile') : setStatusFilter('all')} />
                 ) : (
                   <div className="space-y-4">
                     {filteredProviderBookings.map((booking) => renderBookingCard(booking, true))}
@@ -509,14 +493,7 @@ const Bookings = () => {
           ) : (
             <div className="space-y-4">
               {bookings.length === 0 ? (
-                <Card className="border-border/50 bg-card/50">
-                  <CardContent className="py-16 text-center">
-                    <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" strokeWidth={1.5} />
-                    <h2 className="text-lg font-semibold">No bookings yet</h2>
-                    <p className="text-muted-foreground mt-2">Browse providers and book a service</p>
-                    <Button onClick={() => navigate('/providers')} className="mt-4">Find Providers</Button>
-                  </CardContent>
-                </Card>
+                <EmptyState kind="bookings" title={t('empty_bookings_title')} description={t('empty_bookings_desc')} action={t('browse_providers')} onAction={() => navigate('/providers')} />
               ) : (
                 bookings.map((booking) => renderBookingCard(booking, false))
               )}
