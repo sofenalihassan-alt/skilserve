@@ -1,6 +1,7 @@
 import Seo from "@/components/Seo";
 import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { EmptyState } from '@/components/EmptyState';
 import { Header } from '@/components/Header';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -58,6 +59,7 @@ const Messages = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const location = useLocation();
+  const navigate = useNavigate();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedUserInfo, setSelectedUserInfo] = useState<{ name: string; avatarUrl: string | null; category: string | null; phone: string | null } | null>(null);
@@ -341,7 +343,7 @@ const Messages = () => {
             <CardContent className="p-0">
               <ScrollArea className="h-[calc(100dvh-360px)] md:h-[500px]">
                 {conversations.length === 0 ? (
-                  <p className="text-center text-muted-foreground p-4">{t('no_messages')}</p>
+                  <EmptyState compact kind="messages" title={t('no_messages')} description={t('empty_messages_desc')} action={t('browse_providers')} onAction={() => navigate('/providers')} />
                 ) : conversations.map((conv) => (
                   <div
                     key={conv.userId}
@@ -414,7 +416,7 @@ const Messages = () => {
                   <ScrollArea className="flex-1 pr-2 md:pr-4">
                     <div className="space-y-3">
                       {messages.length === 0 && (
-                        <p className="text-center text-muted-foreground py-8">No messages yet. Say hello!</p>
+                        <EmptyState compact kind="messages" title={t('no_messages')} description={t('first_message_desc')} action={t('say_hello')} onAction={() => { setNewMessage(t('hello_message')); document.getElementById('chat-message-input')?.focus(); }} />
                       )}
                       {messages.map((msg) => (
                         <div key={msg.id} className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'} group`}>
@@ -457,7 +459,7 @@ const Messages = () => {
                   <div className="mt-3">
                     <div className="flex gap-2 items-center">
                       <ChatImageUpload files={attachFiles} onChange={setAttachFiles} disabled={loading} />
-                      <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
+                      <Input id="chat-message-input" value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
                         placeholder={t('type_message')} onKeyDown={(e) => e.key === 'Enter' && sendMessage()} disabled={loading} className="text-sm" />
                       <Button onClick={sendMessage} disabled={loading || (!newMessage.trim() && attachFiles.length === 0)} size="sm">
                         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquareText className="h-4 w-4" />}
@@ -467,8 +469,8 @@ const Messages = () => {
                 </CardContent>
               </>
             ) : (
-              <div className="h-full flex items-center justify-center text-muted-foreground">
-                <p>Select a conversation to start messaging</p>
+              <div className="h-full flex items-center justify-center">
+                <EmptyState kind="messages" title={t('select_conversation')} description={t(conversations.length ? 'select_conversation_desc' : 'empty_messages_desc')} action={t('view_bookings')} onAction={() => navigate('/bookings')} />
               </div>
             )}
           </Card>

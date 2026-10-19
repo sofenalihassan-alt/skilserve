@@ -2,7 +2,8 @@ import { authRedirect } from "@/lib/authRedirect";
 import { useState, useMemo, useEffect } from "react";
 import { Star, Clock, Briefcase, Phone, MessageSquareText, ThumbsUp, ShieldCheck, Navigation, CalendarPlus, Lock } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { PressButton as Button } from "@/components/PressButton";
+import { motion, useReducedMotion } from 'framer-motion';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { useNavigate } from "react-router-dom";
@@ -33,8 +34,11 @@ interface ProviderCardProps {
   reviewCount?: number;
 }
 
+const MotionCard = motion.create(Card);
+
 export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: ProviderCardProps) => {
   const navigate = useNavigate();
+  const reducedMotion = useReducedMotion();
   const { user } = useAuth();
   const { toast } = useToast();
   const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -107,7 +111,7 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
 
   return (
     <>
-      <Card className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card p-0 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:border-primary/30">
+      <MotionCard whileTap={reducedMotion ? undefined : { scale: 0.98 }} transition={{ type: 'spring', stiffness: 400, damping: 28 }} className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card p-0 transition-[border-color,box-shadow] duration-300 hover:shadow-xl hover:shadow-primary/5 hover:border-primary/30">
         <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-br from-primary/10 via-transparent to-accent/10" />
 
         {provider.id && (
@@ -254,7 +258,7 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
             </Button>
           </div>
         </div>
-      </Card>
+      </MotionCard>
 
       <FeedbackDialog
         open={feedbackOpen}

@@ -4,3 +4,4 @@
 - Use a compact transparent derivative of the chosen logo for the header, preserving the original artwork while reducing transfer size and transparent margins.
 
 - Keep mobile navigation badge fetching in a dedicated hook with user-scoped realtime subscriptions and focus/reconnect refreshes, so counts remain current without changing notification read behavior.
+- Reuse EmptyState for illustrated, localized empty-list prompts and PressButton for reduced-motion-aware spring feedback; this keeps actions and motion consistent without changing every global button.
