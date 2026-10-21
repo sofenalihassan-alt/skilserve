@@ -17,6 +17,7 @@ import {
   RefreshCw,
   SlidersHorizontal,
   X,
+  ArrowUpDown,
 } 
 from "lucide-react";
 import {
@@ -25,6 +26,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { supabase } from "@/integrations/supabase/client";
 import { LiveActivityToast } from "@/components/LiveActivityToast";
 import { useToast } from "@/hooks/use-toast";
@@ -209,6 +211,70 @@ const Providers = () => {
     setMinExperience(0);
   };
 
+  const activeFilterCount =
+    (category !== "all" ? 1 : 0) + (priceRange[0] > 0 || priceRange[1] < 2000 ? 1 : 0) +
+    (minRating > 0 ? 1 : 0) + (minExperience > 0 ? 1 : 0) + (verifiedOnly ? 1 : 0) + (available247 ? 1 : 0);
+  const n = filteredProviders.length;
+  const showLabel = n === 0 ? "No providers match" : `Show ${n} provider${n === 1 ? "" : "s"}`;
+  const categories = ["all","electrical","plumbing","carpentry","cleaning","painting","hvac","landscaping","handyman"];
+  const chip = (active: boolean) =>
+    `h-9 rounded-full border px-3.5 text-sm font-medium transition-colors ${active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary/40"}`;
+
+  const filterFields = (
+    <div className="space-y-6">
+      <section className="space-y-3">
+        <h3 className="text-sm font-semibold">Service</h3>
+        <div className="flex flex-wrap gap-2">
+          {categories.map((c) => (
+            <button key={c} type="button" onClick={() => setCategory(c)} className={chip(category === c) + " capitalize"} aria-pressed={category === c}>
+              {c === "all" ? "All" : c === "hvac" ? "HVAC" : c}
+            </button>
+          ))}
+        </div>
+      </section>
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold">Price per hour</h3>
+          <span className="text-sm text-muted-foreground">Rs. {priceRange[0]} – {priceRange[1]}</span>
+        </div>
+        <Slider value={priceRange} onValueChange={setPriceRange} max={2000} step={50} aria-label="Price range" />
+      </section>
+      <section className="space-y-3">
+        <h3 className="text-sm font-semibold">Minimum rating</h3>
+        <div className="flex flex-wrap gap-2">
+          {[0, 3, 4, 4.5].map((r) => (
+            <button key={r} type="button" onClick={() => setMinRating(r)} className={chip(minRating === r)} aria-pressed={minRating === r}>
+              {r === 0 ? "Any" : `${r}★ & up`}
+            </button>
+          ))}
+        </div>
+      </section>
+      <section className="space-y-3">
+        <h3 className="text-sm font-semibold">Experience</h3>
+        <div className="flex flex-wrap gap-2">
+          {[0, 1, 3, 5, 10].map((y) => (
+            <button key={y} type="button" onClick={() => setMinExperience(y)} className={chip(minExperience === y)} aria-pressed={minExperience === y}>
+              {y === 0 ? "Any" : `${y}+ yrs`}
+            </button>
+          ))}
+        </div>
+      </section>
+      <section className="divide-y divide-border rounded-xl border border-border">
+        <label htmlFor="verified-only" className="flex min-h-12 items-center justify-between px-4">
+          <span className="text-sm font-medium">Verified providers only</span>
+          <Switch id="verified-only" checked={verifiedOnly} onCheckedChange={setVerifiedOnly} />
+        </label>
+        <label htmlFor="available-247" className="flex min-h-12 items-center justify-between px-4">
+          <span className="text-sm font-medium">Available 24/7</span>
+          <Switch id="available-247" checked={available247} onCheckedChange={setAvailable247} />
+        </label>
+      </section>
+      <section className="border-t border-border pt-5">
+        <SavedSearches currentFilters={currentFilters} onApply={applySavedFilters} />
+      </section>
+    </div>
+  );
+
   return (
     <div className="min-h-[100dvh] bg-background pb-20 md:pb-0">
       <Seo
@@ -226,234 +292,88 @@ const Providers = () => {
 
         <LiveActivityToast />
 
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6 md:py-8">
         <div>
-        <div className="mb-6 space-y-3">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            
-            {/* Search */}
-            <div className="relative flex-1">
-              <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search providers..."
-                className="ps-9"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
+        <div className="mb-4">
+          <h1 className="font-heading text-2xl font-bold sm:text-3xl">Find a provider</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {loading ? "Loading…" : `${filteredProviders.length} providers available`}
+            {category !== "all" && ` in ${category}`}
+          </p>
+        </div>
 
-            {/* Filters */}
-            <Button
-              variant="outline"
-              onClick={() => setFiltersOpen(true)}
-              className="gap-2"
-            >
+        <div className="sticky top-14 z-30 -mx-4 mb-5 border-b border-border bg-background px-4 py-3 md:top-16">
+          <div className="relative">
+            <Search className="absolute start-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search plumber, electrician, cleaner…"
+              aria-label="Search providers"
+              className="h-12 ps-10 pe-10 text-base"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} aria-label="Clear search" className="absolute end-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted">
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          <div className="mt-3 flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setFiltersOpen(true)} className="h-9 gap-1.5 rounded-full">
               <SlidersHorizontal className="h-4 w-4" />
               Filters
+              {activeFilterCount > 0 && (
+                <span className="ms-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-semibold text-primary-foreground">{activeFilterCount}</span>
+              )}
             </Button>
-
-            {/* Sort */}
-            <div className="sm:w-48">
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="rating">Rating</SelectItem>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
-                  <SelectItem value="experience">Experience</SelectItem>
-                  <SelectItem value="newest">Newest</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Map */}
-            <Button
-              variant="outline"
-              onClick={() => setShowMap(!showMap)}
-              className="gap-2"
-            >
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger aria-label="Sort by" className="h-9 w-auto gap-1.5 rounded-full px-3 text-sm">
+                <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                <SelectValue placeholder="Sort" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="rating">Top rated</SelectItem>
+                <SelectItem value="price-low">Lowest price</SelectItem>
+                <SelectItem value="price-high">Highest price</SelectItem>
+                <SelectItem value="experience">Most experienced</SelectItem>
+                <SelectItem value="newest">Newest</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant={showMap ? "secondary" : "ghost"} size="sm" onClick={() => setShowMap(!showMap)} className="ms-auto h-9 gap-1.5 rounded-full" aria-pressed={showMap}>
               <Map className="h-4 w-4" />
-              {showMap ? "Hide Map" : "Map"}
+              {showMap ? "Hide map" : "Map"}
             </Button>
           </div>
         </div>
-        <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
-  <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
-    <SheetHeader>
-      <SheetTitle className="flex items-center justify-between">
-        <span className="flex items-center gap-2">
-          <Filter className="h-5 w-5" />
-          Filters
-        </span>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={clearFilters}
-        >
-          Clear
-        </Button>
-      </SheetTitle>
-    </SheetHeader>
-
-    <div className="mt-6 space-y-6">
-
-      {/* Service Category */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium">
-          Service Category
-        </label>
-
-        <Select value={category} onValueChange={setCategory}>
-          <SelectTrigger>
-            <SelectValue placeholder="All Services" />
-          </SelectTrigger>
-
-          <SelectContent>
-            <SelectItem value="all">All Services</SelectItem>
-            <SelectItem value="electrical">Electrical</SelectItem>
-            <SelectItem value="plumbing">Plumbing</SelectItem>
-            <SelectItem value="carpentry">Carpentry</SelectItem>
-            <SelectItem value="cleaning">Cleaning</SelectItem>
-            <SelectItem value="painting">Painting</SelectItem>
-            <SelectItem value="hvac">HVAC</SelectItem>
-            <SelectItem value="landscaping">Landscaping</SelectItem>
-            <SelectItem value="handyman">Handyman</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Price */}
-      <div className="space-y-3">
-        <label className="text-sm font-medium">
-          Price Range (Rs/hr)
-        </label>
-
-        <Slider
-          value={priceRange}
-          onValueChange={setPriceRange}
-          max={2000}
-          step={50}
-        />
-
-        <div className="flex justify-between text-sm text-muted-foreground">
-          <span>Rs. {priceRange[0]}</span>
-          <span>Rs. {priceRange[1]}</span>
-        </div>
-      </div>
-
-      {/* Rating */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium">
-          Minimum Rating
-        </label>
-
-        <Select
-          value={String(minRating)}
-          onValueChange={(v) => setMinRating(Number(v))}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-
-          <SelectContent>
-            <SelectItem value="0">Any rating</SelectItem>
-            <SelectItem value="3">3★ & up</SelectItem>
-            <SelectItem value="4">4★ & up</SelectItem>
-            <SelectItem value="4.5">4.5★ & up</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Experience */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium">
-          Minimum Experience
-        </label>
-
-        <Select
-          value={String(minExperience)}
-          onValueChange={(v) => setMinExperience(Number(v))}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-
-          <SelectContent>
-            <SelectItem value="0">Any experience</SelectItem>
-            <SelectItem value="1">1+ years</SelectItem>
-            <SelectItem value="3">3+ years</SelectItem>
-            <SelectItem value="5">5+ years</SelectItem>
-            <SelectItem value="10">10+ years</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Verified */}
-      <div className="flex items-center justify-between">
-        <label
-          htmlFor="verified-only"
-          className="text-sm font-medium"
-        >
-          Verified providers only
-        </label>
-
-        <Switch
-          id="verified-only"
-          checked={verifiedOnly}
-          onCheckedChange={setVerifiedOnly}
-        />
-      </div>
-
-      {/* Available 24/7 */}
-      <div className="flex items-center justify-between">
-        <label
-          htmlFor="available-247"
-          className="text-sm font-medium"
-        >
-          Available 24/7
-        </label>
-
-        <Switch
-          id="available-247"
-          checked={available247}
-          onCheckedChange={setAvailable247}
-        />
-      </div>
-
-      {/* Saved Searches */}
-      <div className="border-t pt-5">
-        <SavedSearches
-          currentFilters={currentFilters}
-          onApply={applySavedFilters}
-        />
-      </div>
-
-      {/* Bottom actions */}
-      <div className="flex gap-3 border-t pt-5">
-        <Button
-          variant="outline"
-          className="flex-1"
-          onClick={clearFilters}
-        >
-          Clear
-        </Button>
-
-        <Button
-          className="flex-1"
-          onClick={() => setFiltersOpen(false)}
-        >
-          Apply Filters
-        </Button>
-      </div>
-
-    </div>
-  </SheetContent>
-</Sheet>
+        {isMobile ? (
+          <Drawer open={filtersOpen} onOpenChange={setFiltersOpen}>
+            <DrawerContent className="max-h-[88dvh]">
+              <DrawerHeader className="flex items-center justify-between pb-2 text-start">
+                <DrawerTitle>Filters</DrawerTitle>
+                <Button variant="ghost" size="sm" onClick={clearFilters}>Clear all</Button>
+              </DrawerHeader>
+              <div className="overflow-y-auto px-4 pb-4">{filterFields}</div>
+              <div className="border-t border-border bg-background p-4 pb-safe">
+                <Button className="h-12 w-full text-base" onClick={() => setFiltersOpen(false)}>{showLabel}</Button>
+              </div>
+            </DrawerContent>
+          </Drawer>
+        ) : (
+          <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
+            <SheetContent side="right" className="flex w-full flex-col p-0 sm:max-w-md">
+              <SheetHeader className="flex-row items-center justify-between space-y-0 border-b border-border p-5">
+                <SheetTitle>Filters</SheetTitle>
+                <Button variant="ghost" size="sm" onClick={clearFilters} className="me-8">Clear all</Button>
+              </SheetHeader>
+              <div className="flex-1 overflow-y-auto p-5">{filterFields}</div>
+              <div className="border-t border-border p-5">
+                <Button className="h-11 w-full" onClick={() => setFiltersOpen(false)}>{showLabel}</Button>
+              </div>
+            </SheetContent>
+          </Sheet>
+        )}
           <main className="flex-1" ref={listRef} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
-            {/* Pull-to-refresh indicator */}
             <AnimatePresence>
               {(pullDistance > 0 || isRefreshing) && (
                 <motion.div
@@ -466,35 +386,15 @@ const Providers = () => {
                     animate={{ rotate: isRefreshing ? 360 : pullDistance * 3 }}
                     transition={isRefreshing ? { repeat: Infinity, duration: 0.8, ease: "linear" } : { duration: 0 }}
                   >
-                    <RefreshCw className={`h-6 w-6 text-primary ${pullDistance > 60 ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <RefreshCw className={`h-6 w-6 ${pullDistance > 60 ? 'text-primary' : 'text-muted-foreground'}`} />
                   </motion.div>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold mb-2 sm:text-3xl">Service Providers Near You</h1>
-                <p className="text-muted-foreground">
-                  {loading ? 'Loading...' : `Found ${filteredProviders.length} providers`}
-                  {category !== "all" && ` in ${category}`}
-                </p>
-              </div>
-              <div className="w-48">
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger><SelectValue placeholder="Sort by" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="rating">Rating</SelectItem>
-                    <SelectItem value="price-low">Price: Low to High</SelectItem>
-                    <SelectItem value="price-high">Price: High to Low</SelectItem>
-                    <SelectItem value="experience">Experience</SelectItem>
-                    <SelectItem value="newest">Newest</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+
             {showMap && (loading ? <div className="mb-6"><MapSkeleton /></div> : <div className="mb-6"><ProvidersMap /></div>)}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {loading ? (
                 <>
                   {Array.from({ length: 6 }).map((_, i) => (
@@ -502,18 +402,18 @@ const Providers = () => {
                   ))}
                 </>
               ) : filteredProviders.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">No providers found matching your filters</p>
+                <div className="col-span-full rounded-2xl border border-dashed border-border py-12 text-center"><p className="font-medium">No providers match your filters</p><Button variant="link" onClick={clearFilters}>Clear all filters</Button></div>
               ) : (
                 <AnimatePresence mode="wait">
                   {filteredProviders.map((provider, index) => (
                     <motion.div
                       key={provider.id}
-                      initial={{ opacity: 0, y: 30 }}
+                      initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
+                      exit={{ opacity: 0 }}
                       transition={{
-                        duration: 0.4,
-                        delay: index * 0.1,
+                        duration: 0.25,
+                        delay: Math.min(index, 6) * 0.04,
                         ease: [0.25, 0.46, 0.45, 0.94],
                       }}
                     >
@@ -534,7 +434,7 @@ const Providers = () => {
       {/* Floating Website Feedback Button */}
       <button
         onClick={() => setFeedbackOpen(true)}
-        className="fixed bottom-6 right-6 z-50 bg-primary text-primary-foreground rounded-full p-4 shadow-lg hover:shadow-xl transition-all hover:scale-105"
+        className="fixed bottom-6 right-6 z-40 hidden md:flex bg-primary text-primary-foreground rounded-full p-4 shadow-lg hover:shadow-xl transition-all hover:scale-105"
         aria-label="Give website feedback"
       >
         <MessageSquare className="h-5 w-5" />
