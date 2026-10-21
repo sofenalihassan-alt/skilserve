@@ -9,7 +9,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { SplashScreen } from "@/components/SplashScreen";
+import { SplashScreen, shouldShowSplash } from "@/components/SplashScreen";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useReferralCapture } from "@/hooks/useReferralCapture";
@@ -52,7 +52,7 @@ const PushNotificationInit = ({ children }: { children: React.ReactNode }) => {
 };
 
 const App = () => {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(shouldShowSplash);
   const handleSplashComplete = useCallback(() => setShowSplash(false), []);
 
   return (

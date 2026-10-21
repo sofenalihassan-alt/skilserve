@@ -132,7 +132,7 @@ const ResetPassword = () => {
         <Header />
         <div className="container mx-auto px-4 py-16">
           <Card className="max-w-md mx-auto p-8 text-center">
-            <Lock className="h-12 w-12 text-muted-foreground mx-auto mb-4 animate-pulse" strokeWidth={1.5} />
+            <Lock className="h-12 w-12 text-muted-foreground mx-auto mb-4" strokeWidth={1.5} />
             <p className="text-muted-foreground">Verifying your reset link...</p>
           </Card>
         </div>

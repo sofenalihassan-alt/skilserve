@@ -87,19 +87,19 @@ export const Header = () => {
 );
 
   return (
-    <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70 border-b border-border/60">
-      <div className="container mx-auto px-3 md:px-4">
+    <header className="sticky top-0 z-50 border-b border-border bg-background">
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
           <Button
             variant="ghost"
             onClick={() => navigate("/")}
             aria-label={t('skill_serve')}
-            className="flex shrink-0 items-center gap-2 md:gap-2.5 h-auto p-0 hover:bg-transparent focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex shrink-0 items-center gap-2 h-auto p-0 hover:bg-transparent focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center md:h-11 md:w-11">
-              <img src={logo} alt="" width={176} height={176} fetchPriority="high" className="h-full w-full object-contain" />
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center md:h-10 md:w-10">
+              <img src={logo} alt="" width={176} height={176} className="h-full w-full object-contain" />
             </span>
-            <span className="font-heading text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <span className="font-heading text-lg md:text-xl font-bold text-foreground">
               {t('skill_serve')}
             </span>
           </Button>
@@ -153,14 +153,14 @@ export const Header = () => {
           </nav>
 
           {/* Mobile: search + theme + notifications in a compact glass pill */}
-          <div className="flex md:hidden items-center gap-0.5 rounded-full border border-border/60 bg-card/70 px-1.5 py-1 shadow-[var(--shadow-sm)] backdrop-blur-xl">
+          <div className="flex md:hidden items-center gap-1">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => window.dispatchEvent(new Event('open-command-palette'))}
               title={t('find_services')}
               aria-label={t('find_services')}
-              className="h-8 w-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10"
+              className="h-10 w-10 text-foreground"
             >
               <Search className="h-[18px] w-[18px]" />
             </Button>

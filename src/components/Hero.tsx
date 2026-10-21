@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
-import { MagneticButton } from "@/components/MagneticButton";
 
 export const Hero = () => {
   const { t } = useLanguage();
@@ -21,11 +20,11 @@ export const Hero = () => {
 
   return (
     <section className="relative overflow-hidden">
-      <div className="container mx-auto px-4 py-16 sm:py-20 lg:py-24">
+      <div className="container mx-auto px-4 py-12 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-4xl text-center">
         <h1 className="text-[28px] leading-[1.15] font-bold tracking-tight sm:text-5xl lg:text-6xl">
           <span className="block">{t("hero_title_1")}</span>
-          <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <span className="block text-primary">
             {t("hero_title_2")}
           </span>
         </h1>
@@ -34,7 +33,7 @@ export const Hero = () => {
             {t("hero_subtitle")}
           </p>
 
-          <div className="mx-auto mt-8 flex w-full max-w-3xl flex-col gap-3 rounded-2xl border border-border/60 bg-card/60 p-3 shadow-lg backdrop-blur-sm sm:mt-10 md:flex-row">
+          <div className="mx-auto mt-8 flex w-full max-w-3xl flex-col gap-3 rounded-2xl border border-border/60 bg-card p-3 shadow-sm sm:mt-10 md:flex-row">
             <div className="relative flex-1">
               <Search className="absolute start-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -59,15 +58,13 @@ export const Hero = () => {
               />
             </div>
 
-            <MagneticButton>
-              <Button
+                          <Button
                 size="lg"
                 className="h-12 w-full px-8 md:w-auto"
                 onClick={handleSearch}
               >
                 {t("search")}
               </Button>
-            </MagneticButton>
           </div>
         </div>
       </div>
