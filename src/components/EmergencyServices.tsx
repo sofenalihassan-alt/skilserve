@@ -12,8 +12,6 @@ export const EmergencyServices = () => {
     <section className="px-4 py-16 sm:py-20">
       <div className="container mx-auto max-w-6xl">
         <div className="relative overflow-hidden rounded-3xl border border-emergency/20 bg-emergency/5 px-5 py-10 shadow-sm sm:px-10 sm:py-14">
-          <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-emergency/10 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
 
           <div className="relative mx-auto max-w-3xl text-center">
             <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-emergency/10 text-emergency sm:h-16 sm:w-16">
