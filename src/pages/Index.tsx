@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Seo from "@/components/Seo";
 import { FAQ } from "@/components/FAQ";
+import { ShieldCheck, Lock, Zap } from "lucide-react";
 
 const Index = () => {
   const { t } = useLanguage();
@@ -23,8 +24,7 @@ const Index = () => {
       <EmergencyServices />
       <FAQ />
       
-        <section className="relative overflow-hidden bg-primary/5 px-4 py-16 sm:py-20">
-        <div className="pointer-events-none absolute left-1/2 top-0 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
+        <section className="bg-muted/40 px-4 py-12 sm:py-20">
 
         <div className="container relative mx-auto max-w-6xl">
           <div className="mx-auto max-w-2xl text-center">
@@ -43,9 +43,9 @@ const Index = () => {
           </div>
 
           <div className="mt-10 grid gap-4 sm:mt-12 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
-            <div className="group rounded-2xl border border-border/60 bg-card/80 p-6 text-center shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 sm:p-7">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl text-primary transition-all duration-300 group-hover:scale-105 group-hover:bg-primary group-hover:text-primary-foreground">
-                ✓
+            <div className="group rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-md sm:p-7">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl text-primary transition-all duration-300">
+                <ShieldCheck className="h-6 w-6" aria-hidden="true" />
               </div>
 
               <h3 className="mt-5 text-base font-bold text-card-foreground sm:text-lg">
@@ -57,9 +57,9 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="group rounded-2xl border border-border/60 bg-card/80 p-6 text-center shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 sm:p-7">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl transition-all duration-300 group-hover:scale-105 group-hover:bg-primary group-hover:text-primary-foreground">
-                🔒
+            <div className="group rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-md sm:p-7">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl text-primary transition-all duration-300">
+                <Lock className="h-6 w-6" aria-hidden="true" />
               </div>
 
               <h3 className="mt-5 text-base font-bold text-card-foreground sm:text-lg">
@@ -71,9 +71,9 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="group rounded-2xl border border-border/60 bg-card/80 p-6 text-center shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 sm:p-7">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl text-primary transition-all duration-300 group-hover:scale-105 group-hover:bg-primary group-hover:text-primary-foreground">
-                ⚡
+            <div className="group rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-md sm:p-7">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl text-primary transition-all duration-300">
+                <Zap className="h-6 w-6" aria-hidden="true" />
               </div>
 
               <h3 className="mt-5 text-base font-bold text-card-foreground sm:text-lg">
