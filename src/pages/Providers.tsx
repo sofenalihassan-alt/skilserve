@@ -215,7 +215,7 @@ const Providers = () => {
     (category !== "all" ? 1 : 0) + (priceRange[0] > 0 || priceRange[1] < 2000 ? 1 : 0) +
     (minRating > 0 ? 1 : 0) + (minExperience > 0 ? 1 : 0) + (verifiedOnly ? 1 : 0) + (available247 ? 1 : 0);
   const n = filteredProviders.length;
-  const showLabel = n === 0 ? "No providers match" : `Show ${n} provider${n === 1 ? "" : "s"}`;
+  const showLabel = loading ? "Loading providers…" : `Show ${n} Provider${n === 1 ? "" : "s"}`;
   const categories = ["all","electrical","plumbing","carpentry","cleaning","painting","hvac","landscaping","handyman"];
   const chip = (active: boolean) =>
     `h-9 rounded-full border px-3.5 text-sm font-medium transition-colors ${active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary/40"}`;
@@ -339,23 +339,23 @@ const Providers = () => {
                 <SelectItem value="newest">Newest</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant={showMap ? "secondary" : "ghost"} size="sm" onClick={() => setShowMap(!showMap)} className="ms-auto h-9 gap-1.5 rounded-full" aria-pressed={showMap}>
+            <Button variant={showMap ? "secondary" : "ghost"} size="sm" onClick={() => setShowMap(!showMap)} className="ms-auto h-9 gap-1.5 rounded-full px-2.5 sm:px-3" aria-pressed={showMap} aria-label={showMap ? "Hide map" : "Show map"}>
               <Map className="h-4 w-4" />
-              {showMap ? "Hide map" : "Map"}
+              <span className="hidden sm:inline">{showMap ? "Hide map" : "Map"}</span>
             </Button>
           </div>
         </div>
 
         {isMobile ? (
           <Drawer open={filtersOpen} onOpenChange={setFiltersOpen}>
-            <DrawerContent className="max-h-[88dvh]">
+            <DrawerContent className="flex max-h-[88dvh] flex-col">
               <DrawerHeader className="flex items-center justify-between pb-2 text-start">
                 <DrawerTitle>Filters</DrawerTitle>
                 <Button variant="ghost" size="sm" onClick={clearFilters}>Clear all</Button>
               </DrawerHeader>
-              <div className="overflow-y-auto px-4 pb-4">{filterFields}</div>
-              <div className="border-t border-border bg-background p-4 pb-safe">
-                <Button className="h-12 w-full text-base" onClick={() => setFiltersOpen(false)}>{showLabel}</Button>
+              <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4">{filterFields}</div>
+              <div className="shrink-0 border-t border-border bg-background p-4 pb-safe">
+                <Button className="h-12 w-full text-base" onClick={() => setFiltersOpen(false)} disabled={loading}>{showLabel}</Button>
               </div>
             </DrawerContent>
           </Drawer>
