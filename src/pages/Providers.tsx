@@ -339,9 +339,9 @@ const Providers = () => {
                 <SelectItem value="newest">Newest</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant={showMap ? "secondary" : "ghost"} size="sm" onClick={() => setShowMap(!showMap)} className="ms-auto h-9 gap-1.5 rounded-full" aria-pressed={showMap}>
+            <Button variant={showMap ? "secondary" : "ghost"} size="sm" onClick={() => setShowMap(!showMap)} className="ms-auto h-9 gap-1.5 rounded-full px-2.5 sm:px-3" aria-pressed={showMap} aria-label={showMap ? "Hide map" : "Show map"}>
               <Map className="h-4 w-4" />
-              {showMap ? "Hide map" : "Map"}
+              <span className="hidden sm:inline">{showMap ? "Hide map" : "Map"}</span>
             </Button>
           </div>
         </div>
