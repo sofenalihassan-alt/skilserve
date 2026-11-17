@@ -1,25 +1,61 @@
-import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { House, ShieldCheck, Wrench } from 'lucide-react';
 import logo from '@/assets/logo-header.webp';
 
 export const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const t0 = setTimeout(() => setVisible(true), 20);
-    const t1 = setTimeout(() => setVisible(false), 550);
-    const t2 = setTimeout(onComplete, 850);
-    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); };
-  }, [onComplete]);
-
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none fixed inset-0 z-[9999] flex items-center justify-center bg-background transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`}
+      className="pointer-events-none fixed inset-0 z-[9999] flex items-center justify-center bg-background"
     >
-      <div className="flex flex-col items-center gap-3">
-        <img src={logo} alt="" width={176} height={176} className="h-16 w-16 object-contain" />
-        <span className="font-heading text-xl font-bold text-foreground">Skill Serve</span>
-      </div>
+      <motion.div
+        className="flex flex-col items-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 1, 1, 0] }}
+        transition={{ duration: 1.18, times: [0, 0.08, 0.93, 1], ease: 'easeInOut' }}
+        onAnimationComplete={onComplete}
+      >
+        <motion.div
+          className="mb-5 flex items-center gap-3"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: [0, 1, 1, 0], y: [8, 0, 0, -8] }}
+          transition={{ duration: 0.67, times: [0, 0.28, 0.76, 1], ease: 'easeInOut' }}
+        >
+          {[House, Wrench, ShieldCheck].map((Icon, index) => (
+            <motion.span
+              key={Icon.displayName ?? index}
+              className={`flex h-11 w-11 items-center justify-center rounded-full border border-primary/30 bg-primary/10 ${index === 1 ? 'text-accent' : 'text-primary'}`}
+              initial={{ opacity: 0, scale: 0.72 }}
+              animate={{ opacity: [0, 1, 1, 0], scale: [0.72, 1, 1, 0.82] }}
+              transition={{
+                delay: index * 0.08,
+                duration: 0.46,
+                times: [0, 0.28, 0.72, 1],
+                ease: 'easeOut',
+              }}
+            >
+              <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.2} />
+            </motion.span>
+          ))}
+        </motion.div>
+
+        <motion.div
+          className="flex flex-col items-center gap-2"
+          initial={{ opacity: 0, y: 10, scale: 0.94 }}
+          animate={{ opacity: [0, 1, 1, 0], y: [10, 0, 0, -3], scale: [0.94, 1, 1, 1] }}
+          transition={{ delay: 0.4, duration: 0.74, times: [0, 0.25, 0.9, 1], ease: 'easeOut' }}
+        >
+          <img src={logo} alt="" width={176} height={176} className="h-16 w-16 object-contain drop-shadow-sm" />
+          <motion.span
+            className="font-heading text-2xl font-bold text-foreground"
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.55, duration: 0.44, ease: 'easeOut' }}
+          >
+            Skill Serve
+          </motion.span>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
