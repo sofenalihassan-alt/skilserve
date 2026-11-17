@@ -24,7 +24,7 @@ export const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
           {[House, Wrench, ShieldCheck].map((Icon, index) => (
             <motion.span
               key={Icon.displayName ?? index}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-primary"
+              className={`flex h-11 w-11 items-center justify-center rounded-full border border-primary/30 bg-primary/10 ${index === 1 ? 'text-accent' : 'text-primary'}`}
               initial={{ opacity: 0, scale: 0.72 }}
               animate={{ opacity: [0, 1, 1, 0], scale: [0.72, 1, 1, 0.82] }}
               transition={{
@@ -34,7 +34,7 @@ export const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
                 ease: 'easeOut',
               }}
             >
-              <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={1.8} />
+              <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.2} />
             </motion.span>
           ))}
         </motion.div>
