@@ -121,18 +121,18 @@ export const Testimonials = () => {
   const displayCount = Math.max(totalCount, 120);
 
   return (
-    <section className="bg-muted/20 px-4 py-16 sm:py-20">
-      <div className="container mx-auto max-w-6xl">
-        <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-12">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+    <section className="relative overflow-hidden px-4 py-20 sm:py-28">
+      <div className="container mx-auto max-w-7xl">
+        <div className="mx-auto mb-12 max-w-3xl text-center sm:mb-16">
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-[1.25rem] border border-primary/10 bg-gradient-to-br from-primary/15 to-accent/10 text-primary shadow-inner">
             <Quote className="h-6 w-6" />
           </div>
 
-          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="text-4xl font-extrabold tracking-[-0.045em] text-foreground sm:text-5xl">
             {t("testimonials_title")}
           </h2>
 
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
             Trusted by {displayCount}+ satisfied customers across Pakistan
           </p>
         </div>
@@ -151,8 +151,8 @@ export const Testimonials = () => {
                 key={`${item.name}-${i}`}
                 className="pl-3 sm:basis-1/2 md:pl-5 lg:basis-1/3"
               >
-                <Card className="group h-full border-border/60 bg-card/80 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10">
-                  <CardContent className="flex h-full flex-col p-6">
+                <Card className="group relative h-full overflow-hidden rounded-[1.75rem] border border-border/60 bg-card/75 shadow-[0_16px_50px_-34px_hsl(var(--foreground)/0.3)] backdrop-blur-2xl transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/30 hover:shadow-[0_26px_60px_-32px_hsl(var(--primary)/0.3)]">
+                  <CardContent className="flex h-full flex-col p-7 sm:p-8">
                     <div className="mb-5 flex items-center justify-between">
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                         <Quote className="h-5 w-5" />
@@ -175,7 +175,7 @@ export const Testimonials = () => {
                       </div>
                     </div>
 
-                    <p className="flex-1 text-sm leading-7 text-foreground/90">
+                    <p className="flex-1 text-base leading-8 tracking-[-0.01em] text-foreground/90">
                       "{item.quote}"
                     </p>
 
