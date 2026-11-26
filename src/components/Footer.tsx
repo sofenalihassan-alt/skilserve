@@ -6,21 +6,21 @@ export const Footer = () => {
   const { t } = useLanguage();
 
   return (
-    <footer className="border-t border-border/60 bg-card/50">
-      <div className="container mx-auto px-4 py-12 sm:py-14">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+    <footer className="relative overflow-hidden border-t border-border/50 bg-[radial-gradient(ellipse_at_10%_0%,hsl(var(--primary)/0.09),transparent_42%),hsl(var(--card)/0.72)] backdrop-blur-2xl">
+      <div className="container mx-auto px-4 py-16 sm:py-20">
+        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.6fr_0.8fr_0.8fr]">
           {/* Brand */}
           <div className="space-y-4 lg:col-span-2">
             <Link
               to="/"
-              className="inline-flex items-center text-xl font-bold tracking-tight text-foreground"
+              className="inline-flex items-center text-2xl font-extrabold tracking-[-0.04em] text-foreground"
             >
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Skill Serve
               </span>
             </Link>
 
-            <p className="max-w-md text-sm leading-6 text-muted-foreground">
+            <p className="max-w-md text-sm leading-7 text-muted-foreground">
               {t("skill_serve")} — Your trusted platform for professional
               services.
             </p>
@@ -118,7 +118,7 @@ export const Footer = () => {
         </div>
 
         {/* Bottom */}
-        <div className="mt-10 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-4 border-t border-border/60 pt-7 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-center text-xs text-muted-foreground sm:text-left">
             &copy; {new Date().getFullYear()} Skill Serve. All rights reserved.
           </p>

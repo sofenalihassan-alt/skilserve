@@ -58,14 +58,14 @@ export const FAQ = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="py-16 sm:py-20">
+    <section className="bg-muted/20 py-20 sm:py-28">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-3xl text-center">
           <span className="text-sm font-semibold uppercase tracking-wider text-primary">
             FAQ
           </span>
 
-          <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="mt-3 text-4xl font-extrabold tracking-[-0.045em] text-foreground sm:text-5xl">
             Frequently Asked Questions
           </h2>
 
@@ -79,9 +79,9 @@ export const FAQ = () => {
           {faqs.map((faq, index) => (
             <details
               key={index}
-              className="group rounded-2xl border border-border/60 bg-card/70 backdrop-blur-sm transition-all duration-200 hover:border-primary/30 hover:shadow-sm"
+              className="group rounded-[1.35rem] border border-border/60 bg-card/75 shadow-[0_10px_30px_-26px_hsl(var(--foreground)/0.25)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-left text-sm font-semibold text-foreground sm:px-6 sm:py-5 sm:text-base">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-5 text-left text-sm font-semibold tracking-tight text-foreground sm:px-7 sm:py-6 sm:text-base">
                 <span>{faq.question}</span>
 
                 <ChevronDown className="h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
