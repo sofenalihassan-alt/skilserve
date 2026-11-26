@@ -53,7 +53,7 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
 
   return (
     <>
-      <MotionCard whileTap={reducedMotion ? undefined : { scale: 0.98 }} transition={{ type: 'spring', stiffness: 400, damping: 28 }} className="relative overflow-hidden rounded-2xl border border-border bg-card p-0 shadow-sm transition-[border-color,box-shadow] duration-200 hover:border-primary/30 hover:shadow-md">
+      <MotionCard whileTap={reducedMotion ? undefined : { scale: 0.98 }} transition={{ type: 'spring', stiffness: 400, damping: 28 }} className="group relative overflow-hidden rounded-[1.6rem] border border-border/60 bg-card/80 p-0 shadow-[0_10px_35px_-26px_hsl(var(--foreground)/0.28)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-primary/35 hover:shadow-[0_24px_55px_-28px_hsl(var(--primary)/0.32)]">
         {provider.id && (
           <div className="absolute top-3 end-3 z-10">
             <FavoriteButton providerId={provider.id} className="h-9 w-9 bg-background hover:bg-muted" />
@@ -61,12 +61,12 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
         )}
         <div className="space-y-4 p-4">
           <button type="button" onClick={() => provider.id && navigate(`/provider/${provider.id}`)} className="flex w-full items-start gap-3 pe-10 text-start">
-            <Avatar className="h-12 w-12">
+            <Avatar className="h-14 w-14 ring-2 ring-primary/10 ring-offset-2 ring-offset-card transition-transform duration-300 group-hover:scale-105">
               <AvatarImage src={provider.avatar_url || undefined} />
               <AvatarFallback className="bg-primary/10 font-semibold text-primary">{initials}</AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <h3 className="truncate font-heading text-base font-semibold text-foreground">{provider.business_name}</h3>
+              <h3 className="truncate font-heading text-lg font-bold tracking-tight text-foreground">{provider.business_name}</h3>
               <p className="truncate text-sm capitalize text-muted-foreground">
                 {provider.specialization || provider.category}
               </p>
@@ -94,9 +94,9 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
             </div>
           )}
 
-          <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
+          <div className="flex items-center justify-between gap-3 border-t border-border/60 pt-4">
             <div>
-              <span className="text-lg font-bold text-foreground">Rs. {provider.hourly_rate ?? 0}</span>
+              <span className="text-xl font-extrabold tracking-tight text-foreground">Rs. {provider.hourly_rate ?? 0}</span>
               <span className="text-sm text-muted-foreground">/hr</span>
             </div>
             <Button className="h-11 px-6" onClick={handleBook}>
