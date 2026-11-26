@@ -73,7 +73,7 @@ export const Header = () => {
     variant="ghost"
     onClick={onClick}
     title={title || label}
-    className="relative gap-2"
+    className="relative gap-2 rounded-xl px-3 text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/8 hover:text-primary"
   >
     <Icon className="h-4 w-4 shrink-0" />
     <span>{label}</span>
@@ -87,9 +87,9 @@ export const Header = () => {
 );
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background">
+    <header className="sticky top-0 z-50 border-b border-border/50 bg-background/75 shadow-[0_8px_32px_-24px_hsl(var(--foreground)/0.25)] backdrop-blur-2xl supports-[backdrop-filter]:bg-background/65">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-14 md:h-16">
+        <div className="flex h-16 items-center justify-between md:h-[4.5rem]">
           <Button
             variant="ghost"
             onClick={() => navigate("/")}
@@ -131,7 +131,7 @@ export const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button aria-label={t('account')} className="flex items-center gap-2 rounded-full border border-border p-1 pe-3 hover:bg-accent/10 transition-colors">
+                  <button aria-label={t('account')} className="flex items-center gap-2 rounded-full border border-border/70 bg-card/60 p-1 pe-3 shadow-sm backdrop-blur-xl transition-all hover:border-primary/30 hover:bg-accent/10">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={avatarUrl || undefined} />
                       <AvatarFallback className="bg-primary/20 text-primary text-sm font-bold">{fullName?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
