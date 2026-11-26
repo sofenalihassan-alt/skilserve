@@ -11,7 +11,8 @@ export const EmergencyServices = () => {
   return (
     <section className="px-4 py-16 sm:py-24">
       <div className="container mx-auto max-w-6xl">
-        <div className="relative isolate overflow-hidden rounded-[2rem] border border-emergency/25 bg-[radial-gradient(ellipse_at_85%_15%,hsl(var(--emergency)/0.16),transparent_42%),linear-gradient(135deg,hsl(var(--emergency)/0.07),hsl(var(--card)/0.88))] px-5 py-12 shadow-[0_28px_80px_-42px_hsl(var(--emergency)/0.5)] ring-1 ring-inset ring-white/40 backdrop-blur-2xl sm:px-12 sm:py-16 dark:ring-white/10">\n          <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 -z-10 h-72 w-72 rounded-full border border-emergency/15 shadow-[0_0_0_32px_hsl(var(--emergency)/0.035),0_0_0_64px_hsl(var(--emergency)/0.025)]" />
+        <div className="relative isolate overflow-hidden rounded-[2rem] border border-emergency/25 bg-[radial-gradient(ellipse_at_85%_15%,hsl(var(--emergency)/0.16),transparent_42%),linear-gradient(135deg,hsl(var(--emergency)/0.07),hsl(var(--card)/0.88))] px-5 py-12 shadow-[0_28px_80px_-42px_hsl(var(--emergency)/0.5)] ring-1 ring-inset ring-white/40 backdrop-blur-2xl sm:px-12 sm:py-16 dark:ring-white/10">
+          <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 -z-10 h-72 w-72 rounded-full border border-emergency/15 shadow-[0_0_0_32px_hsl(var(--emergency)/0.035),0_0_0_64px_hsl(var(--emergency)/0.025)]" />
 
           <div className="relative mx-auto max-w-3xl text-center">
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-[1.4rem] border border-emergency/15 bg-emergency/10 text-emergency shadow-inner sm:h-[4.5rem] sm:w-[4.5rem]">
