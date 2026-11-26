@@ -9,12 +9,12 @@ export const EmergencyServices = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="px-4 py-16 sm:py-20">
+    <section className="px-4 py-16 sm:py-24">
       <div className="container mx-auto max-w-6xl">
-        <div className="relative overflow-hidden rounded-3xl border border-emergency/20 bg-emergency/5 px-5 py-10 shadow-sm sm:px-10 sm:py-14">
+        <div className="relative isolate overflow-hidden rounded-[2rem] border border-emergency/25 bg-[radial-gradient(ellipse_at_85%_15%,hsl(var(--emergency)/0.16),transparent_42%),linear-gradient(135deg,hsl(var(--emergency)/0.07),hsl(var(--card)/0.88))] px-5 py-12 shadow-[0_28px_80px_-42px_hsl(var(--emergency)/0.5)] ring-1 ring-inset ring-white/40 backdrop-blur-2xl sm:px-12 sm:py-16 dark:ring-white/10">\n          <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 -z-10 h-72 w-72 rounded-full border border-emergency/15 shadow-[0_0_0_32px_hsl(var(--emergency)/0.035),0_0_0_64px_hsl(var(--emergency)/0.025)]" />
 
           <div className="relative mx-auto max-w-3xl text-center">
-            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-emergency/10 text-emergency sm:h-16 sm:w-16">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-[1.4rem] border border-emergency/15 bg-emergency/10 text-emergency shadow-inner sm:h-[4.5rem] sm:w-[4.5rem]">
               <AlertCircle className="h-7 w-7 sm:h-8 sm:w-8" />
             </div>
 
@@ -24,11 +24,11 @@ export const EmergencyServices = () => {
               {t("emergency_24_7")}
             </div>
 
-            <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <h2 className="text-4xl font-extrabold tracking-[-0.045em] text-foreground sm:text-5xl">
               {t("emergency_24_7")}
             </h2>
 
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+            <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base sm:leading-8">
               {t("emergency_desc")}
             </p>
 
@@ -49,7 +49,7 @@ export const EmergencyServices = () => {
               <MagneticButton className="block w-full max-w-full">
                 <Button
                   size="lg"
-                  className="h-12 w-full max-w-full bg-emergency px-4 text-sm font-semibold text-emergency-foreground shadow-lg shadow-emergency/20 transition-all hover:bg-emergency/90 hover:shadow-xl hover:shadow-emergency/25 sm:h-13 sm:px-8 sm:text-lg"
+                  className="h-14 w-full max-w-full rounded-2xl bg-emergency px-4 text-sm font-bold text-emergency-foreground shadow-lg shadow-emergency/25 transition-all duration-300 hover:-translate-y-0.5 hover:bg-emergency/90 hover:shadow-xl hover:shadow-emergency/30 sm:px-8 sm:text-base"
                   onClick={() => navigate("/emergency")}
                 >
                   <AlertCircle className="me-2 h-5 w-5 shrink-0" />
