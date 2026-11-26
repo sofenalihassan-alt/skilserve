@@ -24,40 +24,40 @@ const Index = () => {
       <EmergencyServices />
       <FAQ />
       
-        <section className="bg-muted/40 px-4 py-12 sm:py-20">
+        <section className="relative overflow-hidden bg-muted/20 px-4 py-20 sm:py-28">
 
-        <div className="container relative mx-auto max-w-6xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-primary">
+        <div className="container relative mx-auto max-w-7xl">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-primary">
               Why Skill Serve
             </p>
 
-            <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <h2 className="text-4xl font-extrabold tracking-[-0.045em] text-foreground sm:text-5xl">
               {t("why_choose")}
             </h2>
 
-            <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
+            <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
               Find trusted professionals with confidence through a platform built
               around verification, privacy, and fast connections.
             </p>
           </div>
 
-          <div className="mt-10 grid gap-4 sm:mt-12 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
-            <div className="group rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-md sm:p-7">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl text-primary transition-all duration-300">
+          <div className="mt-12 grid gap-4 sm:mt-14 md:grid-cols-12 md:gap-5">
+            <div className="group relative overflow-hidden rounded-[1.75rem] border border-border/60 bg-card/75 p-7 shadow-[0_18px_55px_-36px_hsl(var(--foreground)/0.3)] backdrop-blur-2xl transition-all duration-500 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl md:col-span-5 md:p-9">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/15 to-accent/10 text-primary shadow-inner transition-all duration-500 group-hover:rotate-[-6deg] group-hover:scale-110">
                 <ShieldCheck className="h-6 w-6" aria-hidden="true" />
               </div>
 
-              <h3 className="mt-5 text-base font-bold text-card-foreground sm:text-lg">
+              <h3 className="mt-6 text-lg font-bold tracking-tight text-card-foreground sm:text-xl">
                 {t("verified_providers")}
               </h3>
 
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              <p className="mt-3 text-sm leading-7 text-muted-foreground">
                 {t("verified_desc")}
               </p>
             </div>
 
-            <div className="group rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-md sm:p-7">
+            <div className="group relative overflow-hidden rounded-[1.75rem] border border-border/60 bg-card/75 p-7 shadow-[0_18px_55px_-36px_hsl(var(--foreground)/0.3)] backdrop-blur-2xl transition-all duration-500 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl md:col-span-3 md:p-8">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl text-primary transition-all duration-300">
                 <Lock className="h-6 w-6" aria-hidden="true" />
               </div>
@@ -71,7 +71,7 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="group rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-md sm:p-7">
+            <div className="group relative overflow-hidden rounded-[1.75rem] border border-border/60 bg-card/75 p-7 shadow-[0_18px_55px_-36px_hsl(var(--foreground)/0.3)] backdrop-blur-2xl transition-all duration-500 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl md:col-span-4 md:p-9">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl text-primary transition-all duration-300">
                 <Zap className="h-6 w-6" aria-hidden="true" />
               </div>
