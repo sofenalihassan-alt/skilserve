@@ -100,24 +100,24 @@ export const ServiceCategories = () => {
   };
 
   return (
-    <section className="bg-muted/30 px-4 py-16 sm:py-20">
-      <div className="container mx-auto max-w-6xl">
-        <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-12">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-primary">
+    <section className="relative overflow-hidden bg-muted/25 px-4 py-20 sm:py-28">
+      <div className="container mx-auto max-w-7xl">
+        <div className="mb-12 flex flex-col gap-4 sm:mb-14 sm:flex-row sm:items-end sm:justify-between">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-primary">
             Find the right professional
           </p>
 
-          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="text-4xl font-extrabold tracking-[-0.045em] text-foreground sm:text-5xl">
             Popular Services
           </h2>
 
-          <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base">
+          <p className="mt-3 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
             Browse trusted professionals by service category and find the help
             you need near you.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:gap-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
           {categoryConfig.map((category) => {
             const Icon = category.icon;
             const providerCount =
@@ -132,22 +132,22 @@ export const ServiceCategories = () => {
                 onKeyDown={(event) =>
                   handleCategoryKeyDown(event, category.key)
                 }
-                className="group relative cursor-pointer overflow-hidden border-border/70 bg-card p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:p-5"
+                className={`group relative min-h-40 cursor-pointer overflow-hidden rounded-[1.6rem] border border-border/60 bg-card/75 p-5 shadow-[0_8px_30px_-22px_hsl(var(--foreground)/0.24)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/35 hover:bg-card hover:shadow-[0_22px_55px_-25px_hsl(var(--primary)/0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:min-h-44 sm:p-6 ${category.key === "electrical" || category.key === "plumbing" ? "sm:col-span-1 lg:min-h-52" : ""}` }`
               >
-                <div className="flex flex-col items-center text-center">
-                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-all duration-300 group-hover:scale-105 group-hover:bg-primary group-hover:text-primary-foreground sm:h-14 sm:w-14">
+                <div className="relative flex h-full flex-col items-start text-start">
+                  <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/15 to-accent/10 text-primary shadow-inner transition-all duration-500 group-hover:rotate-[-6deg] group-hover:scale-110 group-hover:from-primary group-hover:to-accent group-hover:text-primary-foreground sm:h-14 sm:w-14">
                     <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
                   </div>
 
-                  <h3 className="line-clamp-1 text-sm font-semibold text-card-foreground sm:text-base">
+                  <h3 className="line-clamp-1 text-base font-bold tracking-tight text-card-foreground sm:text-lg">
                     {category.name}
                   </h3>
 
-                  <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+                  <p className="mt-2 text-xs font-medium text-muted-foreground sm:text-sm">
                     {providerCount.toLocaleString()}+ providers
                   </p>
 
-                  <div className="mt-3 flex items-center gap-1 text-xs font-medium text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <div className="mt-auto flex items-center gap-1 pt-5 text-xs font-bold text-primary transition-all duration-300 group-hover:translate-x-1">
                     <span>View providers</span>
                     <ArrowRight className="h-3.5 w-3.5" />
                   </div>
@@ -161,7 +161,7 @@ export const ServiceCategories = () => {
           <button
             type="button"
             onClick={() => navigate("/providers")}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary/80"
+            className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-5 py-3 text-sm font-semibold text-foreground shadow-sm backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:text-primary"
           >
             View all service providers
             <ArrowRight className="h-4 w-4" />
