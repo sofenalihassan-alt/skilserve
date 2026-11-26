@@ -47,7 +47,7 @@
     --success-foreground: 0 0% 100%;
 
     --warning: 38 80% 45%;
-    --warning-foreground: 222 30% 14%;
+    --warning-foreground: 0 0% 16.5%;
 
     --radius: 0.75rem;
 
@@ -74,19 +74,19 @@
 
     --gradient-dark: linear-gradient(
       180deg,
-      hsl(222 35% 10%),
-      hsl(222 35% 6%)
+      hsl(0 0% 16.5%),
+      hsl(0 0% 10%)
     );
 
     --gradient-card: linear-gradient(
       145deg,
       hsl(0 0% 100%),
-      hsl(210 35% 97%)
+      hsl(0 0% 96%)
     );
 
     --gradient-glow: radial-gradient(
       ellipse at center,
-      hsl(213 85% 52% / 0.12),
+      hsl(2.5 100% 44% / 0.10),
       transparent 70%
     );
 
@@ -123,20 +123,20 @@
     --accent-foreground: 0 0% 16.5%;
 
     --destructive: 2.5 100% 48%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 90%;
 
     --border: 0 0% 30%;
     --input: 0 0% 30%;
     --ring: 2.5 100% 48%;
 
     --emergency: 2.5 100% 48%;
-    --emergency-foreground: 210 40% 98%;
+    --emergency-foreground: 0 0% 90%;
 
     --success: 160 55% 42%;
-    --success-foreground: 210 40% 98%;
+    --success-foreground: 0 0% 90%;
 
     --warning: 38 92% 52%;
-    --warning-foreground: 222 35% 8%;
+    --warning-foreground: 0 0% 10%;
 
     --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.25);
     --shadow-md: 0 4px 8px -2px hsl(0 0% 0% / 0.30);
@@ -158,19 +158,19 @@
 
     --gradient-dark: linear-gradient(
       180deg,
-      hsl(222 35% 8%),
+      hsl(0 0% 10%),
       hsl(0 0% 6%)
     );
 
     --gradient-card: linear-gradient(
       145deg,
-      hsl(222 32% 13%),
-      hsl(222 32% 10%)
+      hsl(0 0% 18%),
+      hsl(0 0% 14%)
     );
 
     --gradient-glow: radial-gradient(
       ellipse at center,
-      hsl(213 90% 64% / 0.15),
+      hsl(2.5 100% 48% / 0.12),
       transparent 70%
     );
 
