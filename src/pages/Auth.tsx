@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { loginSchema, signupSchema, getSafeErrorMessage } from "@/lib/validation";
-import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import Seo from "@/components/Seo";
 
@@ -70,17 +69,33 @@ const Auth = () => {
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
-    const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/auth?next=${encodeURIComponent(nextPath)}`,
-    });
-    if (error) {
+    try {
+      const redirectTo = new URL("/auth", window.location.origin);
+      redirectTo.searchParams.set("next", nextPath);
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: redirectTo.toString() },
+      });
+
+      if (error) {
+        toast({
+          title: "Google Sign-In Failed",
+          description: getSafeErrorMessage(error),
+          variant: "destructive",
+        });
+        setLoading(false);
+      }
+      // On success Supabase redirects the browser to Google. Do not reset
+      // loading here because the page is navigating away.
+    } catch (error) {
       toast({
         title: "Google Sign-In Failed",
         description: getSafeErrorMessage(error),
         variant: "destructive",
       });
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -341,6 +356,7 @@ const Auth = () => {
                   {loading ? "Creating account..." : "Sign Up"}
                 </Button>
               </form>
+
             </TabsContent>
           </Tabs>
         </Card>
