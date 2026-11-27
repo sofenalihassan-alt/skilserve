@@ -348,6 +348,8 @@ const Auth = () => {
                     name="phone"
                     type="tel" 
                     placeholder="Enter your phone number"
+                    aria-invalid={validationField === "phone"}
+                    aria-describedby={validationField === "phone" ? "signup-validation-error" : undefined}
                   />
                 </div>
                 <div className="space-y-2">
