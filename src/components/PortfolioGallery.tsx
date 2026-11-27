@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageIcon } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -62,9 +62,10 @@ export const PortfolioGallery = ({ providerId, max }: { providerId: string; max?
             key={it.id}
             type="button"
             onClick={(e) => { e.stopPropagation(); setLightbox(it); }}
-            className="relative aspect-square overflow-hidden rounded-lg group"
+            className="relative aspect-square overflow-hidden rounded-lg group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            aria-label={`View portfolio image ${i + 1}${it.caption ? `: ${it.caption}` : ""}`}
           >
-            <img src={it.image_url} alt={it.caption || "Portfolio"} loading="lazy" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+            <img src={it.image_url} alt={it.caption || `Portfolio photo ${i + 1}`} loading="lazy" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
             {extra > 0 && i === shown.length - 1 && (
               <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-semibold">
                 +{extra}
@@ -76,9 +77,13 @@ export const PortfolioGallery = ({ providerId, max }: { providerId: string; max?
 
       <Dialog open={!!lightbox} onOpenChange={(o) => !o && setLightbox(null)}>
         <DialogContent className="max-w-3xl p-2">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Portfolio image preview</DialogTitle>
+            <DialogDescription>{lightbox?.caption || "Enlarged portfolio photo"}</DialogDescription>
+          </DialogHeader>
           {lightbox && (
             <div className="space-y-2">
-              <img src={lightbox.image_url} alt={lightbox.caption || ""} className="w-full max-h-[80vh] object-contain rounded" />
+              <img src={lightbox.image_url} alt={lightbox.caption || "Enlarged portfolio photo"} className="w-full max-h-[80vh] object-contain rounded" />
               {lightbox.caption && <p className="text-sm text-center text-muted-foreground px-4 pb-2">{lightbox.caption}</p>}
             </div>
           )}
