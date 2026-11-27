@@ -85,7 +85,7 @@ export const FeedbackDialog = ({ open, onOpenChange, type, providerName, provide
         </DialogHeader>
 
         <div className="space-y-4 py-2">
-          <div className="flex justify-center gap-1" role="radiogroup" aria-label="Rating" aria-describedby={ratingError ? "feedback-rating-error" : undefined}>
+          <div className="flex justify-center gap-1" role="group" aria-label="Rating" aria-describedby={ratingError ? "feedback-rating-error" : undefined}>
             {Array.from({ length: 5 }).map((_, i) => (
               <button
                 key={i}
@@ -93,8 +93,7 @@ export const FeedbackDialog = ({ open, onOpenChange, type, providerName, provide
                 onClick={() => setRating(i + 1)}
                 onMouseEnter={() => setHoverRating(i + 1)}
                 onMouseLeave={() => setHoverRating(0)}
-                role="radio"
-                aria-checked={rating === i + 1}
+                aria-pressed={rating === i + 1}
                 aria-label={`${i + 1} out of 5 stars`}
                 className="p-1 transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
               >
