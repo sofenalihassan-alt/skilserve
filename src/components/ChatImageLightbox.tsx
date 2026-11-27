@@ -17,8 +17,8 @@ export const ChatImageLightbox = ({ images, startIndex, onClose }: ChatImageLigh
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') setIndex((i) => (i + 1) % images.length);
-      if (e.key === 'ArrowLeft') setIndex((i) => (i - 1 + images.length) % images.length);
+      if (e.key === 'ArrowRight') { e.preventDefault(); setIndex((i) => (i + 1) % images.length); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); setIndex((i) => (i - 1 + images.length) % images.length); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
