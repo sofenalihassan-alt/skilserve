@@ -25,6 +25,7 @@ export const FeedbackDialog = ({ open, onOpenChange, type, providerName, provide
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [ratingError, setRatingError] = useState("");
 
   const handleSubmit = async () => {
     if (!user) {
@@ -32,10 +33,12 @@ export const FeedbackDialog = ({ open, onOpenChange, type, providerName, provide
       return;
     }
     if (rating === 0) {
+      setRatingError("Please select a rating before submitting.");
       toast({ title: "Please select a rating", variant: "destructive" });
       return;
     }
 
+    setRatingError("");
     setSubmitting(true);
 
     if (type === "website") {
@@ -82,7 +85,7 @@ export const FeedbackDialog = ({ open, onOpenChange, type, providerName, provide
         </DialogHeader>
 
         <div className="space-y-4 py-2">
-          <div className="flex justify-center gap-1">
+          <div className="flex justify-center gap-1" role="radiogroup" aria-label="Rating" aria-describedby={ratingError ? "feedback-rating-error" : undefined}>
             {Array.from({ length: 5 }).map((_, i) => (
               <button
                 key={i}
@@ -90,7 +93,10 @@ export const FeedbackDialog = ({ open, onOpenChange, type, providerName, provide
                 onClick={() => setRating(i + 1)}
                 onMouseEnter={() => setHoverRating(i + 1)}
                 onMouseLeave={() => setHoverRating(0)}
-                className="p-1 transition-transform hover:scale-110"
+                role="radio"
+                aria-checked={rating === i + 1}
+                aria-label={`${i + 1} out of 5 stars`}
+                className="p-1 transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
               >
                 <Star
                   className={`h-8 w-8 ${
@@ -102,7 +108,10 @@ export const FeedbackDialog = ({ open, onOpenChange, type, providerName, provide
               </button>
             ))}
           </div>
+          {ratingError && <p id="feedback-rating-error" role="alert" className="text-sm text-destructive text-center">{ratingError}</p>}
+          <label htmlFor="feedback-comment" className="sr-only">Additional comments</label>
           <Textarea
+            id="feedback-comment"
             placeholder="Tell us more about your experience (optional)..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
