@@ -99,7 +99,8 @@ const Auth = () => {
       const firstError = validation.error.errors[0];
       setValidationMessage(firstError.message);
       const invalidField = String(firstError.path[0]);
-      window.setTimeout(() => e.currentTarget.querySelector<HTMLInputElement>(`[name="${invalidField}"]`)?.focus(), 0);
+      const formElement = e.currentTarget;
+      window.setTimeout(() => formElement.querySelector<HTMLInputElement>(`[name="${invalidField}"]`)?.focus(), 0);
       toast({
         title: "Validation Error",
         description: firstError.message,
