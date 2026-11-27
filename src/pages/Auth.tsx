@@ -22,6 +22,7 @@ const Auth = () => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
   const [userType, setUserType] = useState<"user" | "provider">("user");
   const [loading, setLoading] = useState(false);
+  const [validationMessage, setValidationMessage] = useState("");
   const navigate = useNavigate();
   const { signIn, signUp, user } = useAuth();
   const nextPath = safeNext(new URLSearchParams(window.location.search).get("next"));
@@ -96,6 +97,7 @@ const Auth = () => {
     
     if (!validation.success) {
       const firstError = validation.error.errors[0];
+      setValidationMessage(firstError.message);
       toast({
         title: "Validation Error",
         description: firstError.message,
@@ -105,6 +107,7 @@ const Auth = () => {
       return;
     }
 
+    setValidationMessage("");
     const { error } = await signIn(validation.data.email, validation.data.password);
     
     if (error) {
@@ -148,6 +151,7 @@ const Auth = () => {
       return;
     }
 
+    setValidationMessage("");
     const { error } = await signUp(
       validation.data.email, 
       validation.data.password, 
@@ -210,11 +214,12 @@ const Auth = () => {
 
             <div className="mb-6">
               <Label className="mb-2 block">Account Type</Label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2" role="group" aria-label="Account type">
                 <Button
                   type="button"
                   variant={userType === "user" ? "default" : "outline"}
                   onClick={() => setUserType("user")}
+                  aria-pressed={userType === "user"}
                   className="flex items-center gap-2"
                 >
                   <User className="h-4 w-4" />
@@ -224,6 +229,7 @@ const Auth = () => {
                   type="button"
                   variant={userType === "provider" ? "default" : "outline"}
                   onClick={() => setUserType("provider")}
+                  aria-pressed={userType === "provider"}
                   className="flex items-center gap-2"
                 >
                   <Briefcase className="h-4 w-4" />
@@ -233,7 +239,8 @@ const Auth = () => {
             </div>
 
             <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4">
+              <form onSubmit={handleLogin} className="space-y-4" noValidate>
+                {validationMessage && <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{validationMessage}</p>}
                 <div className="space-y-2">
                   <Label htmlFor="login-email">Email</Label>
                   <Input 
@@ -297,7 +304,8 @@ const Auth = () => {
             </TabsContent>
 
             <TabsContent value="signup">
-              <form onSubmit={handleSignup} className="space-y-4">
+              <form onSubmit={handleSignup} className="space-y-4" noValidate>
+                {validationMessage && <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{validationMessage}</p>}
                 <div className="space-y-2">
                   <Label htmlFor="signup-name">Full Name</Label>
                   <Input 
