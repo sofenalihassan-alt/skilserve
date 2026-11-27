@@ -66,6 +66,12 @@ const App = () => {
           <BrowserRouter>
             <AuthProvider>
               <LanguageProvider>
+                <a
+                  href="#main-content"
+                  className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-4 focus:py-3 focus:text-foreground focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  Skip to main content
+                </a>
                 <CommandPalette />
                 <BottomNav />
                 <TermsAcceptanceDialog />
@@ -73,22 +79,22 @@ const App = () => {
                 <PushNotificationInit>
                   <Suspense fallback={<div role="status" aria-label="Loading" className="flex min-h-screen items-center justify-center bg-background"><Loader2 aria-hidden="true" className="h-8 w-8 animate-spin text-primary motion-reduce:animate-none" /></div>}>
                   <Routes>
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/reset-password" element={<ResetPassword />} />
-                    <Route path="/terms" element={<TermsOfService />} />
-                    <Route path="/privacy" element={<PrivacyPolicy />} />
-                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/auth" element={<main id="main-content" tabIndex={-1}><Auth /></main>} />
+                    <Route path="/reset-password" element={<main id="main-content" tabIndex={-1}><ResetPassword /></main>} />
+                    <Route path="/terms" element={<main id="main-content" tabIndex={-1}><TermsOfService /></main>} />
+                    <Route path="/privacy" element={<main id="main-content" tabIndex={-1}><PrivacyPolicy /></main>} />
+                    <Route path="/contact" element={<main id="main-content" tabIndex={-1}><Contact /></main>} />
                     <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
-                    <Route path="/" element={<Index />} />
+                    <Route path="/" element={<main id="main-content" tabIndex={-1}><Index /></main>} />
                     <Route path="/providers" element={<Providers />} />
                     <Route path="/provider/:id" element={<ProviderDetail />} />
-                    <Route path="/provider-registration" element={<ProtectedRoute><ProviderRegistration /></ProtectedRoute>} />
-                    <Route path="/emergency" element={<Emergency />} />
+                    <Route path="/provider-registration" element={<ProtectedRoute><main id="main-content" tabIndex={-1}><ProviderRegistration /></main></ProtectedRoute>} />
+                    <Route path="/emergency" element={<main id="main-content" tabIndex={-1}><Emergency /></main>} />
 
-                    <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+                    <Route path="/messages" element={<ProtectedRoute><main id="main-content" tabIndex={-1}><Messages /></main></ProtectedRoute>} />
                     <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                     <Route path="/bookings" element={<ProtectedRoute><Bookings /></ProtectedRoute>} />
-                    <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+                    <Route path="/admin" element={<AdminRoute><main id="main-content" tabIndex={-1}><Admin /></main></AdminRoute>} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                   </Suspense>
