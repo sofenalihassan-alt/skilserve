@@ -132,7 +132,7 @@ const ProviderDetail = () => {
     name: provider.business_name,
     description: provider.description || seoDescription,
     serviceType: provider.category,
-    url: `https://skilserve.lovable.app/provider/${id}`,
+    url: `https://skillserve.store/provider/${id}`,
     ...(provider.avatar_url ? { image: provider.avatar_url } : {}),
     ...(reviews.length
       ? {
