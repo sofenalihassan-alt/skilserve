@@ -93,11 +93,11 @@ export const DisputeDialog = ({ open, onOpenChange, bookingId, againstUserId }: 
         </DialogHeader>
 
         <div className="space-y-4">
-          {validationError && <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{validationError}</p>}
+          {validationError && <p id="dispute-validation-error" role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{validationError}</p>}
           <div className="space-y-2">
             <Label htmlFor="dispute-reason">Reason</Label>
             <Select value={reason} onValueChange={(value) => { setReason(value); setValidationError(""); }}>
-              <SelectTrigger id="dispute-reason" aria-label="Reason for dispute">
+              <SelectTrigger id="dispute-reason" aria-label="Reason for dispute" aria-invalid={!!validationError && !reason} aria-describedby={validationError && !reason ? "dispute-validation-error" : undefined}>
                 <SelectValue placeholder="Select a reason" />
               </SelectTrigger>
               <SelectContent>
@@ -114,9 +114,10 @@ export const DisputeDialog = ({ open, onOpenChange, bookingId, againstUserId }: 
             <Label htmlFor="dispute-description">Describe what happened</Label>
             <Textarea
               id="dispute-description"
-              aria-describedby="dispute-description-count"
+              aria-invalid={!!validationError && description.trim().length < 10}
+              aria-describedby={validationError && description.trim().length < 10 ? "dispute-validation-error dispute-description-count" : "dispute-description-count"}
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => { setDescription(e.target.value); if (e.target.value.trim().length >= 10 && reason) setValidationError(""); }}
               rows={4}
               maxLength={1000}
               placeholder="Provide as much detail as possible…"
@@ -146,7 +147,7 @@ export const DisputeDialog = ({ open, onOpenChange, bookingId, againstUserId }: 
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={submitting}>
             Cancel
           </Button>
-          <Button onClick={submit} disabled={submitting || !reason || description.trim().length < 10}>
+          <Button onClick={submit} disabled={submitting}>
             {submitting ? "Submitting…" : "Submit Report"}
           </Button>
         </DialogFooter>
