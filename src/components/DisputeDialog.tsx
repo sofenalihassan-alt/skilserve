@@ -34,12 +34,16 @@ export const DisputeDialog = ({ open, onOpenChange, bookingId, againstUserId }: 
   const [description, setDescription] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [validationError, setValidationError] = useState("");
 
   const submit = async () => {
     if (!user || !reason || description.trim().length < 10) {
+      setValidationError("Please choose a reason and describe what happened in at least 10 characters.");
+      window.setTimeout(() => document.getElementById(reason ? "dispute-description" : "dispute-reason")?.focus(), 0);
       toast({ title: "Missing info", description: "Please pick a reason and write at least 10 characters.", variant: "destructive" });
       return;
     }
+    setValidationError("");
     setSubmitting(true);
     try {
       const evidenceUrls: string[] = [];
@@ -89,10 +93,11 @@ export const DisputeDialog = ({ open, onOpenChange, bookingId, againstUserId }: 
         </DialogHeader>
 
         <div className="space-y-4">
+          {validationError && <p id="dispute-validation-error" role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{validationError}</p>}
           <div className="space-y-2">
-            <Label>Reason</Label>
-            <Select value={reason} onValueChange={setReason}>
-              <SelectTrigger>
+            <Label htmlFor="dispute-reason">Reason</Label>
+            <Select value={reason} onValueChange={(value) => { setReason(value); setValidationError(""); }}>
+              <SelectTrigger id="dispute-reason" aria-label="Reason for dispute" aria-invalid={!!validationError && !reason} aria-describedby={validationError && !reason ? "dispute-validation-error" : undefined}>
                 <SelectValue placeholder="Select a reason" />
               </SelectTrigger>
               <SelectContent>
@@ -106,30 +111,34 @@ export const DisputeDialog = ({ open, onOpenChange, bookingId, againstUserId }: 
           </div>
 
           <div className="space-y-2">
-            <Label>Describe what happened</Label>
+            <Label htmlFor="dispute-description">Describe what happened</Label>
             <Textarea
+              id="dispute-description"
+              aria-invalid={!!validationError && description.trim().length < 10}
+              aria-describedby={validationError && description.trim().length < 10 ? "dispute-validation-error dispute-description-count" : "dispute-description-count"}
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => { setDescription(e.target.value); if (e.target.value.trim().length >= 10 && reason) setValidationError(""); }}
               rows={4}
               maxLength={1000}
               placeholder="Provide as much detail as possible…"
             />
-            <p className="text-xs text-muted-foreground text-right">{description.length}/1000</p>
+            <p id="dispute-description-count" className="text-xs text-muted-foreground text-right" aria-live="polite">{description.length}/1000 characters</p>
           </div>
 
           <div className="space-y-2">
-            <Label className="flex items-center gap-1.5">
+            <Label htmlFor="dispute-evidence" className="flex items-center gap-1.5">
               <Upload className="h-3.5 w-3.5" />
               Evidence (optional, up to 3 files, 5MB each)
             </Label>
             <Input
+              id="dispute-evidence"
               type="file"
               accept="image/*,application/pdf"
               multiple
               onChange={(e) => setFiles(Array.from(e.target.files || []).slice(0, 3))}
             />
             {files.length > 0 && (
-              <p className="text-xs text-muted-foreground">{files.length} file(s) selected</p>
+              <p className="text-xs text-muted-foreground" role="status">{files.length} file(s) selected</p>
             )}
           </div>
         </div>
@@ -138,7 +147,7 @@ export const DisputeDialog = ({ open, onOpenChange, bookingId, againstUserId }: 
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={submitting}>
             Cancel
           </Button>
-          <Button onClick={submit} disabled={submitting || !reason || description.trim().length < 10}>
+          <Button onClick={submit} disabled={submitting}>
             {submitting ? "Submitting…" : "Submit Report"}
           </Button>
         </DialogFooter>
