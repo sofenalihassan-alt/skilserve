@@ -24,6 +24,7 @@ const ResetPassword = () => {
   const [recovered, setRecovered] = useState(false);
   const [expired, setExpired] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -66,6 +67,9 @@ const ResetPassword = () => {
 
     const validation = resetSchema.safeParse({ password, confirmPassword });
     if (!validation.success) {
+      const nextErrors: Record<string, string> = {};
+      validation.error.errors.forEach((issue) => { nextErrors[String(issue.path[0])] = issue.message; });
+      setFieldErrors(nextErrors);
       toast({
         title: "Validation Error",
         description: validation.error.errors[0].message,
@@ -75,6 +79,7 @@ const ResetPassword = () => {
       return;
     }
 
+    setFieldErrors({});
     const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
@@ -154,11 +159,13 @@ const ResetPassword = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="password">New Password</Label>
-              <Input id="password" name="password" type="password" placeholder="Min 8 characters" required />
+              <Input id="password" name="password" type="password" placeholder="Min 8 characters" required aria-invalid={!!fieldErrors.password} aria-describedby={fieldErrors.password ? "password-error" : undefined} />
+              {fieldErrors.password && <p id="password-error" role="alert" className="text-sm text-destructive">{fieldErrors.password}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input id="confirmPassword" name="confirmPassword" type="password" placeholder="Re-enter password" required />
+              <Input id="confirmPassword" name="confirmPassword" type="password" placeholder="Re-enter password" required aria-invalid={!!fieldErrors.confirmPassword} aria-describedby={fieldErrors.confirmPassword ? "confirm-password-error" : undefined} />
+              {fieldErrors.confirmPassword && <p id="confirm-password-error" role="alert" className="text-sm text-destructive">{fieldErrors.confirmPassword}</p>}
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Updating..." : "Update Password"}
