@@ -161,6 +161,7 @@ const Contact = () => {
               >
                 <MessageCircle className="h-4 w-4" /> Or chat with us on WhatsApp
               </a>
+              </form>
             </CardContent>
           </Card>
 
