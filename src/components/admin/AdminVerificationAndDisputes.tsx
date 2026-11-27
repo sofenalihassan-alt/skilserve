@@ -182,7 +182,7 @@ export const AdminVerificationTab = () => {
                 selectedDoc.file_path.endsWith(".pdf") ? (
                   <iframe src={signedUrl} className="w-full h-[500px] rounded-lg border border-border" title="Document" />
                 ) : (
-                  <img src={signedUrl} alt="Document" className="w-full max-h-[500px] object-contain rounded-lg border border-border" />
+                  <img src={signedUrl} alt={`Verification document: ${selectedDoc.doc_type.replace(/_/g, " ")}`} className="w-full max-h-[500px] object-contain rounded-lg border border-border" />
                 )
               ) : (
                 <p>Loading…</p>

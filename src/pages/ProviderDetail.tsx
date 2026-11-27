@@ -132,7 +132,7 @@ const ProviderDetail = () => {
     name: provider.business_name,
     description: provider.description || seoDescription,
     serviceType: provider.category,
-    url: `https://skilserve.lovable.app/provider/${id}`,
+    url: `https://skillserve.store/provider/${id}`,
     ...(provider.avatar_url ? { image: provider.avatar_url } : {}),
     ...(reviews.length
       ? {
@@ -149,7 +149,7 @@ const ProviderDetail = () => {
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Seo title={seoTitle} description={seoDescription} type="profile" jsonLd={providerJsonLd} />
       <Header />
-      <main className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
+      <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
         <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2">
           <ArrowLeft className="h-4 w-4" /> {t("back")}
         </Button>

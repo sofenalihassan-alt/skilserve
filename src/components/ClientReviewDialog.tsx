@@ -102,15 +102,16 @@ export const ClientReviewDialog = ({
         <div className="space-y-4">
           <div className="space-y-2">
             <Label>Rating</Label>
-            <div className="flex gap-1" onMouseLeave={() => setHovered(0)}>
+            <div className="flex gap-1" role="group" aria-label="Rating" onMouseLeave={() => setHovered(0)}>
               {[1, 2, 3, 4, 5].map((value) => (
                 <button
                   key={value}
                   type="button"
                   aria-label={`${value} star${value > 1 ? 's' : ''}`}
+                  aria-pressed={rating === value}
                   onMouseEnter={() => setHovered(value)}
                   onClick={() => setRating(value)}
-                  className="p-1 transition-transform hover:scale-110"
+                  className="p-1 transition-transform hover:scale-110 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <Star
                     className={`h-7 w-7 ${

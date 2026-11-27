@@ -4,7 +4,7 @@ import { User, Globe, LogOut, MessageSquareText, Home, Search, AlertTriangle, Br
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -60,41 +60,49 @@ export const Header = () => {
   icon: Icon,
   label,
   onClick,
+  to,
   title,
   badge,
 }: {
   icon: React.ElementType;
   label: string;
-  onClick: () => void;
+  onClick?: () => void;
+  to?: string;
   title?: string;
   badge?: number;
-}) => (
-  <Button
-    variant="ghost"
-    onClick={onClick}
-    title={title || label}
-    className="relative gap-2 rounded-xl px-3 text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/8 hover:text-primary"
-  >
-    <Icon className="h-4 w-4 shrink-0" />
-    <span>{label}</span>
+}) => {
+  const content = (
+    <>
+      <Icon className="h-4 w-4 shrink-0" />
+      <span>{label}</span>
+      {badge !== undefined && badge > 0 && (
+        <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
+          {badge > 99 ? "99+" : badge}
+        </span>
+      )}
+    </>
+  );
+  const className = "relative gap-2 rounded-xl px-3 text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/8 hover:text-primary";
 
-    {badge !== undefined && badge > 0 && (
-      <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
-        {badge > 99 ? "99+" : badge}
-      </span>
-    )}
-  </Button>
-);
+  return to ? (
+    <Button asChild variant="ghost" title={title || label} className={className}>
+      <Link to={to}>{content}</Link>
+    </Button>
+  ) : (
+    <Button variant="ghost" onClick={onClick} title={title || label} className={className}>
+      {content}
+    </Button>
+  );
+};
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/75 shadow-[0_8px_32px_-24px_hsl(var(--foreground)/0.25)] backdrop-blur-2xl supports-[backdrop-filter]:bg-background/65">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between md:h-[4.5rem]">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/")}
+          <Link
+            to="/"
             aria-label={t('skill_serve')}
-            className="flex shrink-0 items-center gap-2 h-auto p-0 hover:bg-transparent focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex shrink-0 items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <span className="flex h-9 w-9 shrink-0 items-center justify-center md:h-10 md:w-10">
               <img src={logo} alt="" width={176} height={176} className="h-full w-full object-contain" />
@@ -102,19 +110,19 @@ export const Header = () => {
             <span className="font-heading text-lg md:text-xl font-bold text-foreground">
               {t('skill_serve')}
             </span>
-          </Button>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
-            <NavButton icon={Home} label={t('home')} onClick={() => navigate("/")} />
+            <NavButton icon={Home} label={t('home')} to="/" />
             <NavButton icon={Search} label={t('find_services')} onClick={() => window.dispatchEvent(new Event('open-command-palette'))} />
-            <NavButton icon={AlertTriangle} label={t('emergency')} onClick={() => navigate("/emergency")} />
+            <NavButton icon={AlertTriangle} label={t('emergency')} to="/emergency" />
             {!isProvider && (
-              <NavButton icon={Briefcase} label={t('become_provider')} onClick={() => user ? navigate("/provider-registration") : navigate(authRedirect("/provider-registration"))} />
+              <NavButton icon={Briefcase} label={t('become_provider')} to={user ? "/provider-registration" : authRedirect("/provider-registration")} />
             )}
-            {user && <NavButton icon={MessageSquareText} label={t('messages')} onClick={() => navigate("/messages")} badge={unreadCount} />}
+            {user && <NavButton icon={MessageSquareText} label={t('messages')} to="/messages" badge={unreadCount} />}
             {user && <NotificationCenter />}
-            {isAdmin && <NavButton icon={Shield} label="Admin" onClick={() => navigate("/admin")} />}
+            {isAdmin && <NavButton icon={Shield} label="Admin" to="/admin" />}
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -131,9 +139,9 @@ export const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button aria-label={t('account')} className="flex items-center gap-2 rounded-full border border-border/70 bg-card/60 p-1 pe-3 shadow-sm backdrop-blur-xl transition-all hover:border-primary/30 hover:bg-accent/10">
+                  <button type="button" aria-label={t('account')} className="flex items-center gap-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-border/70 bg-card/60 p-1 pe-3 shadow-sm backdrop-blur-xl transition-all hover:border-primary/30 hover:bg-accent/10">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={avatarUrl || undefined} />
+                      <AvatarImage src={avatarUrl || undefined} alt={`${fullName || t('account')} profile photo`} />
                       <AvatarFallback className="bg-primary/20 text-primary text-sm font-bold">{fullName?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
                     </Avatar>
                     <span className="text-sm font-medium hidden lg:inline">{fullName || t('account')}</span>

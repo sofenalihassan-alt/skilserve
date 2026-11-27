@@ -27,9 +27,9 @@ export const CookieConsent = () => {
 
   return (
     <div
-      role="dialog"
+      role="region"
       aria-live="polite"
-      aria-label="Cookie consent"
+      aria-label="Cookie preferences"
       className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-md z-[60] rounded-2xl border border-border bg-card/95 backdrop-blur-md shadow-2xl p-4 md:p-5 animate-in slide-in-from-bottom-5 fade-in"
     >
       <div className="flex gap-3">

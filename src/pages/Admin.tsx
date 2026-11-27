@@ -441,8 +441,8 @@ const ContentTab = () => {
                   <div className="flex gap-1 mt-1">{Array.from({ length: t.rating }).map((_, i) => <Star key={i} className="h-3 w-3 fill-yellow-400 text-yellow-400" />)}</div>
                 </div>
                 <div className="flex gap-1">
-                  <Button size="sm" variant="ghost" onClick={() => setEditItem(t)}><Edit className="h-4 w-4" /></Button>
-                  <Button size="sm" variant="ghost" onClick={() => handleDeleteTestimonial(t.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                  <Button size="sm" variant="ghost" aria-label="Edit testimonial" onClick={() => setEditItem(t)}><Edit className="h-4 w-4" /></Button>
+                  <Button size="sm" variant="ghost" aria-label="Delete testimonial" onClick={() => handleDeleteTestimonial(t.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                 </div>
               </div>
             ))}
@@ -483,7 +483,7 @@ const ContentTab = () => {
                   <p className="text-sm mt-1">{f.comment || 'No comment'}</p>
                   <p className="text-xs text-muted-foreground mt-1">Page: {f.page} • {format(new Date(f.created_at), 'MMM d, yyyy')}</p>
                 </div>
-                <Button size="sm" variant="ghost" onClick={() => handleDeleteFeedback(f.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                <Button size="sm" variant="ghost" aria-label="Delete feedback" onClick={() => handleDeleteFeedback(f.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
               </div>
             ))}
           </div>

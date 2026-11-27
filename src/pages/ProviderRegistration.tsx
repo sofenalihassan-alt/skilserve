@@ -33,6 +33,8 @@ const ProviderRegistration = () => {
   const [availability247, setAvailability247] = useState(false);
   const [existingProvider, setExistingProvider] = useState<ExistingProvider | null>(null);
   const [category, setCategory] = useState('');
+  const [categoryError, setCategoryError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formValues, setFormValues] = useState({
     businessName: '',
     hourlyRate: '',
@@ -87,10 +89,24 @@ const ProviderRegistration = () => {
     });
 
     if (!validation.success) {
+      const nextErrors: Record<string, string> = {};
+      validation.error.errors.forEach((issue) => { nextErrors[String(issue.path[0])] = issue.message; });
+      setFieldErrors(nextErrors);
+      const firstInvalid = Object.keys(nextErrors)[0];
+      window.setTimeout(() => document.getElementById(firstInvalid)?.focus(), 0);
       toast({ title: "Validation Error", description: validation.error.errors[0].message, variant: "destructive" });
       setLoading(false);
       return;
     }
+
+    setFieldErrors({});
+    if (!category) {
+      setCategoryError("Please select a service category.");
+      window.setTimeout(() => document.getElementById("category")?.focus(), 0);
+      setLoading(false);
+      return;
+    }
+    setCategoryError("");
 
     const payload = {
       business_name: validation.data.businessName,
@@ -158,13 +174,14 @@ const ProviderRegistration = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="businessName">Business Name *</Label>
-              <Input id="businessName" value={formValues.businessName} onChange={(e) => setFormValues({ ...formValues, businessName: e.target.value })} placeholder="Your business or professional name" required />
+              <Input id="businessName" value={formValues.businessName} onChange={(e) => setFormValues({ ...formValues, businessName: e.target.value })} placeholder="Your business or professional name" required aria-invalid={!!fieldErrors.businessName} aria-describedby={fieldErrors.businessName ? "businessName-error" : undefined} />
+              {fieldErrors.businessName && <p id="businessName-error" role="alert" className="text-sm text-destructive">{fieldErrors.businessName}</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="category">Service Category *</Label>
-              <Select value={category} onValueChange={setCategory} required>
-                <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
+              <Select value={category} onValueChange={(value) => { setCategory(value); setCategoryError(""); }}>
+                <SelectTrigger id="category" aria-required="true" aria-invalid={!!categoryError} aria-describedby={categoryError ? "category-error" : undefined}><SelectValue placeholder="Select a category" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="plumbing">Plumbing</SelectItem>
                   <SelectItem value="electrical">Electrical</SelectItem>
@@ -176,22 +193,26 @@ const ProviderRegistration = () => {
                   <SelectItem value="handyman">Handyman</SelectItem>
                 </SelectContent>
               </Select>
+              {categoryError && <p id="category-error" role="alert" className="text-sm text-destructive">{categoryError}</p>}
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="hourlyRate">Hourly Rate (PKR) *</Label>
-                <Input id="hourlyRate" value={formValues.hourlyRate} onChange={(e) => setFormValues({ ...formValues, hourlyRate: e.target.value })} type="number" min="0" step="0.01" placeholder="1000" required />
+                <Input id="hourlyRate" value={formValues.hourlyRate} onChange={(e) => setFormValues({ ...formValues, hourlyRate: e.target.value })} type="number" min="0" step="0.01" placeholder="1000" required aria-invalid={!!fieldErrors.hourlyRate} aria-describedby={fieldErrors.hourlyRate ? "hourlyRate-error" : undefined} />
+                {fieldErrors.hourlyRate && <p id="hourlyRate-error" role="alert" className="text-sm text-destructive">{fieldErrors.hourlyRate}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="yearsExperience">Years of Experience</Label>
-                <Input id="yearsExperience" value={formValues.yearsExperience} onChange={(e) => setFormValues({ ...formValues, yearsExperience: e.target.value })} type="number" min="0" placeholder="5" />
+                <Input id="yearsExperience" value={formValues.yearsExperience} onChange={(e) => setFormValues({ ...formValues, yearsExperience: e.target.value })} type="number" min="0" placeholder="5" aria-invalid={!!fieldErrors.yearsExperience} aria-describedby={fieldErrors.yearsExperience ? "yearsExperience-error" : undefined} />
+                {fieldErrors.yearsExperience && <p id="yearsExperience-error" role="alert" className="text-sm text-destructive">{fieldErrors.yearsExperience}</p>}
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="specialization">Specialization</Label>
-              <Input id="specialization" value={formValues.specialization} onChange={(e) => setFormValues({ ...formValues, specialization: e.target.value })} placeholder="e.g., Residential Plumbing, Emergency Services" />
+              <Input id="specialization" value={formValues.specialization} onChange={(e) => setFormValues({ ...formValues, specialization: e.target.value })} placeholder="e.g., Residential Plumbing, Emergency Services" aria-invalid={!!fieldErrors.specialization} aria-describedby={fieldErrors.specialization ? "specialization-error" : undefined} />
+              {fieldErrors.specialization && <p id="specialization-error" role="alert" className="text-sm text-destructive">{fieldErrors.specialization}</p>}
             </div>
 
             <div className="p-3 rounded-lg bg-success/10 border border-success/20 text-sm text-muted-foreground">
@@ -208,7 +229,8 @@ const ProviderRegistration = () => {
 
             <div className="space-y-2">
               <Label htmlFor="bio">Bio *</Label>
-              <Textarea id="bio" value={formValues.bio} onChange={(e) => setFormValues({ ...formValues, bio: e.target.value })} placeholder="Tell potential clients about your experience..." className="min-h-[120px]" required />
+              <Textarea id="bio" value={formValues.bio} onChange={(e) => setFormValues({ ...formValues, bio: e.target.value })} placeholder="Tell potential clients about your experience..." className="min-h-[120px]" required aria-invalid={!!fieldErrors.bio} aria-describedby={fieldErrors.bio ? "bio-error" : undefined} />
+              {fieldErrors.bio && <p id="bio-error" role="alert" className="text-sm text-destructive">{fieldErrors.bio}</p>}
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>

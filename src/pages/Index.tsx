@@ -17,6 +17,7 @@ const Index = () => {
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Seo title={"Skill Serve — Find Trusted Service Providers Near You"} description={"Book verified plumbers, electricians, cleaners and more near you. Compare ratings, chat with pros and get 24/7 emergency help on Skill Serve."} />
       <Header />
+      <main id="main-content" tabIndex={-1}>
       <Hero />
       <StatsCounter />
       <ServiceCategories />
@@ -88,6 +89,7 @@ const Index = () => {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );
