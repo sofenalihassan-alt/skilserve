@@ -55,14 +55,14 @@ export const ChatImageUpload = ({ files, onChange, disabled }: ChatImageUploadPr
             <div key={`${file.name}-${i}`} className="relative">
               <img
                 src={URL.createObjectURL(file)}
-                alt={t('attached_photo')}
+                alt={`Preview of ${file.name}`}
                 className="h-16 w-16 rounded-md object-cover border"
               />
               <button
                 type="button"
                 onClick={() => remove(i)}
-                aria-label={t('remove_photo')}
-                className="absolute -top-2 -end-2 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center"
+                aria-label={`${t('remove_photo')}: ${file.name}`}
+                className="absolute -top-2 -end-2 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <X className="h-3 w-3" />
               </button>
