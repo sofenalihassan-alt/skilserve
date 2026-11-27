@@ -39,6 +39,7 @@ export const DisputeDialog = ({ open, onOpenChange, bookingId, againstUserId }: 
   const submit = async () => {
     if (!user || !reason || description.trim().length < 10) {
       setValidationError("Please choose a reason and describe what happened in at least 10 characters.");
+      window.setTimeout(() => document.getElementById(reason ? "dispute-description" : "dispute-reason")?.focus(), 0);
       toast({ title: "Missing info", description: "Please pick a reason and write at least 10 characters.", variant: "destructive" });
       return;
     }
