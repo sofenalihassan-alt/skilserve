@@ -33,6 +33,7 @@ const ProviderRegistration = () => {
   const [availability247, setAvailability247] = useState(false);
   const [existingProvider, setExistingProvider] = useState<ExistingProvider | null>(null);
   const [category, setCategory] = useState('');
+  const [categoryError, setCategoryError] = useState('');
   const [formValues, setFormValues] = useState({
     businessName: '',
     hourlyRate: '',
@@ -91,6 +92,13 @@ const ProviderRegistration = () => {
       setLoading(false);
       return;
     }
+
+    if (!category) {
+      setCategoryError("Please select a service category.");
+      setLoading(false);
+      return;
+    }
+    setCategoryError("");
 
     const payload = {
       business_name: validation.data.businessName,
@@ -163,8 +171,8 @@ const ProviderRegistration = () => {
 
             <div className="space-y-2">
               <Label htmlFor="category">Service Category *</Label>
-              <Select value={category} onValueChange={setCategory} required>
-                <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
+              <Select value={category} onValueChange={(value) => { setCategory(value); setCategoryError(""); }}>
+                <SelectTrigger id="category" aria-required="true" aria-invalid={!!categoryError} aria-describedby={categoryError ? "category-error" : undefined}><SelectValue placeholder="Select a category" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="plumbing">Plumbing</SelectItem>
                   <SelectItem value="electrical">Electrical</SelectItem>
@@ -176,6 +184,7 @@ const ProviderRegistration = () => {
                   <SelectItem value="handyman">Handyman</SelectItem>
                 </SelectContent>
               </Select>
+              {categoryError && <p id="category-error" role="alert" className="text-sm text-destructive">{categoryError}</p>}
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
