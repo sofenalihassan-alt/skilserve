@@ -422,10 +422,11 @@ const Messages = () => {
                 </CardHeader>
                 <CardContent className="flex flex-col h-[calc(100dvh-380px)] md:h-[520px]">
                   <ScrollArea className="flex-1 pr-2 md:pr-4">
-                    <div className="space-y-3" role="log" aria-label={`Messages with ${chatPartnerName}`} aria-live="polite" aria-relevant="additions text" aria-atomic="false">
+                    <div className="space-y-3">
                       {messages.length === 0 && (
                         <EmptyState compact kind="messages" title={t('no_messages')} description={t('first_message_desc')} action={t('say_hello')} onAction={() => { setNewMessage(t('hello_message')); document.getElementById('chat-message-input')?.focus(); }} />
                       )}
+                      <div role="log" aria-label={`Messages with ${chatPartnerName}`} aria-live="polite" aria-relevant="additions text" aria-atomic="false">
                       {messages.map((msg) => (
                         <div key={msg.id} className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'} group`}>
                           <div className={`max-w-[80%] md:max-w-[70%] rounded-lg p-3 relative ${msg.sender_id === user.id ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
@@ -462,6 +463,7 @@ const Messages = () => {
                           </div>
                         </div>
                       ))}
+                      </div>
                       <div ref={messagesEndRef} />
                     </div>
                   </ScrollArea>
