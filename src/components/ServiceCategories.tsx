@@ -16,9 +16,8 @@ import {
   Grid3X3,
   ArrowRight,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const categoryConfig = [
   { key: "electrical", icon: Zap, name: "Electrician", fallback: 68 },
@@ -59,7 +58,6 @@ const categoryConfig = [
 
 export const ServiceCategories = () => {
   const [counts, setCounts] = useState<Record<string, number>>({});
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCounts = async () => {
@@ -84,20 +82,6 @@ export const ServiceCategories = () => {
 
     fetchCounts();
   }, []);
-
-  const handleCategoryClick = (categoryKey: string) => {
-    navigate(`/providers?category=${categoryKey}`);
-  };
-
-  const handleCategoryKeyDown = (
-    event: React.KeyboardEvent<HTMLDivElement>,
-    categoryKey: string
-  ) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleCategoryClick(categoryKey);
-    }
-  };
 
   return (
     <section className="relative overflow-hidden bg-muted/25 px-4 py-20 sm:py-28">
@@ -124,15 +108,10 @@ export const ServiceCategories = () => {
               counts[category.key] || category.fallback;
 
             return (
-              <Card
+              <Link
                 key={category.key}
-                role="button"
-                tabIndex={0}
-                onClick={() => handleCategoryClick(category.key)}
-                onKeyDown={(event) =>
-                  handleCategoryKeyDown(event, category.key)
-                }
-                className="group relative min-h-40 cursor-pointer overflow-hidden rounded-[1.6rem] border border-border/60 bg-card/75 p-5 shadow-[0_8px_30px_-22px_hsl(var(--foreground)/0.24)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/35 hover:bg-card hover:shadow-[0_22px_55px_-25px_hsl(var(--primary)/0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:min-h-44 sm:p-6"
+                to={`/providers?category=${category.key}`}
+                className="group relative block min-h-40 cursor-pointer overflow-hidden rounded-[1.6rem] border border-border/60 bg-card/75 p-5 shadow-[0_8px_30px_-22px_hsl(var(--foreground)/0.24)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/35 hover:bg-card hover:shadow-[0_22px_55px_-25px_hsl(var(--primary)/0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:min-h-44 sm:p-6"
               >
                 <div className="relative flex h-full flex-col items-start text-start">
                   <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/15 to-accent/10 text-primary shadow-inner transition-all duration-500 group-hover:rotate-[-6deg] group-hover:scale-110 group-hover:from-primary group-hover:to-accent group-hover:text-primary-foreground sm:h-14 sm:w-14">
@@ -152,20 +131,19 @@ export const ServiceCategories = () => {
                     <ArrowRight className="h-3.5 w-3.5" />
                   </div>
                 </div>
-              </Card>
+              </Link>
             );
           })}
         </div>
 
         <div className="mt-8 text-center">
-          <button
-            type="button"
-            onClick={() => navigate("/providers")}
-            className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-5 py-3 text-sm font-semibold text-foreground shadow-sm backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:text-primary"
+          <Link
+            to="/providers"
+            className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-5 py-3 text-sm font-semibold text-foreground shadow-sm backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             View all service providers
             <ArrowRight className="h-4 w-4" />
-          </button>
+          </Link>
         </div>
       </div>
     </section>
