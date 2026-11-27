@@ -89,8 +89,6 @@ export const BottomNav = () => {
               variant="ghost"
               key={path}
               aria-current={active ? "page" : undefined}
-              aria-label={`${label}${badge ? ` (${badge})` : ""}`}
-              title={label}
               className={cn(
                 "relative isolate flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-lg px-0 py-1 hover:bg-transparent hover:text-primary",
                 active ? "text-primary" : "text-muted-foreground"
