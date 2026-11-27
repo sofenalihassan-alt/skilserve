@@ -373,7 +373,7 @@ const Providers = () => {
             </SheetContent>
           </Sheet>
         )}
-          <main className="flex-1" ref={listRef} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+          <main id="main-content" tabIndex={-1} className="flex-1" ref={listRef} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
             <AnimatePresence>
               {(pullDistance > 0 || isRefreshing) && (
                 <motion.div
