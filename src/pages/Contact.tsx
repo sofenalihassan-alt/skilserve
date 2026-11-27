@@ -55,6 +55,8 @@ const Contact = () => {
       const fieldErrors: Record<string, string> = {};
       result.error.errors.forEach((e) => { fieldErrors[e.path[0] as string] = e.message; });
       setErrors(fieldErrors);
+      const firstInvalid = Object.keys(fieldErrors)[0];
+      window.setTimeout(() => document.getElementById(`contact-${firstInvalid}`)?.focus(), 0);
       return;
     }
     setErrors({});
