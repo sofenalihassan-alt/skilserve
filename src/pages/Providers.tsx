@@ -285,7 +285,7 @@ const Providers = () => {
           "@type": "CollectionPage",
           name: "Service Providers",
           description: "Directory of verified local service providers on Skill Serve.",
-          url: "https://skilserve.lovable.app/providers",
+          url: "https://skillserve.store/providers",
         }}
       />
         <Header />
@@ -373,7 +373,7 @@ const Providers = () => {
             </SheetContent>
           </Sheet>
         )}
-          <main className="flex-1" ref={listRef} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+          <main id="main-content" tabIndex={-1} className="flex-1" ref={listRef} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
             <AnimatePresence>
               {(pullDistance > 0 || isRefreshing) && (
                 <motion.div
