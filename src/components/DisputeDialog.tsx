@@ -34,12 +34,15 @@ export const DisputeDialog = ({ open, onOpenChange, bookingId, againstUserId }: 
   const [description, setDescription] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [validationError, setValidationError] = useState("");
 
   const submit = async () => {
     if (!user || !reason || description.trim().length < 10) {
+      setValidationError("Please choose a reason and describe what happened in at least 10 characters.");
       toast({ title: "Missing info", description: "Please pick a reason and write at least 10 characters.", variant: "destructive" });
       return;
     }
+    setValidationError("");
     setSubmitting(true);
     try {
       const evidenceUrls: string[] = [];
@@ -89,9 +92,10 @@ export const DisputeDialog = ({ open, onOpenChange, bookingId, againstUserId }: 
         </DialogHeader>
 
         <div className="space-y-4">
+          {validationError && <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{validationError}</p>}
           <div className="space-y-2">
             <Label htmlFor="dispute-reason">Reason</Label>
-            <Select value={reason} onValueChange={setReason}>
+            <Select value={reason} onValueChange={(value) => { setReason(value); setValidationError(""); }}>
               <SelectTrigger id="dispute-reason" aria-label="Reason for dispute">
                 <SelectValue placeholder="Select a reason" />
               </SelectTrigger>
