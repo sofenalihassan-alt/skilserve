@@ -1,6 +1,6 @@
 import { authRedirect } from "@/lib/authRedirect";
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Home, Map, CalendarDays, MessageSquareText, MoreHorizontal, AlertTriangle, Briefcase, Globe, Shield, LogOut, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -85,17 +85,18 @@ export const BottomNav = () => {
           const active = isActive(path);
           return (
             <Button
+              asChild
               variant="ghost"
               key={path}
               aria-current={active ? "page" : undefined}
               aria-label={`${label}${badge ? ` (${badge})` : ""}`}
               title={label}
-              onClick={() => navigate(path)}
               className={cn(
                 "relative isolate flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-lg px-0 py-1 hover:bg-transparent hover:text-primary",
                 active ? "text-primary" : "text-muted-foreground"
               )}
             >
+              <Link to={path} aria-label={`${label}${badge ? ` (${badge})` : ""}`} title={label}>
               {active && (
                 <motion.span
                   layoutId="active-tab-pill"
@@ -120,6 +121,7 @@ export const BottomNav = () => {
               >
                 {label}
               </span>
+              </Link>
             </Button>
           );
         })}
