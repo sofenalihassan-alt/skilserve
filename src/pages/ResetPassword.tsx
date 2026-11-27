@@ -70,6 +70,8 @@ const ResetPassword = () => {
       const nextErrors: Record<string, string> = {};
       validation.error.errors.forEach((issue) => { nextErrors[String(issue.path[0])] = issue.message; });
       setFieldErrors(nextErrors);
+      const firstInvalid = String(validation.error.errors[0].path[0]);
+      window.setTimeout(() => document.getElementById(firstInvalid)?.focus(), 0);
       toast({
         title: "Validation Error",
         description: validation.error.errors[0].message,
