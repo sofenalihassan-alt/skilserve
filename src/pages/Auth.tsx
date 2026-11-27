@@ -23,6 +23,7 @@ const Auth = () => {
   const [userType, setUserType] = useState<"user" | "provider">("user");
   const [loading, setLoading] = useState(false);
   const [validationMessage, setValidationMessage] = useState("");
+  const [validationField, setValidationField] = useState("");
   const navigate = useNavigate();
   const { signIn, signUp, user } = useAuth();
   const nextPath = safeNext(new URLSearchParams(window.location.search).get("next"));
@@ -98,6 +99,7 @@ const Auth = () => {
     if (!validation.success) {
       const firstError = validation.error.errors[0];
       setValidationMessage(firstError.message);
+      setValidationField(String(firstError.path[0]));
       const invalidField = String(firstError.path[0]);
       const formElement = e.currentTarget;
       window.setTimeout(() => formElement.querySelector<HTMLInputElement>(`[name="${invalidField}"]`)?.focus(), 0);
@@ -111,6 +113,7 @@ const Auth = () => {
     }
 
     setValidationMessage("");
+    setValidationField("");
     const { error } = await signIn(validation.data.email, validation.data.password);
     
     if (error) {
@@ -155,6 +158,7 @@ const Auth = () => {
     }
 
     setValidationMessage("");
+    setValidationField("");
     const { error } = await signUp(
       validation.data.email, 
       validation.data.password, 
@@ -243,7 +247,7 @@ const Auth = () => {
 
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4" noValidate>
-                {validationMessage && <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{validationMessage}</p>}
+                {validationMessage && <p id="login-validation-error" role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{validationMessage}</p>}
                 <div className="space-y-2">
                   <Label htmlFor="login-email">Email</Label>
                   <Input 
@@ -252,6 +256,8 @@ const Auth = () => {
                     type="email" 
                     placeholder="Enter your email"
                     required
+                    aria-invalid={validationField === "email"}
+                    aria-describedby={validationField === "email" ? "login-validation-error" : undefined}
                   />
                 </div>
                 <div className="space-y-2">
@@ -262,6 +268,8 @@ const Auth = () => {
                     type="password" 
                     placeholder="Enter your password"
                     required
+                    aria-invalid={validationField === "password"}
+                    aria-describedby={validationField === "password" ? "login-validation-error" : undefined}
                   />
                 </div>
                 <div className="flex justify-end">
@@ -308,7 +316,7 @@ const Auth = () => {
 
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-4" noValidate>
-                {validationMessage && <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{validationMessage}</p>}
+                {validationMessage && <p id="signup-validation-error" role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{validationMessage}</p>}
                 <div className="space-y-2">
                   <Label htmlFor="signup-name">Full Name</Label>
                   <Input 
@@ -317,6 +325,8 @@ const Auth = () => {
                     type="text" 
                     placeholder="Enter your full name"
                     required
+                    aria-invalid={validationField === "fullName"}
+                    aria-describedby={validationField === "fullName" ? "signup-validation-error" : undefined}
                   />
                 </div>
                 <div className="space-y-2">
@@ -327,6 +337,8 @@ const Auth = () => {
                     type="email" 
                     placeholder="Enter your email"
                     required
+                    aria-invalid={validationField === "email"}
+                    aria-describedby={validationField === "email" ? "signup-validation-error" : undefined}
                   />
                 </div>
                 <div className="space-y-2">
@@ -346,6 +358,8 @@ const Auth = () => {
                     type="password" 
                     placeholder="Create a password"
                     required
+                    aria-invalid={validationField === "password"}
+                    aria-describedby={validationField === "password" ? "signup-validation-error" : undefined}
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
