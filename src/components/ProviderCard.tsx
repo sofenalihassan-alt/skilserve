@@ -60,7 +60,7 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
           </div>
         )}
         <div className="space-y-4 p-4">
-          <Link to={provider.id ? `/provider/${provider.id}` : "#"} aria-disabled={!provider.id} tabIndex={provider.id ? 0 : -1} className="flex w-full items-start gap-3 pe-10 text-start rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <Link to={provider.id ? `/provider/${provider.id}` : "/providers"} className="flex w-full items-start gap-3 pe-10 text-start rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <Avatar className="h-14 w-14 ring-2 ring-primary/10 ring-offset-2 ring-offset-card transition-transform duration-300 group-hover:scale-105">
               <AvatarImage src={provider.avatar_url || undefined} alt={`${provider.business_name || "Service provider"} profile photo`} />
               <AvatarFallback className="bg-primary/10 font-semibold text-primary">{initials}</AvatarFallback>
