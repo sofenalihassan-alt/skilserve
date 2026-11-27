@@ -90,9 +90,9 @@ export const DisputeDialog = ({ open, onOpenChange, bookingId, againstUserId }: 
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Reason</Label>
+            <Label htmlFor="dispute-reason">Reason</Label>
             <Select value={reason} onValueChange={setReason}>
-              <SelectTrigger>
+              <SelectTrigger id="dispute-reason" aria-label="Reason for dispute">
                 <SelectValue placeholder="Select a reason" />
               </SelectTrigger>
               <SelectContent>
@@ -106,30 +106,33 @@ export const DisputeDialog = ({ open, onOpenChange, bookingId, againstUserId }: 
           </div>
 
           <div className="space-y-2">
-            <Label>Describe what happened</Label>
+            <Label htmlFor="dispute-description">Describe what happened</Label>
             <Textarea
+              id="dispute-description"
+              aria-describedby="dispute-description-count"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
               maxLength={1000}
               placeholder="Provide as much detail as possible…"
             />
-            <p className="text-xs text-muted-foreground text-right">{description.length}/1000</p>
+            <p id="dispute-description-count" className="text-xs text-muted-foreground text-right" aria-live="polite">{description.length}/1000 characters</p>
           </div>
 
           <div className="space-y-2">
-            <Label className="flex items-center gap-1.5">
+            <Label htmlFor="dispute-evidence" className="flex items-center gap-1.5">
               <Upload className="h-3.5 w-3.5" />
               Evidence (optional, up to 3 files, 5MB each)
             </Label>
             <Input
+              id="dispute-evidence"
               type="file"
               accept="image/*,application/pdf"
               multiple
               onChange={(e) => setFiles(Array.from(e.target.files || []).slice(0, 3))}
             />
             {files.length > 0 && (
-              <p className="text-xs text-muted-foreground">{files.length} file(s) selected</p>
+              <p className="text-xs text-muted-foreground" role="status">{files.length} file(s) selected</p>
             )}
           </div>
         </div>
