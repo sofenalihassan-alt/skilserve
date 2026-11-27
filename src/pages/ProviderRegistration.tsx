@@ -92,6 +92,8 @@ const ProviderRegistration = () => {
       const nextErrors: Record<string, string> = {};
       validation.error.errors.forEach((issue) => { nextErrors[String(issue.path[0])] = issue.message; });
       setFieldErrors(nextErrors);
+      const firstInvalid = Object.keys(nextErrors)[0];
+      window.setTimeout(() => document.getElementById(firstInvalid)?.focus(), 0);
       toast({ title: "Validation Error", description: validation.error.errors[0].message, variant: "destructive" });
       setLoading(false);
       return;
@@ -100,6 +102,7 @@ const ProviderRegistration = () => {
     setFieldErrors({});
     if (!category) {
       setCategoryError("Please select a service category.");
+      window.setTimeout(() => document.getElementById("category")?.focus(), 0);
       setLoading(false);
       return;
     }
