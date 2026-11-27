@@ -85,7 +85,7 @@ const App = () => {
                     <Route path="/privacy" element={<main id="main-content" tabIndex={-1}><PrivacyPolicy /></main>} />
                     <Route path="/contact" element={<main id="main-content" tabIndex={-1}><Contact /></main>} />
                     <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
-                    <Route path="/" element={<main id="main-content" tabIndex={-1}><Index /></main>} />
+                    <Route path="/" element={<Index />} />
                     <Route path="/providers" element={<Providers />} />
                     <Route path="/provider/:id" element={<ProviderDetail />} />
                     <Route path="/provider-registration" element={<ProtectedRoute><main id="main-content" tabIndex={-1}><ProviderRegistration /></main></ProtectedRoute>} />
