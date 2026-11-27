@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 
-export const SITE_URL = "https://skilserve.lovable.app";
+export const SITE_URL = "https://skillserve.store";
 
 interface SeoProps {
   title: string;
