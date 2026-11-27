@@ -285,7 +285,7 @@ const Providers = () => {
           "@type": "CollectionPage",
           name: "Service Providers",
           description: "Directory of verified local service providers on Skill Serve.",
-          url: "https://skilserve.lovable.app/providers",
+          url: "https://skillserve.store/providers",
         }}
       />
         <Header />
