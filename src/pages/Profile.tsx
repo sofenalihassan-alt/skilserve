@@ -160,7 +160,7 @@ const Profile = () => {
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Seo title={"My Profile | Skill Serve"} description={"Manage your Skill Serve account details, saved addresses, favourites and notification preferences."} noindex />
       <Header />
-      <main className="container mx-auto px-4 py-8">
+      <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Profile Header */}
           <div className="relative">

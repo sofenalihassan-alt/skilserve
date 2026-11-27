@@ -395,7 +395,7 @@ const Bookings = () => {
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Seo title={"My Bookings | Skill Serve"} description={"View, track and manage all your Skill Serve service bookings, from pending requests to completed jobs."} noindex />
       <Header />
-      <main className="container mx-auto px-4 py-8">
+      <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-8">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="mb-8">

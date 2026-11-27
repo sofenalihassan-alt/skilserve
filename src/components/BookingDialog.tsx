@@ -86,6 +86,8 @@ export const BookingDialog = ({ open, onOpenChange, provider }: BookingDialogPro
         fieldErrors[e.path[0] as string] = e.message;
       });
       setErrors(fieldErrors);
+      const firstInvalid = fieldErrors.description ? "description" : "booking-date-trigger";
+      window.setTimeout(() => document.getElementById(firstInvalid)?.focus(), 0);
       return;
     }
 
@@ -126,7 +128,7 @@ export const BookingDialog = ({ open, onOpenChange, provider }: BookingDialogPro
           <DialogDescription className="capitalize">{provider.category} Service</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-5 pt-2">
+        <form className="space-y-5 pt-2" onSubmit={(event) => { event.preventDefault(); void handleSubmit(); }} noValidate>
           {/* Optional Packages */}
           {provider.id && (
             <div className="space-y-2">
@@ -153,19 +155,26 @@ export const BookingDialog = ({ open, onOpenChange, provider }: BookingDialogPro
               id="description"
               placeholder="e.g. My kitchen sink is leaking and needs repair..."
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => { setDescription(e.target.value); setErrors((current) => ({ ...current, description: "" })); }}
               className="min-h-[100px]"
+              aria-invalid={!!errors.description}
+              aria-describedby={errors.description ? "booking-description-error" : undefined}
+              required
             />
-            {errors.description && <p className="text-xs text-destructive">{errors.description}</p>}
+            {errors.description && <p id="booking-description-error" role="alert" className="text-xs text-destructive">{errors.description}</p>}
           </div>
 
           {/* Date Picker */}
           <div className="space-y-2">
-            <Label>Preferred Date *</Label>
+            <Label htmlFor="booking-date-trigger">Preferred Date *</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
+                  id="booking-date-trigger"
+                  type="button"
                   variant="outline"
+                  aria-invalid={!!errors.date}
+                  aria-describedby={errors.date ? "booking-date-error" : undefined}
                   className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
@@ -176,21 +185,21 @@ export const BookingDialog = ({ open, onOpenChange, provider }: BookingDialogPro
                 <Calendar
                   mode="single"
                   selected={date}
-                  onSelect={setDate}
+                  onSelect={(value) => { setDate(value); setErrors((current) => ({ ...current, date: "" })); }}
                   disabled={(d) => d < new Date()}
                   initialFocus
                   className={cn("p-3 pointer-events-auto")}
                 />
               </PopoverContent>
             </Popover>
-            {errors.date && <p className="text-xs text-destructive">{errors.date}</p>}
+            {errors.date && <p id="booking-date-error" role="alert" className="text-xs text-destructive">{errors.date}</p>}
           </div>
 
           {/* Duration */}
           <div className="space-y-2">
-            <Label>Estimated Duration</Label>
+            <Label htmlFor="booking-duration">Estimated Duration</Label>
             <Select value={String(duration)} onValueChange={(v) => setDuration(Number(v))}>
-              <SelectTrigger>
+              <SelectTrigger id="booking-duration">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -246,11 +255,11 @@ export const BookingDialog = ({ open, onOpenChange, provider }: BookingDialogPro
           </div>
 
           {/* Submit */}
-          <Button onClick={handleSubmit} disabled={submitting} className="w-full gap-2" size="lg">
+          <Button type="submit" disabled={submitting} className="w-full gap-2" size="lg">
             <Send className="h-4 w-4" strokeWidth={1.5} />
             {submitting ? "Sending Request..." : "Send Booking Request"}
           </Button>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

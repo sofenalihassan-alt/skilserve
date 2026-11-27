@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { PressButton as Button } from "@/components/PressButton";
 import { motion, useReducedMotion } from 'framer-motion';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { BookingDialog } from "@/components/BookingDialog";
 import { FavoriteButton } from "@/components/FavoriteButton";
@@ -60,9 +60,9 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
           </div>
         )}
         <div className="space-y-4 p-4">
-          <button type="button" onClick={() => provider.id && navigate(`/provider/${provider.id}`)} className="flex w-full items-start gap-3 pe-10 text-start">
+          <Link to={provider.id ? `/provider/${provider.id}` : "/providers"} className="flex w-full items-start gap-3 pe-10 text-start rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <Avatar className="h-14 w-14 ring-2 ring-primary/10 ring-offset-2 ring-offset-card transition-transform duration-300 group-hover:scale-105">
-              <AvatarImage src={provider.avatar_url || undefined} />
+              <AvatarImage src={provider.avatar_url || undefined} alt={`${provider.business_name || "Service provider"} profile photo`} />
               <AvatarFallback className="bg-primary/10 font-semibold text-primary">{initials}</AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
@@ -77,7 +77,7 @@ export const ProviderCard = ({ provider, avgRating = 0, reviewCount = 0 }: Provi
                 {provider.years_experience ? <span className="text-muted-foreground">· {provider.years_experience} yrs</span> : null}
               </div>
             </div>
-          </button>
+          </Link>
 
           {(provider.verification_status === 'verified' || provider.availability_24_7) && (
             <div className="flex flex-wrap gap-2">

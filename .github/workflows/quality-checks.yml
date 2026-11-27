@@ -1,0 +1,59 @@
+name: Quality checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  quality:
+    name: TypeScript, lint and production build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pull request branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Set up Bun for the sitemap prebuild
+        uses: oven-sh/setup-bun@v2
+
+      - name: Regenerate npm lockfile for pull requests
+        if: github.event_name == 'pull_request'
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund --legacy-peer-deps
+
+      - name: Commit synchronized npm lockfile
+        if: github.event_name == 'pull_request'
+        run: |
+          if ! git diff --quiet -- package-lock.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add package-lock.json
+            git commit -m "chore: synchronize npm lockfile"
+            git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
+          fi
+
+      - name: Install locked dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: TypeScript check
+        run: npx tsc -b --pretty false
+
+      - name: ESLint (existing repository baseline)
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Production build
+        run: npm run build
