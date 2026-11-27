@@ -90,7 +90,7 @@ export const FeedbackDialog = ({ open, onOpenChange, type, providerName, provide
               <button
                 key={i}
                 type="button"
-                onClick={() => setRating(i + 1)}
+                onClick={() => { setRating(i + 1); setRatingError(""); }}
                 onMouseEnter={() => setHoverRating(i + 1)}
                 onMouseLeave={() => setHoverRating(0)}
                 aria-pressed={rating === i + 1}
