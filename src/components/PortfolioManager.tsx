@@ -89,7 +89,7 @@ export const PortfolioManager = ({ providerId }: { providerId: string }) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <Input ref={inputRef} type="file" accept="image/*" onChange={upload} disabled={uploading || items.length >= MAX_ITEMS} className="sr-only" id="portfolio-upload" />
+          <Input ref={inputRef} type="file" accept="image/*" onChange={upload} disabled={uploading || items.length >= MAX_ITEMS} className="sr-only" id="portfolio-upload" aria-label={t("add_photo")} />
           <Button type="button" variant="outline" disabled={uploading || items.length >= MAX_ITEMS} className="w-full gap-2" onClick={() => inputRef.current?.click()} aria-controls="portfolio-upload">
               <Upload className="h-4 w-4" />
               {uploading ? t("uploading") : items.length >= MAX_ITEMS ? t("limit_reached") : t("add_photo")}
@@ -106,8 +106,8 @@ export const PortfolioManager = ({ providerId }: { providerId: string }) => {
                 <button
                   type="button"
                   onClick={() => remove(it.id, it.image_url)}
-                  className="absolute top-1 right-1 p-1.5 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity"
-                  aria-label={`Delete portfolio photo ${index + 1}`} className="absolute top-1 right-1 p-1.5 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label={`Delete portfolio photo ${index + 1}`}
+                  className="absolute top-1 right-1 p-1.5 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-opacity"
                 >
                   <Trash2 className="h-3 w-3" />
                 </button>
