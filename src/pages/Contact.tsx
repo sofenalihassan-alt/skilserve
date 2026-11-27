@@ -48,7 +48,8 @@ const Contact = () => {
       });
   }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const result = contactSchema.safeParse(form);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -98,6 +99,7 @@ const Contact = () => {
                 <p className="font-medium text-sm">Phone</p>
                 <a href={`tel:${phone}`} className="text-sm text-muted-foreground hover:text-primary">{phone}</a>
               </div>
+            </form>
             </CardContent>
           </Card>
           <Card>
@@ -126,28 +128,29 @@ const Contact = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2"><Send className="h-5 w-5" /> Send a Message</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Name</Label>
-                <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Your name" />
-                {errors.name && <p className="text-xs text-destructive mt-1">{errors.name}</p>}
+            <CardContent>
+              <form onSubmit={handleSubmit} noValidate className="space-y-4">
+              <div className="space-y-1">
+                <Label htmlFor="contact-name">Name</Label>
+                <Input id="contact-name" name="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Your name" type="text" aria-invalid={!!errors.name} aria-describedby={errors.name ? "contact-name-error" : undefined} required />
+                {errors.name && <p id="contact-name-error" role="alert" className="text-xs text-destructive mt-1">{errors.name}</p>}
               </div>
-              <div>
-                <Label>Email</Label>
-                <Input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="your@email.com" type="email" />
-                {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
+              <div className="space-y-1">
+                <Label htmlFor="contact-email">Email</Label>
+                <Input id="contact-email" name="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="your@email.com" type="email" aria-invalid={!!errors.email} aria-describedby={errors.email ? "contact-email-error" : undefined} required />
+                {errors.email && <p id="contact-email-error" role="alert" className="text-xs text-destructive mt-1">{errors.email}</p>}
               </div>
-              <div>
-                <Label>Subject</Label>
-                <Input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="What's this about?" />
-                {errors.subject && <p className="text-xs text-destructive mt-1">{errors.subject}</p>}
+              <div className="space-y-1">
+                <Label htmlFor="contact-subject">Subject</Label>
+                <Input id="contact-subject" name="subject" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="What's this about?" type="text" aria-invalid={!!errors.subject} aria-describedby={errors.subject ? "contact-subject-error" : undefined} required />
+                {errors.subject && <p id="contact-subject-error" role="alert" className="text-xs text-destructive mt-1">{errors.subject}</p>}
               </div>
-              <div>
-                <Label>Message</Label>
-                <Textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Describe your issue or question..." rows={5} />
-                {errors.message && <p className="text-xs text-destructive mt-1">{errors.message}</p>}
+              <div className="space-y-1">
+                <Label htmlFor="contact-message">Message</Label>
+                <Textarea id="contact-message" name="message" value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Describe your issue or question..." rows={5} aria-invalid={!!errors.message} aria-describedby={errors.message ? "contact-message-error" : undefined} required />
+                {errors.message && <p id="contact-message-error" role="alert" className="text-xs text-destructive mt-1">{errors.message}</p>}
               </div>
-              <Button onClick={handleSubmit} disabled={submitting} className="w-full">
+              <Button type="submit" disabled={submitting} className="w-full">
                 {submitting ? "Sending..." : "Send Message"}
               </Button>
               <a
