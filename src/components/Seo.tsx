@@ -27,7 +27,7 @@ const Seo = ({
   const cleanPath = path ?? location.pathname;
   const url = `${SITE_URL}${cleanPath === "/" ? "" : cleanPath}`;
 
-  const img = image || `${SITE_URL}/favicon.png`;
+  const img = image || `${SITE_URL}/logo.webp`;
 
   return (
     <Helmet prioritizeSeoTags>

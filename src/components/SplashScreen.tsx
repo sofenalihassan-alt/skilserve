@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { House, ShieldCheck, Wrench } from 'lucide-react';
-import logo from '@/assets/logo-header.webp';
 
 export const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
   let isUrdu = false;
@@ -55,7 +54,7 @@ export const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
           animate={{ opacity: [0, 1, 1, 0], y: [10, 0, 0, -3], scale: [0.94, 1, 1, 1] }}
           transition={{ delay: 0.7, duration: 1.8, times: [0, 0.2, 0.9, 1], ease: 'easeOut' }}
         >
-          <img src={logo} alt="" width={176} height={176} className="h-16 w-16 object-contain" />
+          <img src="/logo.webp" alt="" width={176} height={176} loading="eager" decoding="async" className="h-16 w-16 object-contain" />
           <motion.span
             className={`font-heading text-2xl font-bold text-foreground ${isUrdu ? 'font-urdu leading-loose' : ''}`}
             dir={isUrdu ? 'rtl' : 'ltr'}

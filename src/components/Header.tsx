@@ -10,7 +10,6 @@ import { useAdmin } from "@/hooks/useAdmin";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationCenter } from "@/components/NotificationCenter";
-import logo from "@/assets/logo-header.webp";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -97,7 +96,7 @@ export const Header = () => {
             className="flex shrink-0 items-center gap-2 h-auto p-0 hover:bg-transparent focus-visible:ring-2 focus-visible:ring-ring"
           >
             <span className="flex h-9 w-9 shrink-0 items-center justify-center md:h-10 md:w-10">
-              <img src={logo} alt="" width={176} height={176} className="h-full w-full object-contain" />
+              <img src="/logo.webp" alt="Skill Serve logo" width={176} height={176} loading="eager" decoding="async" className="h-full w-full object-contain" />
             </span>
             <span className="font-heading text-lg md:text-xl font-bold text-foreground">
               {t('skill_serve')}
