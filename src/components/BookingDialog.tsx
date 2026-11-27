@@ -155,7 +155,7 @@ export const BookingDialog = ({ open, onOpenChange, provider }: BookingDialogPro
               id="description"
               placeholder="e.g. My kitchen sink is leaking and needs repair..."
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => { setDescription(e.target.value); setErrors((current) => ({ ...current, description: "" })); }}
               className="min-h-[100px]"
               aria-invalid={!!errors.description}
               aria-describedby={errors.description ? "booking-description-error" : undefined}
@@ -185,7 +185,7 @@ export const BookingDialog = ({ open, onOpenChange, provider }: BookingDialogPro
                 <Calendar
                   mode="single"
                   selected={date}
-                  onSelect={setDate}
+                  onSelect={(value) => { setDate(value); setErrors((current) => ({ ...current, date: "" })); }}
                   disabled={(d) => d < new Date()}
                   initialFocus
                   className={cn("p-3 pointer-events-auto")}
@@ -197,9 +197,9 @@ export const BookingDialog = ({ open, onOpenChange, provider }: BookingDialogPro
 
           {/* Duration */}
           <div className="space-y-2">
-            <Label>Estimated Duration</Label>
+            <Label htmlFor="booking-duration">Estimated Duration</Label>
             <Select value={String(duration)} onValueChange={(v) => setDuration(Number(v))}>
-              <SelectTrigger>
+              <SelectTrigger id="booking-duration">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
