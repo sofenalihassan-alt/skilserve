@@ -99,7 +99,6 @@ const Contact = () => {
                 <p className="font-medium text-sm">Phone</p>
                 <a href={`tel:${phone}`} className="text-sm text-muted-foreground hover:text-primary">{phone}</a>
               </div>
-            </form>
             </CardContent>
           </Card>
           <Card>
