@@ -139,9 +139,9 @@ export const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button aria-label={t('account')} className="flex items-center gap-2 rounded-full border border-border/70 bg-card/60 p-1 pe-3 shadow-sm backdrop-blur-xl transition-all hover:border-primary/30 hover:bg-accent/10">
+                  <button type="button" aria-label={t('account')} className="flex items-center gap-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-border/70 bg-card/60 p-1 pe-3 shadow-sm backdrop-blur-xl transition-all hover:border-primary/30 hover:bg-accent/10">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={avatarUrl || undefined} />
+                      <AvatarImage src={avatarUrl || undefined} alt={`${fullName || t('account')} profile photo`} />
                       <AvatarFallback className="bg-primary/20 text-primary text-sm font-bold">{fullName?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
                     </Avatar>
                     <span className="text-sm font-medium hidden lg:inline">{fullName || t('account')}</span>
