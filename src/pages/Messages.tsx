@@ -69,6 +69,7 @@ const Messages = () => {
   const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
   const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'message' | 'conversation'; id?: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -241,6 +242,7 @@ const Messages = () => {
     } else {
       setNewMessage('');
       setAttachFiles([]);
+      setAnnouncement('Message sent.');
       await fetchMessages(selectedUserId);
       await fetchConversations();
     }
@@ -302,6 +304,8 @@ const Messages = () => {
   };
 
   const selectConversation = (userId: string) => {
+    const selected = conversations.find(c => c.userId === userId);
+    setAnnouncement(selected ? `Conversation opened with ${selected.userName}.` : 'Conversation opened.');
     setSelectedUserId(userId);
     const conv = conversations.find(c => c.userId === userId);
     if (conv) {
@@ -335,6 +339,7 @@ const Messages = () => {
       <Header />
       <div className="container mx-auto px-4 py-4 md:py-8">
         <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">{t('messages')}</h1>
+        <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{announcement}</p>
 
         <div className="grid md:grid-cols-3 gap-4 h-[calc(100dvh-240px)] md:h-[600px]">
           {/* Conversation List */}
@@ -345,14 +350,17 @@ const Messages = () => {
                 {conversations.length === 0 ? (
                   <EmptyState compact kind="messages" title={t('no_messages')} description={t('empty_messages_desc')} action={t('browse_providers')} onAction={() => navigate('/providers')} />
                 ) : conversations.map((conv) => (
-                  <div
+                  <button
+                    type="button"
                     key={conv.userId}
                     onClick={() => selectConversation(conv.userId)}
-                    className={`p-3 md:p-4 border-b cursor-pointer hover:bg-muted/50 transition-colors ${selectedUserId === conv.userId ? 'bg-muted' : ''}`}
+                    aria-pressed={selectedUserId === conv.userId}
+                    aria-label={`Open conversation with ${conv.userName}${conv.unreadCount > 0 ? `, ${conv.unreadCount} unread messages` : ''}`}
+                    className={`block w-full p-3 md:p-4 border-b text-start hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring ${selectedUserId === conv.userId ? 'bg-muted' : ''}`}
                   >
                     <div className="flex items-center gap-3">
                       <Avatar className="h-10 w-10 shrink-0">
-                        <AvatarImage src={conv.avatarUrl || undefined} />
+                        <AvatarImage src={conv.avatarUrl || undefined} alt={`Profile photo of ${conv.userName}`} />
                         <AvatarFallback className="bg-primary/10 text-primary">
                           {conv.userName.charAt(0).toUpperCase()}
                         </AvatarFallback>
@@ -370,7 +378,7 @@ const Messages = () => {
                         </div>
                       )}
                     </div>
-                  </div>
+                  </button>
                 ))}
               </ScrollArea>
             </CardContent>
@@ -386,7 +394,7 @@ const Messages = () => {
                       <ArrowLeft className="h-5 w-5" />
                     </Button>
                     <Avatar className="h-10 w-10 shrink-0">
-                      <AvatarImage src={chatPartnerAvatar || undefined} />
+                      <AvatarImage src={chatPartnerAvatar || undefined} alt={`Profile photo of ${chatPartnerName}`} />
                       <AvatarFallback className="bg-primary/10 text-primary">
                         {chatPartnerName.charAt(0).toUpperCase()}
                       </AvatarFallback>
@@ -414,7 +422,7 @@ const Messages = () => {
                 </CardHeader>
                 <CardContent className="flex flex-col h-[calc(100dvh-380px)] md:h-[520px]">
                   <ScrollArea className="flex-1 pr-2 md:pr-4">
-                    <div className="space-y-3">
+                    <div className="space-y-3" role="log" aria-label={`Messages with ${chatPartnerName}`} aria-live="polite" aria-relevant="additions text" aria-atomic="false">
                       {messages.length === 0 && (
                         <EmptyState compact kind="messages" title={t('no_messages')} description={t('first_message_desc')} action={t('say_hello')} onAction={() => { setNewMessage(t('hello_message')); document.getElementById('chat-message-input')?.focus(); }} />
                       )}
@@ -431,9 +439,10 @@ const Messages = () => {
                                       key={path}
                                       type="button"
                                       onClick={() => setLightbox({ images: all, index: Math.min(i, all.length - 1) })}
-                                      className="block overflow-hidden rounded-md"
+                                      className="block overflow-hidden rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                      aria-label={`Open shared photo ${i + 1}`}
                                     >
-                                      <img src={url} alt="Shared photo" loading="lazy" className="h-28 w-full object-cover" />
+                                      <img src={url} alt={`Photo shared by ${msg.sender_id === user.id ? 'you' : chatPartnerName}`}  loading="lazy" className="h-28 w-full object-cover" />
                                     </button>
                                   ) : (
                                     <div key={path} className="h-28 w-full rounded-md bg-background/40 flex items-center justify-center">
@@ -445,9 +454,9 @@ const Messages = () => {
                             )}
                             {msg.message && <p className="break-words text-sm">{msg.message}</p>}
                             <p className="text-[10px] opacity-70 mt-1">{new Date(msg.created_at).toLocaleTimeString()}</p>
-                            <button onClick={() => handleDeleteMessage(msg.id)}
-                              className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                              title="Delete message">
+                            <button type="button" onClick={() => handleDeleteMessage(msg.id)}
+                              className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-opacity"
+                              aria-label="Delete message" title="Delete message">
                               <Trash2 className="h-3 w-3" />
                             </button>
                           </div>
@@ -456,16 +465,17 @@ const Messages = () => {
                       <div ref={messagesEndRef} />
                     </div>
                   </ScrollArea>
-                  <div className="mt-3">
+                  <form className="mt-3" onSubmit={(event) => { event.preventDefault(); void sendMessage(); }}>
                     <div className="flex gap-2 items-center">
                       <ChatImageUpload files={attachFiles} onChange={setAttachFiles} disabled={loading} />
+                      <label htmlFor="chat-message-input" className="sr-only">{t('type_message')}</label>
                       <Input id="chat-message-input" value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder={t('type_message')} onKeyDown={(e) => e.key === 'Enter' && sendMessage()} disabled={loading} className="text-sm" />
-                      <Button onClick={sendMessage} disabled={loading || (!newMessage.trim() && attachFiles.length === 0)} size="sm">
-                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquareText className="h-4 w-4" />}
+                        placeholder={t('type_message')} disabled={loading} className="text-sm" />
+                      <Button type="submit" aria-label="Send message" disabled={loading || (!newMessage.trim() && attachFiles.length === 0)} size="sm">
+                        {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <MessageSquareText className="h-4 w-4" aria-hidden="true" />}
                       </Button>
                     </div>
-                  </div>
+                  </form>
                 </CardContent>
               </>
             ) : (
