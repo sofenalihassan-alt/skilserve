@@ -32,7 +32,7 @@ jobs:
 
       - name: Regenerate npm lockfile for pull requests
         if: github.event_name == 'pull_request'
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund --legacy-peer-deps
 
       - name: Commit synchronized npm lockfile
         if: github.event_name == 'pull_request'
@@ -46,7 +46,7 @@ jobs:
           fi
 
       - name: Install locked dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: TypeScript check
         run: npx tsc -b --pretty false
