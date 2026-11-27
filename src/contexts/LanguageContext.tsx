@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useRef, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, useEffect, ReactNode } from 'react';
 
 type Language = 'en' | 'ur';
 
@@ -240,6 +240,11 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   });
   const [isTransitioning, setIsTransitioning] = useState(false);
   const pendingLang = useRef<Language | null>(null);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === 'ur' ? 'rtl' : 'ltr';
+  }, [language]);
 
   const setLanguage = useCallback((lang: Language) => {
     if (lang === language) return;
